@@ -13,7 +13,9 @@ public class LoginPresenter {
     }
 
     public void onLoginButtonClicked(String username, String password) {
-        if (model.login(username, password)) {
+        //send request to http and get answer
+        boolean success = true;
+        if (success) {
             view.loginSuccess();
         } else {
             view.loginFailure("Invalid username or password.");

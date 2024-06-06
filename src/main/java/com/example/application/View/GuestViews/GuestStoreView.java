@@ -8,17 +8,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
-@Route("StoreView")
+@Route("GuestStoreView")
 public class GuestStoreView extends VerticalLayout {
     VerticalLayout storeProducts = new VerticalLayout(
             new HorizontalLayout(new Text("name: skirt")),
-            new HorizontalLayout(new Text("description: blue skirt size M")),
-            new HorizontalLayout(new Text("price: 53")),
+            new HorizontalLayout(new Text("description: blue")),
+            new HorizontalLayout(new Text("price: 43")),
             new HorizontalLayout(
                     new TextField("", "quantity"),
-                    new Button("Add to Cart", event -> {
-                        getUI().ifPresent(ui -> ui.navigate("LoginView"));
-                    })
+                    new Button("Add to Cart")
             )
     );
 

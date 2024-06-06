@@ -1,0 +1,48 @@
+package com.example.application.Util;
+
+public class ProductDTO {
+    private String productName;
+    private int price;
+    private String description;
+    private String categoryStr;
+
+    // Constructor
+    public ProductDTO(String productName, int price, String description, String categoryStr) {
+        this.productName = productName;
+        this.price = price;
+        this.description = description;
+        this.categoryStr = categoryStr;
+    }
+    // Getters and Setters
+    public String getName() {
+        return productName;
+    }
+
+    public void setName(String name) {
+        this.productName = name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategoryStr() {
+        return categoryStr;
+    }
+
+    public void setCategoryStr(String category) {
+        this.categoryStr = category;
+    }
+}

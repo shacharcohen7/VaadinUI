@@ -2,7 +2,10 @@ package com.example.application.View.GuestViews;
 
 import com.example.application.Model.MarketModel;
 import com.example.application.Model.ProductModel;
+import com.example.application.Presenter.GuestPresenters.GuestSearchResultPresenter;
 import com.example.application.Presenter.GuestPresenters.GuestWelcomePresenter;
+import com.example.application.Util.ProductDTO;
+import com.example.application.Util.ProductSearchService;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
@@ -13,10 +16,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 @Route("")
 public class GuestWelcomeView extends VerticalLayout {
     private GuestWelcomePresenter presenter;
+    private ProductSearchService productSearchService;
     private Button shoppingCartButton;
     private Button loginButton;
     private Button signInButton;
@@ -30,10 +35,10 @@ public class GuestWelcomeView extends VerticalLayout {
     private HorizontalLayout allStores;
 
     public GuestWelcomeView() {
-        presenter = new GuestWelcomePresenter(this, new MarketModel());
+        presenter = new GuestWelcomePresenter(this, productSearchService);
 
         shoppingCartButton = new Button("Shopping Cart", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
+            getUI().ifPresent(ui -> ui.navigate("GuestShoppingCartView"));
         });
         loginButton = new Button("Log In", event -> {
             getUI().ifPresent(ui -> ui.navigate("LoginView"));
@@ -71,7 +76,7 @@ public class GuestWelcomeView extends VerticalLayout {
         );
 
         allStores = new HorizontalLayout(new Button("ZARA", event -> {
-                            getUI().ifPresent(ui -> ui.navigate("StoreView"));
+                            getUI().ifPresent(ui -> ui.navigate("GuestStoreView"));
                         }));
 
         add(
@@ -80,7 +85,7 @@ public class GuestWelcomeView extends VerticalLayout {
         );
     }
 
-    public void showGeneralSearchResult(HashMap<String, ProductModel> productsFound){
-        getUI().ifPresent(ui -> ui.navigate("SearchResultView"));
+    public void showGeneralSearchResult(){
+        getUI().ifPresent(ui -> ui.navigate("GuestSearchResultView"));
     }
 }

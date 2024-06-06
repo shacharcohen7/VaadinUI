@@ -36,6 +36,6 @@ public class LoginView extends VerticalLayout {
     }
 
     public void loginSuccess() {
-        getUI().ifPresent(ui -> ui.navigate("WelcomeMemberView"));
+        getUI().ifPresent(ui -> ui.navigate("GuestWelcomeMemberView"));
     }
 }
