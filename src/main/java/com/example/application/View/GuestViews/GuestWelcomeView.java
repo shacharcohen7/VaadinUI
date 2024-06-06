@@ -2,7 +2,7 @@ package com.example.application.View.GuestViews;
 
 import com.example.application.Model.MarketModel;
 import com.example.application.Model.ProductModel;
-import com.example.application.Presenter.GuestPresenters.WelcomeGuestPresenter;
+import com.example.application.Presenter.GuestPresenters.GuestWelcomePresenter;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 @Route("")
 public class GuestWelcomeView extends VerticalLayout {
-    private WelcomeGuestPresenter presenter;
+    private GuestWelcomePresenter presenter;
     private Button shoppingCartButton;
     private Button loginButton;
     private Button signInButton;
@@ -30,7 +30,7 @@ public class GuestWelcomeView extends VerticalLayout {
     private HorizontalLayout allStores;
 
     public GuestWelcomeView() {
-        presenter = new WelcomeGuestPresenter(this, new MarketModel());
+        presenter = new GuestWelcomePresenter(this, new MarketModel());
 
         shoppingCartButton = new Button("Shopping Cart", event -> {
             getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));

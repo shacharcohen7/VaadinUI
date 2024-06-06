@@ -3,11 +3,11 @@ package com.example.application.Presenter.GuestPresenters;
 import com.example.application.Model.MarketModel;
 import com.example.application.View.GuestViews.GuestWelcomeView;
 
-public class WelcomeGuestPresenter {
+public class GuestWelcomePresenter {
     private GuestWelcomeView view;
     private MarketModel model;
 
-    public WelcomeGuestPresenter(GuestWelcomeView view, MarketModel model){
+    public GuestWelcomePresenter(GuestWelcomeView view, MarketModel model){
         this.view = view;
         this.model = model;
     }
