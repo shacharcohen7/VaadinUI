@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/project/c0dd47dd-53e6-42f6-99a4-0927f767d3b3 -->
     <groupId>com.example.application</groupId>
-    <artifactId>mytodo</artifactId>
+    <artifactId>VaadinProject</artifactId>
     <name>mytodo</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>18</java.version>
         <vaadin.version>24.3.13</vaadin.version>
     </properties>
 
