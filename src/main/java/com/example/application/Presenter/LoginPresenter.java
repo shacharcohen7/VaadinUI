@@ -1,7 +1,7 @@
-package com.example.application.Presenter.GuestPresenters;
+package com.example.application.Presenter;
 
 import com.example.application.Model.MarketModel;
-import com.example.application.View.GuestViews.LoginView;
+import com.example.application.View.LoginView;
 
 public class LoginPresenter {
     private final LoginView view;
@@ -16,6 +16,7 @@ public class LoginPresenter {
         //send request to http and get answer
         boolean success = true;
         if (success) {
+            //update user state
             view.loginSuccess();
         } else {
             view.loginFailure("Invalid username or password.");
