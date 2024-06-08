@@ -5,16 +5,17 @@ import com.example.application.View.LoginView;
 
 public class LoginPresenter {
     private LoginView view;
+    private String userID;
 
-    public LoginPresenter(LoginView view) {
+    public LoginPresenter(LoginView view, String userID) {
         this.view = view;
+        this.userID = userID;
     }
 
     public void onLoginButtonClicked(String username, String password) {
-        //send request to http and get answer
+        //call login()
         boolean success = true;
         if (success) {
-            //update user state
             view.loginSuccess();
         } else {
             view.loginFailure("Invalid username or password.");

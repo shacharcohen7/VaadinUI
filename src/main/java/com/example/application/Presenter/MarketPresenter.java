@@ -24,32 +24,49 @@ public class MarketPresenter {
     }
 
     public boolean isMember(){
-        //send request to http and get answer
-        return false;
+        //call isMember()
+        return true;
     }
 
     public String getMemberName(){
-        //send request to http and get answer
+        //call getMemberUsername()
         return "Avi";
     }
 
     public void onSearchButtonClicked(String productName, String category,
                                                  String keywords, int minPrice, int maxPrice, int minStoreRating) {
-        //send request to http and get answer
+        //call generalProductSearch()
         HashMap<String, ProductDTO> productsFound = new HashMap<String, ProductDTO>();
         productsFound.put("skirt", new ProductDTO("skirt",43,"blue", "clothes"));
         view.showGeneralSearchResult(productsFound);
     }
 
-    public List<String> getAllStoreNames(){
-        //send request to http and get answer
+    public List<String> getAllStoresID(){
+        //call getAllStores()
         List<String> storeNames = new LinkedList<String>();
-        storeNames.add("ZARA");
-        storeNames.add("Renuar");
+        storeNames.add("store12");
         return storeNames;
     }
 
-    public void onStoreButtonClicked(String storeName){
-        view.openStore(storeName);
+    public String getStoreName(String storeID){
+        //call getStoreName()
+        return "ZARA";
+    }
+
+    public void logOut(){
+        //call logout()
+        view.logout();
+    }
+
+    public void onAddToCartButtonClicked(ProductDTO productDto, int quantity){
+        //call AddProductCart()
+        boolean success = true;
+        String message;
+        if (success) {
+            message = "Product was added to cart";
+        } else {
+            message = "Failed adding product to cart";
+        }
+        view.addProductCartResult(message);
     }
 }

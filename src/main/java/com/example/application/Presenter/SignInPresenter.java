@@ -3,18 +3,22 @@ package com.example.application.Presenter;
 import com.example.application.Model.MarketModel;
 import com.example.application.View.SignInView;
 
-public class SignInPresenter {
-    private final SignInView view;
-    private final MarketModel model;
+import java.time.LocalDate;
 
-    public SignInPresenter(SignInView view, MarketModel model){
+public class SignInPresenter {
+    private SignInView view;
+    private String userID;
+
+    public SignInPresenter(SignInView view, String userID){
         this.view = view;
-        this.model = model;
+        this.userID = userID;
     }
 
-    public void onSignInButtonClicked(String username, String birthdate, String country, String city,
-                                                                    String address, String name, String password) {
-        if(model.signIn(username, birthdate, country, city, address, name, password)){
+    public void onSignInButtonClicked(String username, LocalDate birthdate, String country, String city,
+                                      String address, String name, String password) {
+        //call register()
+        boolean success = true;
+        if (success){
             view.SignInSuccess();
         } else {
             view.SignInFailure("Sign in failed");

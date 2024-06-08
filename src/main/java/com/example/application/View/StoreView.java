@@ -5,14 +5,12 @@ import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +19,14 @@ import java.util.Map;
 @Route("StoreView")
 public class StoreView extends VerticalLayout implements HasUrlParameter<String> {
     private StorePresenter presenter;
+    private QueryParameters userQuery;
     private String userID;
-    private H1 welcomeToStore;
+    private String storeID;
     private Text helloMessage;
     private Button shoppingCartButton;
+    private Button homeButton;
     private Button loginButton;
+    private Button logoutButton;
     private Button signInButton;
     private TextField productNameField;
     private TextField categoryField;
@@ -37,27 +38,43 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     private VerticalLayout allProductsLayout;
     private HashMap<String, ProductDTO> allProducts;
 
-    public StoreView() {
-        presenter = new StorePresenter(this, userID);
-        welcomeToStore = new H1("");
+    public StoreView() {}
+
+    public void buildView(){
+        presenter = new StorePresenter(this, userID, storeID);
+        makeUserQuery();
         createTopLayout();
-        add(welcomeToStore);
+        add(new H1("Welcome to " + presenter.getStoreName()));
         createSearchLayout();
         createAllProductsLayout();
     }
 
     public void createTopLayout(){
+        HorizontalLayout topLayout = new HorizontalLayout();
         helloMessage = new Text("Hello, " + presenter.getUserName());
+        homeButton = new Button("Home", event -> {
+            getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+        });
         shoppingCartButton = new Button("Shopping Cart", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
+            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", userQuery));
         });
-        loginButton = new Button("Log In", event -> {
-            getUI().ifPresent(ui -> ui.navigate("LoginView"));
-        });
-        signInButton = new Button("Sign In", event -> {
-            getUI().ifPresent(ui -> ui.navigate("SignInView"));
-        });
-        add(new HorizontalLayout(helloMessage, shoppingCartButton, loginButton, signInButton));
+        topLayout.add(helloMessage, homeButton, shoppingCartButton);
+        if(!presenter.isMember()){
+            loginButton = new Button("Log In", event -> {
+                getUI().ifPresent(ui -> ui.navigate("LoginView", userQuery));
+            });
+            signInButton = new Button("Sign In", event -> {
+                getUI().ifPresent(ui -> ui.navigate("SignInView", userQuery));
+            });
+            topLayout.add(loginButton, signInButton);
+        }
+        else{
+            logoutButton = new Button("Log Out", event -> {
+                presenter.logOut();
+            });
+            topLayout.add(logoutButton);
+        }
+        add(topLayout);
     }
 
     public void createSearchLayout(){
@@ -92,14 +109,20 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         allProducts = presenter.getAllProducts();
         allProductsLayout = new VerticalLayout();
         for (ProductDTO productDto : allProducts.values()) {
+            IntegerField quantityField = new IntegerField();
+            quantityField.setLabel("quantity");
+            quantityField.setMin(0);
+            quantityField.setMax(10);
+            quantityField.setValue(1);
+            quantityField.setStepButtonsVisible(true);
             allProductsLayout.add(
                     new HorizontalLayout(new Text("name: " + productDto.getName())),
                     new HorizontalLayout(new Text("description: " + productDto.getDescription())),
                     new HorizontalLayout(new Text("price: " + productDto.getPrice())),
-                    new HorizontalLayout(
-                            new IntegerField("","quantity"),
-                            new Button("Add to Cart")
-                    )
+                    quantityField,
+                    new Button("Add to Cart", event -> {
+                        presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
+                    })
             );
         }
         add(allProductsLayout);
@@ -107,24 +130,45 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
     public void showInStoreSearchResult(HashMap<String, ProductDTO> productsFound){
         productsFoundLayout.removeAll();
+        productsFoundLayout.add(new H1("Search results:"));
         for (ProductDTO productDto : productsFound.values()) {
+            IntegerField quantityField = new IntegerField();
+            quantityField.setLabel("quantity");
+            quantityField.setMin(0);
+            quantityField.setMax(10);
+            quantityField.setValue(1);
+            quantityField.setStepButtonsVisible(true);
             productsFoundLayout.add(
                     new HorizontalLayout(new Text("name: " + productDto.getName())),
                     new HorizontalLayout(new Text("description: " + productDto.getDescription())),
                     new HorizontalLayout(new Text("price: " + productDto.getPrice())),
-                    new HorizontalLayout(
-                            new IntegerField("","quantity"),
-                            new Button("Add to Cart")
-                    )
+                    quantityField,
+                    new Button("Add to Cart", event -> {
+                        presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
+                    })
             );
         }
+    }
+
+    public void addProductCartResult(String message){
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void logout(){
+        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+    }
+
+    public void makeUserQuery(){
+        Map<String, List<String>> parameters = new HashMap<>();
+        parameters.put("userID", List.of(userID));
+        userQuery = new QueryParameters(parameters);
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        String storeName = parameters.getOrDefault("storeName", List.of("Unknown")).get(0);
+        storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
         userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
-        welcomeToStore.setText("Welcome to " + storeName);
+        buildView();
     }
 }
