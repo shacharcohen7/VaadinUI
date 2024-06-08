@@ -36,21 +36,23 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
     private List<String> storeNames;
 
     public MarketView() {
-        presenter = new MarketPresenter(this, userID);
-        createTopLayout();
-        add(new H1("Welcome to The Market Place!"));
-        createSearchLayout();
-        createAllStoresLayout();
+
     }
 
     public void createTopLayout(){
         helloMessage = new Text("Hello, " + presenter.getUserName());
         Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userName", List.of(presenter.getUserName()));
+        parameters.put("userID", List.of(userID));
         QueryParameters queryParameters = new QueryParameters(parameters);
-        shoppingCartButton = new Button("Shopping Cart");
-        loginButton = new Button("Log In");
-        signInButton = new Button("Sign In");
+        shoppingCartButton = new Button("Shopping Cart", event -> {
+            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", queryParameters));
+        });
+        loginButton = new Button("Log In", event -> {
+            getUI().ifPresent(ui -> ui.navigate("LoginView", queryParameters));
+        });
+        signInButton = new Button("Sign In", event -> {
+            getUI().ifPresent(ui -> ui.navigate("SignInView", queryParameters));
+        });
         add(new HorizontalLayout(helloMessage, shoppingCartButton, loginButton, signInButton));
     }
 
@@ -121,16 +123,10 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
-
-        QueryParameters queryParameters = new QueryParameters(parameters);
-        shoppingCartButton.addClickListener(event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", queryParameters));
-        });
-        loginButton.addClickListener(event -> {
-            getUI().ifPresent(ui -> ui.navigate("LoginView", queryParameters));
-        });
-        signInButton.addClickListener(event -> {
-            getUI().ifPresent(ui -> ui.navigate("SignInView", queryParameters));
-        });
+        presenter = new MarketPresenter(this, userID);
+        createTopLayout();
+        add(new H1("Welcome to The Market Place!"));
+        createSearchLayout();
+        createAllStoresLayout();
     }
 }

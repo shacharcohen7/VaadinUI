@@ -62,7 +62,7 @@ public class SignInView extends VerticalLayout implements HasUrlParameter<String
         Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("userID", List.of(userID));
         QueryParameters queryParameters = new QueryParameters(parameters);
-        getUI().ifPresent(ui -> ui.navigate("WelcomeView", queryParameters));
+        getUI().ifPresent(ui -> ui.navigate("MarketView", queryParameters));
     }
 
     @Override

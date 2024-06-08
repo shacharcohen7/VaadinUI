@@ -22,7 +22,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
     private Button loginButton;
 
     public LoginView() {
-        presenter = new LoginPresenter(this, new MarketModel());
+        presenter = new LoginPresenter(this);
         userNameField = new TextField("", "username");
         passwordField = new TextField("", "password");
         loginButton = new Button("Login", event -> {
@@ -44,7 +44,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
         Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("userID", List.of(userID));
         QueryParameters queryParameters = new QueryParameters(parameters);
-        getUI().ifPresent(ui -> ui.navigate("WelcomeView", queryParameters));
+        getUI().ifPresent(ui -> ui.navigate("MarketView", queryParameters));
     }
 
     @Override

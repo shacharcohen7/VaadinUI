@@ -4,12 +4,10 @@ import com.example.application.Model.MarketModel;
 import com.example.application.View.LoginView;
 
 public class LoginPresenter {
-    private final LoginView view;
-    private final MarketModel model;
+    private LoginView view;
 
-    public LoginPresenter(LoginView view, MarketModel model) {
+    public LoginPresenter(LoginView view) {
         this.view = view;
-        this.model = model;
     }
 
     public void onLoginButtonClicked(String username, String password) {
