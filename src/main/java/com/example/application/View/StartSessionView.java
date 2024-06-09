@@ -5,6 +5,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ public class StartSessionView extends VerticalLayout {
 
     public StartSessionView(){
         presenter = new StartSessionPresenter(this);
+
     }
 
     public void startSession(String userID) {

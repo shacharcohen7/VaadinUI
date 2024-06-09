@@ -12,8 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * and some desktop browsers.
  *
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.example.application.Presenter"})
 @Theme(value = "mytodo")
+
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
