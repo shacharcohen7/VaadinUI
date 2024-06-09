@@ -64,7 +64,8 @@ public class SignInView extends VerticalLayout implements HasUrlParameter<String
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
-    public void SignInSuccess() {
+    public void SignInSuccess(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
         getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
     }
 

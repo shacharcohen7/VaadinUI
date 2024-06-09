@@ -27,6 +27,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     private Button homeButton;
     private Button loginButton;
     private Button logoutButton;
+    private Button openStoreButton;
+    private Button criticismButton;
+    private Button ratingButton;
+    private Button contactButton;
+    private Button historyButton;
+    private Button myProfileButton;
     private Button signInButton;
     private TextField productNameField;
     private TextField categoryField;
@@ -47,6 +53,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         add(new H1("Welcome to " + presenter.getStoreName()));
         createSearchLayout();
         createAllProductsLayout();
+        if(presenter.verifyStoreOwner()){
+            createInventoryLayout();
+            createPoliciesLayout();
+            createHRLayout();
+            createOtherActionsLayout();
+        }
     }
 
     public void createTopLayout(){
@@ -72,7 +84,26 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             logoutButton = new Button("Log Out", event -> {
                 presenter.logOut();
             });
-            topLayout.add(logoutButton);
+            openStoreButton = new Button("Open new Store", event -> {
+                getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
+            });
+            criticismButton = new Button("Write Criticism", event -> {
+
+            });
+            ratingButton = new Button("Rate us", event -> {
+
+            });
+            contactButton = new Button("Contact us", event -> {
+
+            });
+            historyButton = new Button("History", event -> {
+
+            });
+            myProfileButton = new Button("My Profile", event -> {
+
+            });
+            topLayout.add(logoutButton, openStoreButton, criticismButton,
+                    ratingButton, contactButton, historyButton, myProfileButton);
         }
         add(topLayout);
     }
@@ -126,6 +157,54 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             );
         }
         add(allProductsLayout);
+    }
+
+    public void createInventoryLayout(){
+        add(new H1("Inventory Actions:"));
+        add(new HorizontalLayout(
+                new Button("Add Product to Store"),
+                new Button("Remove Product from Store"),
+                new Button("Update Product in Store")
+        ));
+    }
+
+    public void createPoliciesLayout(){
+        add(new H1("Policies Actions:"));
+        add(new HorizontalLayout(
+                new Button("Update Discount Policy")
+        ));
+    }
+
+    public void createHRLayout(){
+        add(new H1("HR Actions:"));
+        add(
+                new HorizontalLayout(
+                        new Button("Get all Employees"),
+                        new Button("Appoint Store Owner"),
+                        new Button("Fire Store Owner")
+                ),
+                new HorizontalLayout(
+                        new Button("Appoint Store Manager"),
+                        new Button("Update store manager permissions"),
+                        new Button("Fire Store Manager")
+                )
+        );
+    }
+
+    public void createOtherActionsLayout(){
+        add(new H1("Other Actions:"));
+        HorizontalLayout actions = new HorizontalLayout();
+        if(presenter.isOpened()){
+            actions.add(new Button("Close Store"));
+        }
+        else{
+            actions.add(new Button("Reopen Store"));
+        }
+        actions.add(
+                new Button("Contact Clients"),
+                new Button("Get Store History")
+        );
+        add(actions);
     }
 
     public void showInStoreSearchResult(HashMap<String, ProductDTO> productsFound){

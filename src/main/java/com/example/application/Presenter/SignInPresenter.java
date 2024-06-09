@@ -19,7 +19,7 @@ public class SignInPresenter {
         //call register()
         boolean success = true;
         if (success){
-            view.SignInSuccess();
+            view.SignInSuccess("Registration performed");
         } else {
             view.SignInFailure("Sign in failed");
         }

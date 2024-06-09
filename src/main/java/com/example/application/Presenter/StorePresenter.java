@@ -1,5 +1,6 @@
 package com.example.application.Presenter;
 
+import com.example.application.Model.MarketModel;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreView;
 
@@ -23,9 +24,19 @@ public class StorePresenter {
         return "Guest";
     }
 
+    public boolean verifyStoreOwner(){
+        //call verifyStoreOwner()
+        return isMember();
+    }
+
+    public boolean isOpened(){
+        //call verifyStoreOwner()
+        return true;
+    }
+
     public boolean isMember(){
         //call isMember()
-        return true;
+        return MarketModel.isMember();
     }
 
     public String getMemberName(){
@@ -40,6 +51,7 @@ public class StorePresenter {
 
     public void logOut(){
         //call logout()
+        MarketModel.logout();
         view.logout();
     }
 
@@ -60,7 +72,7 @@ public class StorePresenter {
 
     public void onAddToCartButtonClicked(ProductDTO productDto, int quantity){
         //call AddProductCart()
-        boolean success = true;
+        boolean success = MarketModel.addToCart();
         String message;
         if (success) {
             message = "Product was added to cart";

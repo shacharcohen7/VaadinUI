@@ -1,7 +1,10 @@
 package com.example.application.Presenter;
 
+import com.example.application.Model.MarketModel;
+import com.example.application.Model.Product;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.MarketView;
+import org.yaml.snakeyaml.error.Mark;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,7 +28,7 @@ public class MarketPresenter {
 
     public boolean isMember(){
         //call isMember()
-        return true;
+        return MarketModel.isMember();
     }
 
     public String getMemberName(){
@@ -36,16 +39,14 @@ public class MarketPresenter {
     public void onSearchButtonClicked(String productName, String category,
                                                  String keywords, int minPrice, int maxPrice, int minStoreRating) {
         //call generalProductSearch()
-        HashMap<String, ProductDTO> productsFound = new HashMap<String, ProductDTO>();
-        productsFound.put("skirt", new ProductDTO("skirt",43,"blue", "clothes"));
-        view.showGeneralSearchResult(productsFound);
+        view.showGeneralSearchResult(MarketModel.getProducts());
     }
 
     public List<String> getAllStoresID(){
         //call getAllStores()
-        List<String> storeNames = new LinkedList<String>();
-        storeNames.add("store12");
-        return storeNames;
+        List<String> storesID = new LinkedList<String>();
+        storesID.add("store12");
+        return storesID;
     }
 
     public String getStoreName(String storeID){
@@ -55,12 +56,13 @@ public class MarketPresenter {
 
     public void logOut(){
         //call logout()
+        MarketModel.logout();
         view.logout();
     }
 
-    public void onAddToCartButtonClicked(ProductDTO productDto, int quantity){
+    public void onAddToCartButtonClicked(Product product, int quantity){
         //call AddProductCart()
-        boolean success = true;
+        boolean success = MarketModel.addToCart();
         String message;
         if (success) {
             message = "Product was added to cart";

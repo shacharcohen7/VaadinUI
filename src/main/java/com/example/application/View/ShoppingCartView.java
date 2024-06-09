@@ -1,10 +1,12 @@
 package com.example.application.View;
 
+import com.example.application.Model.Product;
 import com.example.application.Presenter.ShoppingCartPresenter;
 import com.example.application.Presenter.StorePresenter;
 import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -27,9 +29,16 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
     private Button shoppingCartButton;
     private Button loginButton;
     private Button logoutButton;
+    private Button openStoreButton;
+    private Button criticismButton;
+    private Button ratingButton;
+    private Button contactButton;
+    private Button historyButton;
+    private Button myProfileButton;
     private Button signInButton;
     private VerticalLayout cartProductsLayout;
-    private Map<String, Map<ProductDTO, Integer>> storeToProductsCart;
+    private VerticalLayout paymentLayout;
+    private Map<String, Map<Product, Integer>> storeToProductsCart;
 
     public ShoppingCartView(){}
 
@@ -66,7 +75,26 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
             logoutButton = new Button("Log Out", event -> {
                 presenter.logOut();
             });
-            topLayout.add(logoutButton);
+            openStoreButton = new Button("Open new Store", event -> {
+                getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
+            });
+            criticismButton = new Button("Write Criticism", event -> {
+
+            });
+            ratingButton = new Button("Rate us", event -> {
+
+            });
+            contactButton = new Button("Contact us", event -> {
+
+            });
+            historyButton = new Button("History", event -> {
+
+            });
+            myProfileButton = new Button("My Profile", event -> {
+
+            });
+            topLayout.add(logoutButton, openStoreButton, criticismButton,
+                    ratingButton, contactButton, historyButton, myProfileButton);
         }
         add(topLayout);
     }
@@ -75,18 +103,18 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
         storeToProductsCart = presenter.getStoreToProductsCart();
         for (String storeID : storeToProductsCart.keySet()) {
             cartProductsLayout.add(new H1(presenter.getStoreName(storeID)));
-            Map<ProductDTO, Integer> storeProducts = storeToProductsCart.get(storeID);
-            for (ProductDTO productDTO : storeProducts.keySet()) {
+            Map<Product, Integer> storeProducts = storeToProductsCart.get(storeID);
+            for (Product product : storeProducts.keySet()) {
                 IntegerField quantityField = new IntegerField();
                 quantityField.setLabel("quantity");
                 quantityField.setMin(0);
                 quantityField.setMax(10);
-                quantityField.setValue(storeProducts.get(productDTO));
+                quantityField.setValue(storeProducts.get(product));
                 quantityField.setStepButtonsVisible(true);
                 cartProductsLayout.add(
-                        new HorizontalLayout(new Text("name: " + productDTO.getName())),
-                        new HorizontalLayout(new Text("description: " + productDTO.getDescription())),
-                        new HorizontalLayout(new Text("price: " + productDTO.getPrice())),
+                        new HorizontalLayout(new Text("name: " + product.getProductName())),
+                        new HorizontalLayout(new Text("description: " + product.getDescription())),
+                        new HorizontalLayout(new Text("price: " + product.getPrice())),
                         quantityField,
                         new Button("Remove from Cart", event -> {presenter.removeProductCart();})
                 );
@@ -97,16 +125,53 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
 
     public void createSummaryLayout(){
         add(
-                new H1("Summery:"),
-                new Text("Total price: " + presenter.getTotalPrice()),
-                new Button("Pay")
+                new H1("Total price: " + presenter.getTotalPrice())
         );
+        paymentLayout = new VerticalLayout();
+        paymentLayout.add(new Button("Continue to Payment", event -> {revealPaymentLayout();}));
+        add(paymentLayout);
+    }
+
+    public void revealPaymentLayout(){
+        paymentLayout.removeAll();
+        IntegerField holderIDField = new IntegerField("holder ID");
+        TextField creditCardField = new TextField("credit card");
+        ComboBox<Integer> yearComboBox = new ComboBox<Integer>("year");
+        yearComboBox.setItems(2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032);
+        ComboBox<Integer> monthComboBox = new ComboBox<Integer>("month");
+        monthComboBox.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+        IntegerField cvvField = new IntegerField("cvv");
+
+        paymentLayout.add(
+                new HorizontalLayout(holderIDField, creditCardField),
+                new HorizontalLayout(monthComboBox, yearComboBox, cvvField),
+                new HorizontalLayout(
+                        new Button("Submit", event -> {
+                            presenter.onSubmitButtonClicked(presenter.getTotalPrice(), creditCardField.getValue(),
+                                    cvvField.getValue(), monthComboBox.getValue(), yearComboBox.getValue(),
+                                    holderIDField.getValue());
+                        }),
+                        new Button("Cancel", event -> {
+                            this.removeAll();
+                            buildView();
+                        })
+                )
+        );
+    }
+
+    public void paymentFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void paymentSuccess(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
     }
 
     public void removeProductCartResult(String message){
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        cartProductsLayout.removeAll();
-        createCartProductsLayout();
+        this.removeAll();
+        buildView();
     }
 
     public void logout(){

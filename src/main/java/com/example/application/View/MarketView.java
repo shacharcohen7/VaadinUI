@@ -1,5 +1,6 @@
 package com.example.application.View;
 
+import com.example.application.Model.Product;
 import com.example.application.Presenter.MarketPresenter;
 import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.Text;
@@ -28,6 +29,12 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
     private Button shoppingCartButton;
     private Button loginButton;
     private Button logoutButton;
+    private Button openStoreButton;
+    private Button criticismButton;
+    private Button ratingButton;
+    private Button contactButton;
+    private Button historyButton;
+    private Button myProfileButton;
     private Button signInButton;
     private TextField productNameField;
     private TextField categoryField;
@@ -72,7 +79,26 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
             logoutButton = new Button("Log Out", event -> {
                 presenter.logOut();
             });
-            topLayout.add(logoutButton);
+            openStoreButton = new Button("Open new Store", event -> {
+                getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
+            });
+            criticismButton = new Button("Write Criticism", event -> {
+
+            });
+            ratingButton = new Button("Rate us", event -> {
+
+            });
+            contactButton = new Button("Contact us", event -> {
+
+            });
+            historyButton = new Button("History", event -> {
+
+            });
+            myProfileButton = new Button("My Profile", event -> {
+
+            });
+            topLayout.add(logoutButton, openStoreButton, criticismButton,
+                                ratingButton, contactButton, historyButton, myProfileButton);
         }
         add(topLayout);
     }
@@ -113,12 +139,12 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
         for(int i=0 ; i<allStoresID.size(); i++){
             String storeID = allStoresID.get(i);
             allStoresLayout.add(new Button(presenter.getStoreName(storeID), event -> {
-                UI.getCurrent().access(() -> openStore(storeID));}));
+                UI.getCurrent().access(() -> goToStore(storeID));}));
         }
         add(allStoresLayout);
     }
 
-    public void openStore(String storeID){
+    public void goToStore(String storeID){
         Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("storeID", List.of(storeID));
         parameters.put("userID", List.of(userID));
@@ -126,10 +152,10 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
         getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
     }
 
-    public void showGeneralSearchResult(HashMap<String, ProductDTO> productsFound){
+    public void showGeneralSearchResult(Map<String, Product> productsFound){
         productsFoundLayout.removeAll();
         productsFoundLayout.add(new H1("Search results:"));
-        for (ProductDTO productDto : productsFound.values()) {
+        for (Product product : productsFound.values()) {
             IntegerField quantityField = new IntegerField();
             quantityField.setLabel("quantity");
             quantityField.setMin(0);
@@ -137,12 +163,12 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
             quantityField.setValue(1);
             quantityField.setStepButtonsVisible(true);
             productsFoundLayout.add(
-                    new HorizontalLayout(new Text("name: " + productDto.getName())),
-                    new HorizontalLayout(new Text("description: " + productDto.getDescription())),
-                    new HorizontalLayout(new Text("price: " + productDto.getPrice())),
+                    new HorizontalLayout(new Text("name: " + product.getProductName())),
+                    new HorizontalLayout(new Text("description: " + product.getDescription())),
+                    new HorizontalLayout(new Text("price: " + product.getPrice())),
                     quantityField,
                     new Button("Add to Cart", event -> {
-                        presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
+                        presenter.onAddToCartButtonClicked(product, quantityField.getValue());
                     })
             );
         }

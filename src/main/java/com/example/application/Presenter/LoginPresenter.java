@@ -14,7 +14,7 @@ public class LoginPresenter {
 
     public void onLoginButtonClicked(String username, String password) {
         //call login()
-        boolean success = true;
+        boolean success = MarketModel.login(username, password);
         if (success) {
             view.loginSuccess();
         } else {

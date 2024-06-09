@@ -1,38 +1,45 @@
 package com.example.application.Model;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class MarketModel {
-    private HashMap<String, StoreModel> allStores;
+    private static User user = new User();
+    private static Store store = new Store();
+    private Product product = new Product();
 
-    public MarketModel(){
-
+    public static boolean login(String username, String password){
+        return user.login(username, password);
     }
 
-    public boolean login(String username, String password){
-        return true;
+    public static void logout(){
+        user.logout();
     }
 
-    public HashMap<String, ProductModel> GeneralSearchResult(String productName, String category, String keywords,
-                                                     int minPrice, int maxPrice, int minStoreRating){
-        HashMap<String, ProductModel> productsFound = new HashMap<String, ProductModel>();
-        productsFound.put("skirt", new ProductModel("skirt", "blue skirt size M", 53));
-        return productsFound;
+    public static boolean isMember(){
+        return user.isMember();
     }
 
-    public StoreModel addStore(String storeName){
-        return new StoreModel(storeName);
+    public static String getStoreName() {
+        return store.getStoreName();
     }
 
-    public void removeStore(String storeName){
-
+    public static Map<String, Product> getProducts() {
+        return store.getProducts();
     }
 
-    public boolean signIn(String username, String birthdate, String country, String city,
-                          String address, String name, String password){
-        return true;
+    public static boolean addToCart(){
+        return user.addToCart();
+    }
+
+    public static boolean removeFromCart(){
+        return user.removeFromCart();
+    }
+
+    public static Map<String, Map<Product, Integer>> getCart(){
+        return user.getCart();
+    }
+
+    public static int getTotalPrice(){
+        return user.getTotalPrice();
     }
 }
