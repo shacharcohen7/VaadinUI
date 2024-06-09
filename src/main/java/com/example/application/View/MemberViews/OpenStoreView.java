@@ -1,14 +1,11 @@
 package com.example.application.View.MemberViews;
 
-import com.example.application.Presenter.MemberPresenter.OpenStorePresenter;
-import com.example.application.Presenter.SignInPresenter;
+import com.example.application.Presenter.MemberPresenters.OpenStorePresenter;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 
@@ -64,5 +61,4 @@ public class OpenStoreView extends VerticalLayout implements HasUrlParameter<Str
         userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
         buildView();
     }
-
 }

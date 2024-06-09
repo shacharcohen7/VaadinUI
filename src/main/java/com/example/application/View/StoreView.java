@@ -20,6 +20,7 @@ import java.util.Map;
 public class StoreView extends VerticalLayout implements HasUrlParameter<String> {
     private StorePresenter presenter;
     private QueryParameters userQuery;
+    private QueryParameters userStoreQuery;
     private String userID;
     private String storeID;
     private Text helloMessage;
@@ -49,6 +50,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void buildView(){
         presenter = new StorePresenter(this, userID, storeID);
         makeUserQuery();
+        makeUserStoreQuery();
         createTopLayout();
         add(new H1("Welcome to " + presenter.getStoreName()));
         createSearchLayout();
@@ -81,9 +83,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             topLayout.add(loginButton, signInButton);
         }
         else{
-            logoutButton = new Button("Log Out", event -> {
-                presenter.logOut();
-            });
             openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
             });
@@ -102,8 +101,11 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             myProfileButton = new Button("My Profile", event -> {
 
             });
-            topLayout.add(logoutButton, openStoreButton, criticismButton,
-                    ratingButton, contactButton, historyButton, myProfileButton);
+            logoutButton = new Button("Log Out", event -> {
+                presenter.logOut();
+            });
+            topLayout.add(openStoreButton, criticismButton,
+                    ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
         }
         add(topLayout);
     }
@@ -162,9 +164,15 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void createInventoryLayout(){
         add(new H1("Inventory Actions:"));
         add(new HorizontalLayout(
-                new Button("Add Product to Store"),
-                new Button("Remove Product from Store"),
-                new Button("Update Product in Store")
+                new Button("Add Product to Store", event -> {
+                    getUI().ifPresent(ui -> ui.navigate("AddProductToStoreView", userStoreQuery));
+                }),
+                new Button("Remove Product from Store", event -> {
+                    getUI().ifPresent(ui -> ui.navigate("RemoveProductFromStoreView", userStoreQuery));
+                }),
+                new Button("Update Product in Store", event -> {
+                    getUI().ifPresent(ui -> ui.navigate("UpdateProductInStoreView", userStoreQuery));
+                })
         ));
     }
 
@@ -235,6 +243,13 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+    }
+
+    public void makeUserStoreQuery(){
+        Map<String, List<String>> parameters = new HashMap<>();
+        parameters.put("userID", List.of(userID));
+        parameters.put("storeID", List.of(userID));
+        userStoreQuery = new QueryParameters(parameters);
     }
 
     public void makeUserQuery(){

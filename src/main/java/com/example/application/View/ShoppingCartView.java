@@ -72,9 +72,6 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
             topLayout.add(loginButton, signInButton);
         }
         else{
-            logoutButton = new Button("Log Out", event -> {
-                presenter.logOut();
-            });
             openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
             });
@@ -93,8 +90,12 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
             myProfileButton = new Button("My Profile", event -> {
 
             });
-            topLayout.add(logoutButton, openStoreButton, criticismButton,
-                    ratingButton, contactButton, historyButton, myProfileButton);
+            logoutButton = new Button("Log Out", event -> {
+                presenter.logOut();
+            });
+
+            topLayout.add(openStoreButton, criticismButton,
+                    ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
         }
         add(topLayout);
     }

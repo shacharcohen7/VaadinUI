@@ -1,9 +1,6 @@
-package com.example.application.Presenter.MemberPresenter;
+package com.example.application.Presenter.MemberPresenters;
 
 import com.example.application.View.MemberViews.OpenStoreView;
-import com.example.application.View.SignInView;
-
-import java.time.LocalDate;
 
 public class OpenStorePresenter {
     private OpenStoreView view;
