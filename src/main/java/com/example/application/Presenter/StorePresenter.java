@@ -96,4 +96,8 @@ public class StorePresenter {
         }
         view.addProductCartResult(message);
     }
+
+    public void onCloseButtonClicked(){
+        //call closeStore()
+    }
 }

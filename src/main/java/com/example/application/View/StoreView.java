@@ -195,7 +195,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         add(new H1("HR Actions:"));
         add(
                 new HorizontalLayout(
-                        new Button("Get all Employees"),
+                        new Button("Get all Employees", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("GetAllEmployeesView", userStoreQuery));
+                        }),
                         new Button("Appoint Store Owner", event -> {
                             getUI().ifPresent(ui -> ui.navigate("AppointStoreOwnerView", userStoreQuery));
                         }),
@@ -205,17 +207,23 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                         new Button("Appoint Store Manager", event -> {
                             getUI().ifPresent(ui -> ui.navigate("AppointStoreManagerView", userStoreQuery));
                         }),
-                        new Button("Update store manager permissions"),
+                        new Button("Update store manager permissions", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("UpdateManagerPermissionsView", userStoreQuery));
+                        }),
                         new Button("Fire Store Manager")
                 )
         );
     }
 
     public void createOtherActionsLayout(){
-        add(new H1("Other Actions:"));
         HorizontalLayout actions = new HorizontalLayout();
+        actions.add(new H1("Other Actions:"));
         if(presenter.isOpened()){
-            actions.add(new Button("Close Store"));
+            actions.add(new Button("Close Store", event -> {
+                presenter.onCloseButtonClicked();
+                actions.removeAll();
+                createOtherActionsLayout();
+            }));
         }
         else{
             actions.add(new Button("Reopen Store"));

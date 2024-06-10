@@ -3,6 +3,7 @@ package com.example.application.View.StoreActionsViews;
 import com.example.application.Presenter.StoreActionsPresenters.AddProductToStorePresenter;
 import com.example.application.Presenter.StoreActionsPresenters.UpdateProductInStorePresenter;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,7 +22,7 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
     private QueryParameters userStoreQuery;
     private String userID;
     private String storeID;
-    private TextField productNameField;
+    private ComboBox<String> productNameField;
     private IntegerField priceField;
     private IntegerField quantityField;
     private TextField descriptionField;
@@ -34,7 +35,8 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
     public void buildView(){
         presenter = new UpdateProductInStorePresenter(this, userID, storeID);
         makeUserStoreQuery();
-        productNameField = new TextField("","product name");
+        productNameField = new ComboBox<String>("product");
+        productNameField.setItems(presenter.getAllProductNames());
         priceField = new IntegerField("", "price");
         quantityField = new IntegerField("", "quantity");
         categoryField = new TextField("","category");
