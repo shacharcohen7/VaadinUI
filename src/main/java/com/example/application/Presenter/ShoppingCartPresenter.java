@@ -28,7 +28,7 @@ public class ShoppingCartPresenter {
 
     public boolean isMember(){
         //call isMember()
-        return MarketModel.isMember();
+        return true;
     }
 
     public String getMemberName(){

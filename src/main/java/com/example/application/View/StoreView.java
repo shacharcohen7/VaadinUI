@@ -57,9 +57,17 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         createAllProductsLayout();
         if(presenter.verifyStoreOwner()){
             createInventoryLayout();
-            createPoliciesLayout();
+            createPurchaseLayout();
             createHRLayout();
             createOtherActionsLayout();
+        }
+        else if(presenter.verifyStoreManager()){
+            if(presenter.hasInventoryPermissions()){
+                createInventoryLayout();
+            }
+            if(presenter.hasPurchasePermissions()){
+                createPurchaseLayout();
+            }
         }
     }
 
@@ -176,7 +184,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         ));
     }
 
-    public void createPoliciesLayout(){
+    public void createPurchaseLayout(){
         add(new H1("Policies Actions:"));
         add(new HorizontalLayout(
                 new Button("Update Discount Policy")
@@ -188,7 +196,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         add(
                 new HorizontalLayout(
                         new Button("Get all Employees"),
-                        new Button("Appoint Store Owner"),
+                        new Button("Appoint Store Owner", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("AppointStoreOwnerView", userStoreQuery));
+                        }),
                         new Button("Fire Store Owner")
                 ),
                 new HorizontalLayout(

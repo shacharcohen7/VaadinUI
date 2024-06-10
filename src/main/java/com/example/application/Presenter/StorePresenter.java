@@ -29,6 +29,21 @@ public class StorePresenter {
         return isMember();
     }
 
+    public boolean verifyStoreManager(){
+        //call verifyStoreManager()
+        return isMember();
+    }
+
+    public boolean hasInventoryPermissions(){
+        //call hasInventoryPermissions()
+        return isMember();
+    }
+
+    public boolean hasPurchasePermissions(){
+        //call hasInventoryPermissions()
+        return isMember();
+    }
+
     public boolean isOpened(){
         //call verifyStoreOwner()
         return true;
@@ -36,7 +51,7 @@ public class StorePresenter {
 
     public boolean isMember(){
         //call isMember()
-        return MarketModel.isMember();
+        return true;
     }
 
     public String getMemberName(){
