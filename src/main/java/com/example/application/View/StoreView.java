@@ -216,13 +216,13 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     }
 
     public void createOtherActionsLayout(){
+        add(new H1("Other Actions:"));
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(new H1("Other Actions:"));
         if(presenter.isOpened()){
             actions.add(new Button("Close Store", event -> {
                 presenter.onCloseButtonClicked();
-                actions.removeAll();
-                createOtherActionsLayout();
+                this.removeAll();
+                buildView();
             }));
         }
         else{
