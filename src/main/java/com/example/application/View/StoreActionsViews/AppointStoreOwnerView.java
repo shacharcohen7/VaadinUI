@@ -1,14 +1,12 @@
 package com.example.application.View.StoreActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.AddProductToStorePresenter;
+import com.example.application.Presenter.StoreActionsPresenters.AppointStoreOwnerPresenter;
 import com.example.application.Presenter.StoreActionsPresenters.RemoveProductFromStorePresenter;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 
@@ -16,42 +14,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("RemoveProductFromStoreView")
-public class RemoveProductFromStoreView extends VerticalLayout implements HasUrlParameter<String> {
-    private RemoveProductFromStorePresenter presenter;
+@Route("AppointStoreOwnerView")
+public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParameter<String> {
+    private AppointStoreOwnerPresenter presenter;
     private QueryParameters userStoreQuery;
     private String userID;
     private String storeID;
-    private ComboBox<String> productNameField;
-    private Button removeButton;
+    private TextField usernameField;
+    private Button appointButton;
     private Button cancelButton;
 
-    public RemoveProductFromStoreView(){}
+    public AppointStoreOwnerView(){}
 
     public void buildView(){
-        presenter = new RemoveProductFromStorePresenter(this, userID, storeID);
+        presenter = new AppointStoreOwnerPresenter(this, userID, storeID);
         makeUserStoreQuery();
-        productNameField = new ComboBox<String>("product");
-        productNameField.setItems(presenter.getAllProductNames());
-        removeButton = new Button("Remove", event -> {
-            presenter.onRemoveButtonClicked(productNameField.getValue());
+        usernameField = new TextField("","user name");
+        appointButton = new Button("Appoint", event -> {
+            presenter.onAppointButtonClicked(usernameField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
         });
         add(
-                new H1("Remove Product from Store"),
-                productNameField,
-                new HorizontalLayout(removeButton, cancelButton)
+                new H1("Appoint Store Owner"),
+                usernameField,
+                new HorizontalLayout(appointButton, cancelButton)
         );
     }
 
-    public void removeSuccess(String message) {
+    public void appointmentSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
         getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
     }
 
-    public void removeFailure(String message) {
+    public void appointmentFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
