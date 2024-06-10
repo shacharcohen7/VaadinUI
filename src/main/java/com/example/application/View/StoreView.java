@@ -202,7 +202,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                         new Button("Fire Store Owner")
                 ),
                 new HorizontalLayout(
-                        new Button("Appoint Store Manager"),
+                        new Button("Appoint Store Manager", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("AppointStoreManagerView", userStoreQuery));
+                        }),
                         new Button("Update store manager permissions"),
                         new Button("Fire Store Manager")
                 )
@@ -258,7 +260,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void makeUserStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("userID", List.of(userID));
-        parameters.put("storeID", List.of(userID));
+        parameters.put("storeID", List.of(storeID));
         userStoreQuery = new QueryParameters(parameters);
     }
 

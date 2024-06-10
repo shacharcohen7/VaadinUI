@@ -55,7 +55,7 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
     public void makeUserStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("userID", List.of(userID));
-        parameters.put("storeID", List.of(userID));
+        parameters.put("storeID", List.of(storeID));
         userStoreQuery = new QueryParameters(parameters);
     }
 
