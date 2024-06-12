@@ -27,8 +27,8 @@ public class StartSessionPresenter {
 
     private void startSession() {
         view.startSession("user1234");
-    }
-//        String url = "http://localhost:8080/api/user";  // Absolute URL
+
+//        String url = "http://localhost:8080/api/market/enterSystem";  // Absolute URL
 //
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.add("accept" , "*/*");
@@ -57,6 +57,6 @@ public class StartSessionPresenter {
 //            System.err.println("Invalid URL: " + e.getMessage());
 //            // Handle the exception accordingly
 //        }
-//    }
+    }
 
 }

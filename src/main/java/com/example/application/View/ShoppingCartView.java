@@ -76,7 +76,7 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
 
             });
             Button myProfileButton = new Button("My Profile", event -> {
-
+                getUI().ifPresent(ui -> ui.navigate("MyProfileView", userQuery));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
