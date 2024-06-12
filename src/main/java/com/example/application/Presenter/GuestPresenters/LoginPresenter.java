@@ -1,7 +1,7 @@
-package com.example.application.Presenter;
+package com.example.application.Presenter.GuestPresenters;
 
 import com.example.application.Model.MarketModel;
-import com.example.application.View.LoginView;
+import com.example.application.View.GuestViews.LoginView;
 
 public class LoginPresenter {
     private LoginView view;

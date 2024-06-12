@@ -4,6 +4,7 @@ import com.example.application.Presenter.StoreActionsPresenters.AddProductToStor
 import com.example.application.Presenter.StoreActionsPresenters.RemoveProductFromStorePresenter;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -34,7 +35,7 @@ public class RemoveProductFromStoreView extends VerticalLayout implements HasUrl
         productNameField = new ComboBox<String>("product");
         productNameField.setItems(presenter.getAllProductNames());
         removeButton = new Button("Remove", event -> {
-            presenter.onRemoveButtonClicked(productNameField.getValue());
+            removeConfirm();
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
@@ -44,6 +45,17 @@ public class RemoveProductFromStoreView extends VerticalLayout implements HasUrl
                 productNameField,
                 new HorizontalLayout(removeButton, cancelButton)
         );
+    }
+
+    public void removeConfirm(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Remove Product");
+        dialog.setText("Are you sure you want to remove this product from store?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Yes");
+        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(productNameField.getValue()));
+        dialog.open();
     }
 
     public void removeSuccess(String message) {
