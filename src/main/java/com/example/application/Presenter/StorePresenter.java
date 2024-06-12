@@ -5,6 +5,7 @@ import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreView;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class StorePresenter {
     private StoreView view;
@@ -32,6 +33,10 @@ public class StorePresenter {
     public boolean verifyStoreManager(){
         //call verifyStoreManager()
         return isMember();
+    }
+
+    public boolean isAdmin(){
+        return true;
     }
 
     public boolean hasInventoryPermissions(){
@@ -78,7 +83,7 @@ public class StorePresenter {
     }
 
     public void onSearchButtonClicked(String productName, String category,
-                                      String keywords, int minPrice, int maxPrice) {
+                                      Set<String> keywords, int minPrice, int maxPrice) {
         //call inStoreSearch()
         HashMap<String, ProductDTO> productsFound = new HashMap<String, ProductDTO>();
         productsFound.put("skirt", new ProductDTO("skirt",43,"blue", "clothes"));

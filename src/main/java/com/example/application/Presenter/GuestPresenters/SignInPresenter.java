@@ -1,7 +1,6 @@
-package com.example.application.Presenter;
+package com.example.application.Presenter.GuestPresenters;
 
-import com.example.application.Model.MarketModel;
-import com.example.application.View.SignInView;
+import com.example.application.View.GuestViews.SignInView;
 
 import java.time.LocalDate;
 

@@ -4,6 +4,8 @@ import com.example.application.Presenter.StorePresenter;
 import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -23,27 +25,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     private QueryParameters userStoreQuery;
     private String userID;
     private String storeID;
-    private Text helloMessage;
-    private Button shoppingCartButton;
-    private Button homeButton;
-    private Button loginButton;
-    private Button logoutButton;
-    private Button openStoreButton;
-    private Button criticismButton;
-    private Button ratingButton;
-    private Button contactButton;
-    private Button historyButton;
-    private Button myProfileButton;
-    private Button signInButton;
-    private TextField productNameField;
-    private TextField categoryField;
-    private TextField keywordsField;
-    private IntegerField minPriceField;
-    private IntegerField maxPriceField;
-    private Button searchButton;
     private VerticalLayout productsFoundLayout;
-    private VerticalLayout allProductsLayout;
-    private HashMap<String, ProductDTO> allProducts;
 
     public StoreView() {}
 
@@ -52,7 +34,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         makeUserQuery();
         makeUserStoreQuery();
         createTopLayout();
-        add(new H1("Welcome to " + presenter.getStoreName()));
+        add(new VerticalLayout(new H1("Welcome to " + presenter.getStoreName())));
         createSearchLayout();
         createAllProductsLayout();
         if(presenter.verifyStoreOwner()){
@@ -73,44 +55,44 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
     public void createTopLayout(){
         HorizontalLayout topLayout = new HorizontalLayout();
-        helloMessage = new Text("Hello, " + presenter.getUserName());
-        homeButton = new Button("Home", event -> {
+        Text helloMessage = new Text("Hello, " + presenter.getUserName());
+        Button homeButton = new Button("Home", event -> {
             getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
         });
-        shoppingCartButton = new Button("Shopping Cart", event -> {
+        Button shoppingCartButton = new Button("Shopping Cart", event -> {
             getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", userQuery));
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
         if(!presenter.isMember()){
-            loginButton = new Button("Log In", event -> {
+            Button loginButton = new Button("Log In", event -> {
                 getUI().ifPresent(ui -> ui.navigate("LoginView", userQuery));
             });
-            signInButton = new Button("Sign In", event -> {
+            Button signInButton = new Button("Sign In", event -> {
                 getUI().ifPresent(ui -> ui.navigate("SignInView", userQuery));
             });
             topLayout.add(loginButton, signInButton);
         }
         else{
-            openStoreButton = new Button("Open new Store", event -> {
+            Button openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
             });
-            criticismButton = new Button("Write Criticism", event -> {
+            Button criticismButton = new Button("Write Criticism", event -> {
 
             });
-            ratingButton = new Button("Rate us", event -> {
+            Button ratingButton = new Button("Rate us", event -> {
 
             });
-            contactButton = new Button("Contact us", event -> {
+            Button contactButton = new Button("Contact us", event -> {
 
             });
-            historyButton = new Button("History", event -> {
+            Button historyButton = new Button("History", event -> {
 
             });
-            myProfileButton = new Button("My Profile", event -> {
+            Button myProfileButton = new Button("My Profile", event -> {
 
             });
-            logoutButton = new Button("Log Out", event -> {
-                presenter.logOut();
+            Button logoutButton = new Button("Log Out", event -> {
+                logoutConfirm();
             });
             topLayout.add(openStoreButton, criticismButton,
                     ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
@@ -119,36 +101,44 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     }
 
     public void createSearchLayout(){
-        add(new Text("Search for product:"));
-        productNameField = new TextField("", "product name");
-        categoryField = new TextField("", "category");
-        keywordsField = new TextField("", "keywords");
-        minPriceField = new IntegerField("", "minimum price");
-        maxPriceField = new IntegerField("", "maximum price");
-        searchButton = new Button("search", event -> {
+        VerticalLayout searchLayout = new VerticalLayout();
+        searchLayout.add(new Text("Search for product:"));
+        TextField productNameField = new TextField("product name");
+        TextField categoryField = new TextField("category");
+        MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<String>("keywords");
+        keywordsField.setItems("clothes", "shoes", "food", "optic", "electricity", "toys", "health", "sport",
+                "women", "men", "children", "beauty", "travel", "gifts", "office", "coffee", "home");
+        IntegerField minPriceField = new IntegerField("minimum price");
+        IntegerField maxPriceField = new IntegerField("maximum price");
+        Button searchButton = new Button("search", event -> {
             presenter.onSearchButtonClicked(productNameField.getValue(), categoryField.getValue(),
                     keywordsField.getValue(), minPriceField.getValue(),
                     maxPriceField.getValue());
         });
+        Button clearButton = new Button("clear", event -> {
+            this.removeAll();
+            this.buildView();
+        });
         productsFoundLayout = new VerticalLayout();
 
-        add(
+        searchLayout.add(
                 new HorizontalLayout(
                         productNameField,
                         categoryField,
                         keywordsField,
                         minPriceField,
-                        maxPriceField,
-                        searchButton
+                        maxPriceField
                 ),
+                new HorizontalLayout(searchButton, clearButton),
                 productsFoundLayout
         );
+        add(searchLayout);
     }
 
     public void createAllProductsLayout(){
-        add(new H1("All store products:"));
-        allProducts = presenter.getAllProducts();
-        allProductsLayout = new VerticalLayout();
+        VerticalLayout allProductsLayout = new VerticalLayout();
+        allProductsLayout.add(new H1("All store products:"));
+        HashMap<String, ProductDTO> allProducts = presenter.getAllProducts();
         for (ProductDTO productDto : allProducts.values()) {
             IntegerField quantityField = new IntegerField();
             quantityField.setLabel("quantity");
@@ -170,30 +160,34 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     }
 
     public void createInventoryLayout(){
-        add(new H1("Inventory Actions:"));
-        add(new HorizontalLayout(
-                new Button("Add Product to Store", event -> {
-                    getUI().ifPresent(ui -> ui.navigate("AddProductToStoreView", userStoreQuery));
-                }),
-                new Button("Remove Product from Store", event -> {
-                    getUI().ifPresent(ui -> ui.navigate("RemoveProductFromStoreView", userStoreQuery));
-                }),
-                new Button("Update Product in Store", event -> {
-                    getUI().ifPresent(ui -> ui.navigate("UpdateProductInStoreView", userStoreQuery));
+        VerticalLayout inventoryLayout = new VerticalLayout();
+        inventoryLayout.add(new H1("Inventory Actions:"),
+                new HorizontalLayout(
+                    new Button("Add Product to Store", event -> {
+                        getUI().ifPresent(ui -> ui.navigate("AddProductToStoreView", userStoreQuery));
+                    }),
+                    new Button("Remove Product from Store", event -> {
+                        getUI().ifPresent(ui -> ui.navigate("RemoveProductFromStoreView", userStoreQuery));
+                    }),
+                    new Button("Update Product in Store", event -> {
+                        getUI().ifPresent(ui -> ui.navigate("UpdateProductInStoreView", userStoreQuery));
                 })
         ));
+        add(inventoryLayout);
     }
 
     public void createPurchaseLayout(){
-        add(new H1("Policies Actions:"));
-        add(new HorizontalLayout(
+        VerticalLayout purchaseLayout = new VerticalLayout();
+        purchaseLayout.add(new H1("Policies Actions:"),
+                new HorizontalLayout(
                 new Button("Update Discount Policy")
         ));
+        add(purchaseLayout);
     }
 
     public void createHRLayout(){
-        add(new H1("HR Actions:"));
-        add(
+        VerticalLayout HRLayout = new VerticalLayout();
+        HRLayout.add(new H1("HR Actions:"),
                 new HorizontalLayout(
                         new Button("Get all Employees", event -> {
                             getUI().ifPresent(ui -> ui.navigate("GetAllEmployeesView", userStoreQuery));
@@ -213,16 +207,16 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                         new Button("Fire Store Manager")
                 )
         );
+        add(HRLayout);
     }
 
     public void createOtherActionsLayout(){
-        add(new H1("Other Actions:"));
+        VerticalLayout otherActionsLayout = new VerticalLayout();
+        otherActionsLayout.add(new H1("Other Actions:"));
         HorizontalLayout actions = new HorizontalLayout();
         if(presenter.isOpened()){
             actions.add(new Button("Close Store", event -> {
-                presenter.onCloseButtonClicked();
-                this.removeAll();
-                buildView();
+                closeStoreConfirm();
             }));
         }
         else{
@@ -232,7 +226,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                 new Button("Contact Clients"),
                 new Button("Get Store History")
         );
-        add(actions);
+        otherActionsLayout.add(actions);
+        add(otherActionsLayout);
     }
 
     public void showInStoreSearchResult(HashMap<String, ProductDTO> productsFound){
@@ -259,6 +254,32 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
     public void addProductCartResult(String message){
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void closeStoreConfirm(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Close Store");
+        dialog.setText("Are you sure you want to close this store?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Yes");
+        dialog.addConfirmListener(event -> {
+            presenter.onCloseButtonClicked();
+            this.removeAll();
+            buildView();
+        });
+        dialog.open();
+    }
+
+    public void logoutConfirm(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Logout");
+        dialog.setText("Are you sure you want to log out?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Yes");
+        dialog.addConfirmListener(event -> presenter.logOut());
+        dialog.open();
     }
 
     public void logout(){

@@ -1,7 +1,6 @@
-package com.example.application.View;
+package com.example.application.View.GuestViews;
 
-import com.example.application.Model.MarketModel;
-import com.example.application.Presenter.LoginPresenter;
+import com.example.application.Presenter.GuestPresenters.LoginPresenter;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;

@@ -2,13 +2,11 @@ package com.example.application.Presenter;
 
 import com.example.application.Model.MarketModel;
 import com.example.application.Model.Product;
-import com.example.application.Util.ProductDTO;
 import com.example.application.View.MarketView;
-import org.yaml.snakeyaml.error.Mark;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class MarketPresenter {
     private MarketView view;
@@ -37,7 +35,7 @@ public class MarketPresenter {
     }
 
     public void onSearchButtonClicked(String productName, String category,
-                                                 String keywords, int minPrice, int maxPrice, int minStoreRating) {
+                                      Set<String> keywords, int minPrice, int maxPrice, int minStoreRating) {
         //call generalProductSearch()
         view.showGeneralSearchResult(MarketModel.getProducts());
     }
@@ -52,6 +50,10 @@ public class MarketPresenter {
     public String getStoreName(String storeID){
         //call getStoreName()
         return "ZARA";
+    }
+
+    public boolean isAdmin(){
+        return true;
     }
 
     public void logOut(){
