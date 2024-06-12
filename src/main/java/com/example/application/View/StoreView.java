@@ -89,7 +89,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
             });
             Button myProfileButton = new Button("My Profile", event -> {
-
+                getUI().ifPresent(ui -> ui.navigate("MyProfileView", userQuery));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
