@@ -1,5 +1,6 @@
 package com.example.application.Presenter.StoreActionsPresenters;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
 import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
@@ -25,12 +26,10 @@ public class RemoveProductFromStorePresenter {
     }
 
     public void onRemoveButtonClicked(String productName) {
-        //call removeProductFromStore()
-        boolean success = true;
-        if (success) {
+        if (APIcalls.removeProductFromStore(userID, storeID, productName).contains("success")) {
             view.removeSuccess("Product was removed");
         } else {
-            view.removeFailure("Invalid details.");
+            view.removeFailure("Invalid input.");
         }
     }
 }

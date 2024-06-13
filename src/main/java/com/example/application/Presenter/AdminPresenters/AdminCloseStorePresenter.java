@@ -1,6 +1,7 @@
 package com.example.application.Presenter.AdminPresenters;
 
 import com.example.application.Model.APIcalls;
+import com.example.application.Util.StoreDTO;
 import com.example.application.View.AdminViews.AdminCloseStoreView;
 
 import java.util.LinkedList;
@@ -18,15 +19,19 @@ public class AdminCloseStorePresenter {
     }
 
     public List<String> getAllStoreIDs(){
-        //call getAllStores() and retrieve store IDs
-        return new LinkedList<String>();
+        List<String> storeIDs = new LinkedList<String>();
+        List<StoreDTO> storesDTO = APIcalls.getAllStores();
+        for (int i=0 ; i<storesDTO.size() ; i++){
+            storeIDs.add(storesDTO.get(i).getStore_ID());
+        }
+        return storeIDs;
     }
 
     public void onCloseButtonClicked(String storeID) {
         if (APIcalls.closeStore(userID, storeID).contains("success")) {
             view.closeSuccess("Store was closed");
         } else {
-            view.closeFailure("Invalid store ID.");
+            view.closeFailure("Invalid input.");
         }
     }
 }

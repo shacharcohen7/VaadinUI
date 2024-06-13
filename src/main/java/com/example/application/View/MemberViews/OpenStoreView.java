@@ -46,8 +46,12 @@ public class OpenStoreView extends VerticalLayout{
         );
     }
 
-    public void open(String message) {
+    public void openSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void openFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 }
