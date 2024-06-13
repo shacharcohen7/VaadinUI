@@ -1,5 +1,6 @@
 package com.example.application.Presenter.AdminPresenters;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.View.AdminViews.AdminCloseStoreView;
 
 import java.util.LinkedList;
@@ -21,10 +22,8 @@ public class AdminCloseStorePresenter {
         return new LinkedList<String>();
     }
 
-    public void onCloseButtonClicked(String productName) {
-        //call CloseStore()
-        boolean success = true;
-        if (success) {
+    public void onCloseButtonClicked(String storeID) {
+        if (APIcalls.closeStore(userID, storeID).contains("success")) {
             view.closeSuccess("Store was closed");
         } else {
             view.closeFailure("Invalid store ID.");

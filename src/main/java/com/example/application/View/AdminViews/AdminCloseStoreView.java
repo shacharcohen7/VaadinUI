@@ -9,32 +9,34 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Route("AdminCloseStoreView")
-public class AdminCloseStoreView  extends VerticalLayout implements HasUrlParameter<String> {
+public class AdminCloseStoreView  extends VerticalLayout {
     private AdminCloseStorePresenter presenter;
-    private QueryParameters userQuery;
     private String userID;
     private ComboBox<String> storeIDField;
     private Button closeButton;
     private Button cancelButton;
 
-    public AdminCloseStoreView(){}
+    public AdminCloseStoreView(){
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        buildView();
+    }
 
     public void buildView(){
         presenter = new AdminCloseStorePresenter(this, userID);
-        makeUserQuery();
         storeIDField = new ComboBox<String>("store ID");
         storeIDField.setItems(presenter.getAllStoreIDs());
         closeButton = new Button("Close", event -> {
             closeStoreConfirm();
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
         add(
                 new H1("Close Store"),
@@ -58,23 +60,11 @@ public class AdminCloseStoreView  extends VerticalLayout implements HasUrlParame
 
     public void closeSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void closeFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
-    public void makeUserQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
-        userQuery = new QueryParameters(parameters);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
-        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
-        buildView();
-    }
 }

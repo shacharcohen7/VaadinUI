@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Route("AddProductToStoreView")
 public class AddProductToStoreView extends VerticalLayout implements HasUrlParameter<String>{
     private AddProductToStorePresenter presenter;
-    private QueryParameters userStoreQuery;
+    private QueryParameters storeQuery;
     private String userID;
     private String storeID;
     private TextField productNameField;
@@ -32,8 +33,9 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
     public AddProductToStoreView(){}
 
     public void buildView(){
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         presenter = new AddProductToStorePresenter(this, userID, storeID);
-        makeUserStoreQuery();
+        makeStoreQuery();
         productNameField = new TextField("","product name");
         priceField = new IntegerField("", "price");
         quantityField = new IntegerField("", "quantity");
@@ -44,7 +46,7 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
                     quantityField.getValue(), descriptionField.getValue(), categoryField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
         add(
                 new H1("Add Product to Store"),
@@ -59,25 +61,23 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
 
     public void addSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
     }
 
     public void addFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
-    public void makeUserStoreQuery(){
+    public void makeStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
         parameters.put("storeID", List.of(storeID));
-        userStoreQuery = new QueryParameters(parameters);
+        storeQuery = new QueryParameters(parameters);
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
         buildView();
     }
 }

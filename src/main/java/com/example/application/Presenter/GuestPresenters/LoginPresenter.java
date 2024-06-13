@@ -1,7 +1,9 @@
 package com.example.application.Presenter.GuestPresenters;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.Model.MarketModel;
 import com.example.application.View.GuestViews.LoginView;
+import com.vaadin.flow.server.VaadinSession;
 
 public class LoginPresenter {
     private LoginView view;
@@ -13,9 +15,9 @@ public class LoginPresenter {
     }
 
     public void onLoginButtonClicked(String username, String password) {
-        //call login()
-        boolean success = MarketModel.login(username, password);
-        if (success) {
+        String memberID = APIcalls.login(userID, username, password);
+        if (memberID != null) {
+            VaadinSession.getCurrent().setAttribute("memberID", memberID);
             view.loginSuccess();
         } else {
             view.loginFailure("Invalid username or password.");

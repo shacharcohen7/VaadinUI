@@ -16,23 +16,25 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Route("MarketView")
-public class MarketView extends VerticalLayout implements HasUrlParameter<String>{
+public class MarketView extends VerticalLayout {
     private MarketPresenter presenter;
-    private QueryParameters userQuery;
     private String userID;
     private VerticalLayout productsFoundLayout;
 
-    public MarketView() {}
+    public MarketView() {
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        buildView();
+    }
 
     public void buildView(){
         presenter = new MarketPresenter(this, userID);
-        makeUserQuery();
         createTopLayout();
         add(new VerticalLayout(new H1("Welcome to The Market Place!")));
         createSearchLayout();
@@ -47,21 +49,21 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
         Button homeButton = new Button("Home");
         Button shoppingCartButton = new Button("Shopping Cart", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
         if(!presenter.isMember()){
             Button loginButton = new Button("Log In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("LoginView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("LoginView"));
             });
             Button signInButton = new Button("Sign In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("SignInView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("SignInView"));
             });
             topLayout.add(loginButton, signInButton);
         }
         else{
             Button openStoreButton = new Button("Open new Store", event -> {
-                getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
             Button criticismButton = new Button("Write Criticism", event -> {
 
@@ -76,7 +78,7 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
 
             });
             Button myProfileButton = new Button("My Profile", event -> {
-                getUI().ifPresent(ui -> ui.navigate("MyProfileView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
@@ -142,7 +144,7 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
         VerticalLayout adminLayout = new VerticalLayout();
         adminLayout.add(new H1("Administration:"));
         Button closeStoreButton = new Button("Close Store", event -> {
-            getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView"));
         });
         Button deleteMemberButton = new Button("Delete Member", event -> {
 
@@ -168,10 +170,11 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
         getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
     }
 
-    public void showGeneralSearchResult(Map<String, Product> productsFound){
+    public void showGeneralSearchResult(List<ProductDTO> productsFound){
         productsFoundLayout.removeAll();
         productsFoundLayout.add(new H1("Search results:"));
-        for (Product product : productsFound.values()) {
+        for (int i=0 ; i < productsFound.size() ; i++) {
+            ProductDTO product = productsFound.get(i);
             IntegerField quantityField = new IntegerField();
             quantityField.setLabel("quantity");
             quantityField.setMin(0);
@@ -179,7 +182,7 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
             quantityField.setValue(1);
             quantityField.setStepButtonsVisible(true);
             productsFoundLayout.add(
-                    new HorizontalLayout(new Text("name: " + product.getProductName())),
+                    new HorizontalLayout(new Text("name: " + product.getName())),
                     new HorizontalLayout(new Text("description: " + product.getDescription())),
                     new HorizontalLayout(new Text("price: " + product.getPrice())),
                     quantityField,
@@ -207,19 +210,6 @@ public class MarketView extends VerticalLayout implements HasUrlParameter<String
 
     public void logout(){
         this.removeAll();
-        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
-    }
-
-    public void makeUserQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
-        userQuery = new QueryParameters(parameters);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
-        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 }

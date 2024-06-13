@@ -15,24 +15,26 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Route("ShoppingCartView")
-public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<String> {
+public class ShoppingCartView extends VerticalLayout {
     private ShoppingCartPresenter presenter;
-    private QueryParameters userQuery;
     private String userID;
     private VerticalLayout cartLayout;
     private VerticalLayout paymentLayout;
 
-    public ShoppingCartView(){}
+    public ShoppingCartView(){
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        buildView();
+    }
 
     public void buildView(){
         this.presenter = new ShoppingCartPresenter(this, userID);
-        makeUserQuery();
         createTopLayout();
         add(new VerticalLayout(new H1("Shopping Cart")));
         cartLayout = new VerticalLayout();
@@ -44,24 +46,24 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
         HorizontalLayout topLayout = new HorizontalLayout();
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
         Button homeButton = new Button("Home", event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
         Button shoppingCartButton = new Button("Shopping Cart", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
         if(!presenter.isMember()){
             Button loginButton = new Button("Log In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("LoginView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("LoginView"));
             });
             Button signInButton = new Button("Sign In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("SignInView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("SignInView"));
             });
             topLayout.add(loginButton, signInButton);
         }
         else{
             Button openStoreButton = new Button("Open new Store", event -> {
-                getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
             Button criticismButton = new Button("Write Criticism", event -> {
 
@@ -76,7 +78,7 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
 
             });
             Button myProfileButton = new Button("My Profile", event -> {
-                getUI().ifPresent(ui -> ui.navigate("MyProfileView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
@@ -156,7 +158,7 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
 
     public void paymentSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void removeProductCartResult(String message){
@@ -177,19 +179,7 @@ public class ShoppingCartView extends VerticalLayout implements HasUrlParameter<
     }
 
     public void logout(){
-        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
-    public void makeUserQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
-        userQuery = new QueryParameters(parameters);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
-        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
-        buildView();
-    }
 }
