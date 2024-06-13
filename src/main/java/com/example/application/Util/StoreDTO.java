@@ -22,6 +22,9 @@ public class StoreDTO {
     }
     // Getters and Setters
 
+    public StoreDTO(){
+
+    }
 
     public String getDescription() {
         return description;
