@@ -12,6 +12,10 @@ public class PaymentServiceDTO {
 
     }
 
+    public PaymentServiceDTO(){
+
+    }
+
     public String getLicensedDealerNumber() {
         return licensedDealerNumber;
     }

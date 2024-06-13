@@ -15,6 +15,10 @@ public class SupplyServiceDTO {
         this.licensedDealerNumber = licensedDealerNumber;
     }
 
+    public SupplyServiceDTO(){
+
+    }
+
     public HashSet<String> getCities() {
         return cities;
     }

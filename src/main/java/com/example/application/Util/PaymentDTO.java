@@ -15,6 +15,10 @@ public class PaymentDTO {
         this.year = year;
     }
 
+    public PaymentDTO(){
+
+    }
+
     public String getHolderId() {
         return holderId;
     }

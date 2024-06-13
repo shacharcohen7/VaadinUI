@@ -15,6 +15,11 @@ public class ProductDTO {
         this.description = description;
         this.categoryStr = categoryStr;
     }
+
+    public ProductDTO(){
+
+    }
+
     // Getters and Setters
     public String getName() {
         return productName;
