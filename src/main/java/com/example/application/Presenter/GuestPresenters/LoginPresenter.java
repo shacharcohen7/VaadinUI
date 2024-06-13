@@ -20,7 +20,7 @@ public class LoginPresenter {
             VaadinSession.getCurrent().setAttribute("memberID", memberID);
             view.loginSuccess();
         } else {
-            view.loginFailure("Invalid username or password.");
+            view.loginFailure("Invalid input.");
         }
     }
 }

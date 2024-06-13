@@ -1,5 +1,6 @@
 package com.example.application.Presenter.StoreActionsPresenters;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.View.StoreActionsViews.AppointStoreOwnerView;
 import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
 
@@ -15,12 +16,10 @@ public class AppointStoreOwnerPresenter {
     }
 
     public void onAppointButtonClicked(String usernameToAppoint) {
-        //call appointStoreOwner()
-        boolean success = true;
-        if (success) {
+        if (APIcalls.appointStoreOwner(userID, usernameToAppoint, storeID).contains("success")) {
             view.appointmentSuccess("Appointment performed successfully");
         } else {
-            view.appointmentFailure("Appointment failed.");
+            view.appointmentFailure("Invalid input.");
         }
     }
 }

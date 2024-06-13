@@ -46,7 +46,6 @@ public class MarketPresenter {
 
     public void onSearchButtonClicked(String productName, String category,
                                       Set<String> keywords, int minPrice, int maxPrice, int minStoreRating) {
-//        view.showGeneralSearchResult(MarketModel.getProducts());
         view.showGeneralSearchResult(APIcalls.generalProductSearch(userID, productName, category, new ArrayList<>(keywords)));
     }
 

@@ -1,5 +1,6 @@
 package com.example.application.Presenter.MemberPresenters;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.View.MemberViews.OpenStoreView;
 
 public class OpenStorePresenter {
@@ -12,7 +13,11 @@ public class OpenStorePresenter {
     }
 
     public void onDoneButtonClicked(String storeName, String description) {
-        //call openStore()
-        view.open("Store was opened");
+        if(APIcalls.openStore(userID, storeName, description) != null){
+            view.openSuccess("Store was opened");
+        }
+        else{
+            view.openFailure("Invalid input");
+        }
     }
 }

@@ -23,7 +23,7 @@ public class SignInPresenter {
         if (memberID != null){
             view.SignInSuccess("Registration performed");
         } else {
-            view.SignInFailure("Sign in failed");
+            view.SignInFailure("Invalid input.");
         }
     }
 }

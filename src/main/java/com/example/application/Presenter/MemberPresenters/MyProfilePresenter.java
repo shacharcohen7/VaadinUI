@@ -26,7 +26,7 @@ public class MyProfilePresenter {
         if (success){
             view.updateSuccess("User details were updated successfully");
         } else {
-            view.updateFailure("Invalid details.");
+            view.updateFailure("Invalid input.");
         }
     }
 }
