@@ -1,12 +1,24 @@
 package com.example.application.Presenter;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.Model.MarketModel;
 import com.example.application.Model.Product;
+import com.example.application.Util.APIResponse;
+import com.example.application.Util.ProductDTO;
+import com.example.application.Util.StoreDTO;
 import com.example.application.View.MarketView;
+import com.vaadin.flow.server.VaadinSession;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 public class MarketPresenter {
     private MarketView view;
@@ -25,31 +37,30 @@ public class MarketPresenter {
     }
 
     public boolean isMember(){
-        //call isMember()
-        return true;
+        return APIcalls.isMember(userID);
     }
 
     public String getMemberName(){
-        //call getMemberUsername()
-        return "Avi";
+        return APIcalls.getUser(userID).getUserName();
     }
 
     public void onSearchButtonClicked(String productName, String category,
                                       Set<String> keywords, int minPrice, int maxPrice, int minStoreRating) {
-        //call generalProductSearch()
-        view.showGeneralSearchResult(MarketModel.getProducts());
+//        view.showGeneralSearchResult(MarketModel.getProducts());
+        view.showGeneralSearchResult(APIcalls.generalProductSearch(userID, productName, category, new ArrayList<>(keywords)));
     }
 
     public List<String> getAllStoresID(){
-        //call getAllStores()
-        List<String> storesID = new LinkedList<String>();
-        storesID.add("store12");
-        return storesID;
+        List<String> storeNames = new LinkedList<String>();
+        List<StoreDTO> storesDTO = APIcalls.getAllStores();
+        for (int i=0 ; i<storesDTO.size() ; i++){
+            storeNames.add(storesDTO.get(i).getStoreName());
+        }
+        return storeNames;
     }
 
     public String getStoreName(String storeID){
-        //call getStoreName()
-        return "ZARA";
+        return APIcalls.getStore(storeID).getStoreName();
     }
 
     public boolean isAdmin(){
@@ -57,12 +68,12 @@ public class MarketPresenter {
     }
 
     public void logOut(){
-        //call logout()
-        MarketModel.logout();
-        view.logout();
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
-    public void onAddToCartButtonClicked(Product product, int quantity){
+    public void onAddToCartButtonClicked(ProductDTO product, int quantity){
         //call AddProductCart()
         boolean success = MarketModel.addToCart();
         String message;

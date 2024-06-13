@@ -1,8 +1,10 @@
 package com.example.application.Presenter;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.Model.MarketModel;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -25,14 +27,12 @@ public class StorePresenter {
         return "Guest";
     }
 
-    public boolean verifyStoreOwner(){
-        //call verifyStoreOwner()
-        return isMember();
+    public boolean isStoreOwner(){
+        return APIcalls.isStoreOwner(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
-    public boolean verifyStoreManager(){
-        //call verifyStoreManager()
-        return isMember();
+    public boolean isStoreManager(){
+        return APIcalls.isStoreManager(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
     public boolean isAdmin(){
@@ -40,13 +40,11 @@ public class StorePresenter {
     }
 
     public boolean hasInventoryPermissions(){
-        //call hasInventoryPermissions()
-        return isMember();
+        return APIcalls.hasInventoryPermission(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
     public boolean hasPurchasePermissions(){
-        //call hasInventoryPermissions()
-        return isMember();
+        return APIcalls.hasPurchasePermission(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
     public boolean isOpened(){
@@ -55,39 +53,32 @@ public class StorePresenter {
     }
 
     public boolean isMember(){
-        //call isMember()
-        return true;
+        return APIcalls.isMember(userID);
     }
 
     public String getMemberName(){
-        //call getMemberUsername()
-        return "Avi";
+        return APIcalls.getUser(userID).getUserName();
     }
 
     public String getStoreName(){
-        //call getStoreName()
-        return "ZARA";
+        return APIcalls.getStore(storeID).getStoreName();
     }
 
     public void logOut(){
-        //call logout()
-        MarketModel.logout();
-        view.logout();
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public HashMap<String, ProductDTO> getAllProducts(){
         //call getStoreProducts()
-        HashMap<String, ProductDTO> allProducts = new HashMap<String, ProductDTO>();
-        allProducts.put("skirt", new ProductDTO("skirt",43,"blue", "clothes"));
-        return allProducts;
+        return new HashMap<String, ProductDTO>();
     }
 
     public void onSearchButtonClicked(String productName, String category,
                                       Set<String> keywords, int minPrice, int maxPrice) {
         //call inStoreSearch()
-        HashMap<String, ProductDTO> productsFound = new HashMap<String, ProductDTO>();
-        productsFound.put("skirt", new ProductDTO("skirt",43,"blue", "clothes"));
-        view.showInStoreSearchResult(productsFound);
+
     }
 
     public void onAddToCartButtonClicked(ProductDTO productDto, int quantity){
@@ -102,7 +93,7 @@ public class StorePresenter {
         view.addProductCartResult(message);
     }
 
-    public void onCloseButtonClicked(){
-        //call closeStore()
+    public boolean onCloseButtonClicked(){
+        return APIcalls.closeStore(userID, storeID).contains("success");
     }
 }

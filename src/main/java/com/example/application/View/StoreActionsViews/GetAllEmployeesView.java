@@ -10,6 +10,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Route("GetAllEmployeesView")
 public class GetAllEmployeesView extends VerticalLayout implements HasUrlParameter<String> {
     private GetAllEmployeesPresenter presenter;
-    private QueryParameters userStoreQuery;
+    private QueryParameters storeQuery;
     private String userID;
     private String storeID;
     private Button OKButton;
@@ -26,10 +27,11 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
     public GetAllEmployeesView(){}
 
     public void buildView(){
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         presenter = new GetAllEmployeesPresenter(this, userID, storeID);
-        makeUserStoreQuery();
+        makeStoreQuery();
         OKButton = new Button("OK", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
         createOwnersLayout();
         createManagersLayout();
@@ -59,18 +61,16 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         add(managersLayout);
     }
 
-    public void makeUserStoreQuery(){
+    public void makeStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
         parameters.put("storeID", List.of(storeID));
-        userStoreQuery = new QueryParameters(parameters);
+        storeQuery = new QueryParameters(parameters);
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
         buildView();
     }
 }

@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Route("UpdateManagerPermissionsView")
 public class UpdateManagerPermissionsView extends VerticalLayout implements HasUrlParameter<String> {
     private UpdateManagerPermissionsPresenter presenter;
-    private QueryParameters userStoreQuery;
+    private QueryParameters storeQuery;
     private String userID;
     private String storeID;
     private ComboBox<String> storeManagerField;
@@ -30,8 +31,9 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
     public UpdateManagerPermissionsView(){}
 
     public void buildView(){
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         presenter = new UpdateManagerPermissionsPresenter(this, userID, storeID);
-        makeUserStoreQuery();
+        makeStoreQuery();
         storeManagerField = new ComboBox<String>("Store Manager");
         storeManagerField.setItems(presenter.getStoreManagers());
         inventoryPermissions = new ComboBox<Boolean>("Inventory Permissions");
@@ -43,7 +45,7 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
                     purchasePermissions.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
         add(
                 new H1("Update Store Manager Permissions"),
@@ -56,25 +58,23 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
 
     public void updateSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
     }
 
     public void updateFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
-    public void makeUserStoreQuery(){
+    public void makeStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
         parameters.put("storeID", List.of(storeID));
-        userStoreQuery = new QueryParameters(parameters);
+        storeQuery = new QueryParameters(parameters);
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
         buildView();
     }
 }

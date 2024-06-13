@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,7 @@ import java.util.Map;
 @Route("StoreView")
 public class StoreView extends VerticalLayout implements HasUrlParameter<String> {
     private StorePresenter presenter;
-    private QueryParameters userQuery;
-    private QueryParameters userStoreQuery;
+    private QueryParameters storeQuery;
     private String userID;
     private String storeID;
     private VerticalLayout productsFoundLayout;
@@ -30,25 +30,27 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public StoreView() {}
 
     public void buildView(){
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         presenter = new StorePresenter(this, userID, storeID);
-        makeUserQuery();
-        makeUserStoreQuery();
+        makeStoreQuery();
         createTopLayout();
         add(new VerticalLayout(new H1("Welcome to " + presenter.getStoreName())));
         createSearchLayout();
         createAllProductsLayout();
-        if(presenter.verifyStoreOwner()){
-            createInventoryLayout();
-            createPurchaseLayout();
-            createHRLayout();
-            createOtherActionsLayout();
-        }
-        else if(presenter.verifyStoreManager()){
-            if(presenter.hasInventoryPermissions()){
+        if(presenter.isMember()){
+            if(presenter.isStoreOwner()){
                 createInventoryLayout();
-            }
-            if(presenter.hasPurchasePermissions()){
                 createPurchaseLayout();
+                createHRLayout();
+                createOtherActionsLayout();
+            }
+            else if(presenter.isStoreManager()){
+                if(presenter.hasInventoryPermissions()){
+                    createInventoryLayout();
+                }
+                if(presenter.hasPurchasePermissions()){
+                    createPurchaseLayout();
+                }
             }
         }
     }
@@ -57,24 +59,24 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         HorizontalLayout topLayout = new HorizontalLayout();
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
         Button homeButton = new Button("Home", event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
         Button shoppingCartButton = new Button("Shopping Cart", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView", userQuery));
+            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
         if(!presenter.isMember()){
             Button loginButton = new Button("Log In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("LoginView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("LoginView"));
             });
             Button signInButton = new Button("Sign In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("SignInView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("SignInView"));
             });
             topLayout.add(loginButton, signInButton);
         }
         else{
             Button openStoreButton = new Button("Open new Store", event -> {
-                getUI().ifPresent(ui -> ui.navigate("OpenStoreView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
             Button criticismButton = new Button("Write Criticism", event -> {
 
@@ -89,7 +91,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
             });
             Button myProfileButton = new Button("My Profile", event -> {
-                getUI().ifPresent(ui -> ui.navigate("MyProfileView", userQuery));
+                getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
@@ -164,13 +166,13 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         inventoryLayout.add(new H1("Inventory Actions:"),
                 new HorizontalLayout(
                     new Button("Add Product to Store", event -> {
-                        getUI().ifPresent(ui -> ui.navigate("AddProductToStoreView", userStoreQuery));
+                        getUI().ifPresent(ui -> ui.navigate("AddProductToStoreView", storeQuery));
                     }),
                     new Button("Remove Product from Store", event -> {
-                        getUI().ifPresent(ui -> ui.navigate("RemoveProductFromStoreView", userStoreQuery));
+                        getUI().ifPresent(ui -> ui.navigate("RemoveProductFromStoreView", storeQuery));
                     }),
                     new Button("Update Product in Store", event -> {
-                        getUI().ifPresent(ui -> ui.navigate("UpdateProductInStoreView", userStoreQuery));
+                        getUI().ifPresent(ui -> ui.navigate("UpdateProductInStoreView", storeQuery));
                 })
         ));
         add(inventoryLayout);
@@ -190,19 +192,19 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         HRLayout.add(new H1("HR Actions:"),
                 new HorizontalLayout(
                         new Button("Get all Employees", event -> {
-                            getUI().ifPresent(ui -> ui.navigate("GetAllEmployeesView", userStoreQuery));
+                            getUI().ifPresent(ui -> ui.navigate("GetAllEmployeesView", storeQuery));
                         }),
                         new Button("Appoint Store Owner", event -> {
-                            getUI().ifPresent(ui -> ui.navigate("AppointStoreOwnerView", userStoreQuery));
+                            getUI().ifPresent(ui -> ui.navigate("AppointStoreOwnerView", storeQuery));
                         }),
                         new Button("Fire Store Owner")
                 ),
                 new HorizontalLayout(
                         new Button("Appoint Store Manager", event -> {
-                            getUI().ifPresent(ui -> ui.navigate("AppointStoreManagerView", userStoreQuery));
+                            getUI().ifPresent(ui -> ui.navigate("AppointStoreManagerView", storeQuery));
                         }),
                         new Button("Update store manager permissions", event -> {
-                            getUI().ifPresent(ui -> ui.navigate("UpdateManagerPermissionsView", userStoreQuery));
+                            getUI().ifPresent(ui -> ui.navigate("UpdateManagerPermissionsView", storeQuery));
                         }),
                         new Button("Fire Store Manager")
                 )
@@ -264,9 +266,10 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> {
-            presenter.onCloseButtonClicked();
-            this.removeAll();
-            buildView();
+            if(presenter.onCloseButtonClicked()){
+                this.removeAll();
+                buildView();
+            }
         });
         dialog.open();
     }
@@ -283,27 +286,19 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     }
 
     public void logout(){
-        getUI().ifPresent(ui -> ui.navigate("MarketView", userQuery));
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
-    public void makeUserStoreQuery(){
+    public void makeStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
         parameters.put("storeID", List.of(storeID));
-        userStoreQuery = new QueryParameters(parameters);
-    }
-
-    public void makeUserQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
-        userQuery = new QueryParameters(parameters);
+        storeQuery = new QueryParameters(parameters);
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        userID = parameters.getOrDefault("userID", List.of("Unknown")).get(0);
         buildView();
     }
 }

@@ -17,13 +17,9 @@ public class StartSessionView extends VerticalLayout {
 
     public StartSessionView(){
         presenter = new StartSessionPresenter(this);
-
     }
 
-    public void startSession(String userID) {
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("userID", List.of(userID));
-        QueryParameters queryParameters = new QueryParameters(parameters);
-        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView", queryParameters)));
+    public void startSession() {
+        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
     }
 }

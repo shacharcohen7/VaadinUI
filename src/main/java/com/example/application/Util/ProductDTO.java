@@ -3,13 +3,15 @@ package com.example.application.Util;
 public class ProductDTO {
     private String productName;
     private int price;
+    private int quantity;
     private String description;
     private String categoryStr;
 
     // Constructor
-    public ProductDTO(String productName, int price, String description, String categoryStr) {
+    public ProductDTO(String productName, int price, int quantity, String description, String categoryStr) {
         this.productName = productName;
         this.price = price;
+        this.quantity = quantity;
         this.description = description;
         this.categoryStr = categoryStr;
     }

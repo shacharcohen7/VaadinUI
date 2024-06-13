@@ -1,9 +1,11 @@
 package com.example.application.Presenter;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.Model.MarketModel;
 import com.example.application.Model.Product;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.ShoppingCartView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,18 +29,16 @@ public class ShoppingCartPresenter {
     }
 
     public boolean isMember(){
-        //call isMember()
-        return true;
+        return APIcalls.isMember(userID);
     }
 
     public String getMemberName(){
-        //call getMemberUsername()
-        return "Avi";
+        return APIcalls.getUser(userID).getUserName();
     }
 
     public String getStoreName(String storeID){
-        //call getStoreName()
-        return "ZARA";
+//        return "ZARA";
+        return APIcalls.getStore(storeID).getStoreName();
     }
 
     public Map<String, Map<Product, Integer>> getStoreToProductsCart(){
@@ -55,9 +55,9 @@ public class ShoppingCartPresenter {
     }
 
     public void logOut(){
-        //call logout()
-        MarketModel.logout();
-        view.logout();
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public int getTotalPrice(){
