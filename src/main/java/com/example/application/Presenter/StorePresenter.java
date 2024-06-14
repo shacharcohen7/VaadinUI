@@ -6,6 +6,7 @@ import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreView;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +74,7 @@ public class StorePresenter {
 
     public void onSearchButtonClicked(String productName, String category,
                                       Set<String> keywords, int minPrice, int maxPrice) {
-        //call inStoreSearch()
+        view.showInStoreSearchResult(APIcalls.inStoreProductSearch(userID, productName, category, new ArrayList<>(keywords), storeID));
 
     }
 

@@ -22,6 +22,7 @@ import com.vaadin.flow.server.VaadinSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Route("MarketView")
 public class MarketView extends VerticalLayout {
@@ -106,6 +107,8 @@ public class MarketView extends VerticalLayout {
                     keywordsField.getValue(), minPriceField.getValue(),
                     maxPriceField.getValue(), minStoreRatingField.getValue());
         });
+
+
         Button clearButton = new Button("clear", event -> {
             this.removeAll();
             this.buildView();
@@ -173,24 +176,29 @@ public class MarketView extends VerticalLayout {
 
     public void showGeneralSearchResult(List<ProductDTO> productsFound){
         productsFoundLayout.removeAll();
-        productsFoundLayout.add(new H1("Search results:"));
-        for (int i=0 ; i < productsFound.size() ; i++) {
-            ProductDTO product = productsFound.get(i);
-            IntegerField quantityField = new IntegerField();
-            quantityField.setLabel("quantity");
-            quantityField.setMin(0);
-            quantityField.setMax(10);
-            quantityField.setValue(1);
-            quantityField.setStepButtonsVisible(true);
-            productsFoundLayout.add(
-                    new HorizontalLayout(new Text("name: " + product.getName())),
-                    new HorizontalLayout(new Text("description: " + product.getDescription())),
-                    new HorizontalLayout(new Text("price: " + product.getPrice())),
-                    quantityField,
-                    new Button("Add to Cart", event -> {
-                        presenter.onAddToCartButtonClicked(product, quantityField.getValue());
-                    })
-            );
+        if (productsFound == null || productsFound.isEmpty()) {
+            productsFoundLayout.add(new H1("No products found."));
+        } else {
+            productsFoundLayout.add(new H1("Search results:"));
+
+            for (ProductDTO product : productsFound) {
+                IntegerField quantityField = new IntegerField();
+                quantityField.setLabel("quantity");
+                quantityField.setMin(0);
+                quantityField.setMax(10);
+                quantityField.setValue(1);
+                quantityField.setStepButtonsVisible(true);
+
+                productsFoundLayout.add(
+                        new HorizontalLayout(new Text("name: " + product.getName())),
+                        new HorizontalLayout(new Text("description: " + product.getDescription())),
+                        new HorizontalLayout(new Text("price: " + product.getPrice())),
+                        quantityField,
+                        new Button("Add to Cart", event -> {
+                            presenter.onAddToCartButtonClicked(product, quantityField.getValue());
+                        })
+                );
+            }
         }
     }
 
