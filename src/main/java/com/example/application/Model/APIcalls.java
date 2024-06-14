@@ -142,6 +142,37 @@ public class APIcalls {
         }
     }
 
+    public static List<ProductDTO> getStoreProducts(String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/getStoreProducts/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<ProductDTO> data = new LinkedList<ProductDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
+            }
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
     public static StoreDTO getStore(String storeID){
         try {
             String url = "http://localhost:8080/api/store/getStore/{storeId}";  // Absolute URL

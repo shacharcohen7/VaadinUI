@@ -140,8 +140,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void createAllProductsLayout(){
         VerticalLayout allProductsLayout = new VerticalLayout();
         allProductsLayout.add(new H1("All store products:"));
-        HashMap<String, ProductDTO> allProducts = presenter.getAllProducts();
-        for (ProductDTO productDto : allProducts.values()) {
+        List<ProductDTO> allProducts = presenter.getAllProducts();
+        for (int i=0 ; i<allProducts.size(); i++) {
+            ProductDTO product = allProducts.get(i);
             IntegerField quantityField = new IntegerField();
             quantityField.setLabel("quantity");
             quantityField.setMin(0);
@@ -149,12 +150,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             quantityField.setValue(1);
             quantityField.setStepButtonsVisible(true);
             allProductsLayout.add(
-                    new HorizontalLayout(new Text("name: " + productDto.getName())),
-                    new HorizontalLayout(new Text("description: " + productDto.getDescription())),
-                    new HorizontalLayout(new Text("price: " + productDto.getPrice())),
+                    new HorizontalLayout(new Text("name: " + product.getName())),
+                    new HorizontalLayout(new Text("description: " + product.getDescription())),
+                    new HorizontalLayout(new Text("price: " + product.getPrice())),
                     quantityField,
                     new Button("Add to Cart", event -> {
-                        presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
+                        presenter.onAddToCartButtonClicked(product, quantityField.getValue());
                     })
             );
         }

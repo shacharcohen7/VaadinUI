@@ -7,6 +7,7 @@ import com.example.application.View.StoreView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class StorePresenter {
@@ -66,9 +67,8 @@ public class StorePresenter {
         }
     }
 
-    public HashMap<String, ProductDTO> getAllProducts(){
-        //call getStoreProducts()
-        return new HashMap<String, ProductDTO>();
+    public List<ProductDTO> getAllProducts(){
+        return APIcalls.getStoreProducts(storeID);
     }
 
     public void onSearchButtonClicked(String productName, String category,
