@@ -31,7 +31,7 @@ public class MarketPresenter {
 
     public String getUserName(){
         if(isMember()){
-            return getMemberName();
+            return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
         }
         return "Guest";
     }
@@ -40,22 +40,13 @@ public class MarketPresenter {
         return APIcalls.isMember(userID);
     }
 
-    public String getMemberName(){
-        return APIcalls.getUser(userID).getUserName();
-    }
-
     public void onSearchButtonClicked(String productName, String category,
                                       Set<String> keywords, int minPrice, int maxPrice, int minStoreRating) {
         view.showGeneralSearchResult(APIcalls.generalProductSearch(userID, productName, category, new ArrayList<>(keywords)));
     }
 
-    public List<String> getAllStoresID(){
-        List<String> storeNames = new LinkedList<String>();
-        List<StoreDTO> storesDTO = APIcalls.getAllStores();
-        for (int i=0 ; i<storesDTO.size() ; i++){
-            storeNames.add(storesDTO.get(i).getStoreName());
-        }
-        return storeNames;
+    public List<StoreDTO> getAllStores(){
+        return APIcalls.getAllStores();
     }
 
     public String getStoreName(String storeID){

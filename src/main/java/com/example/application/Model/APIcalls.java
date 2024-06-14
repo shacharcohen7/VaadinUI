@@ -85,6 +85,34 @@ public class APIcalls {
         }
     }
 
+    public static String getMemberName(String memberID){
+        try {
+            String url = "http://localhost:8080/api/member/getMemberName/{memberId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(memberID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
     public static List<StoreDTO> getAllStores(){
         try {
             String url = "http://localhost:8080/api/store/getAllStores";  // Absolute URL
@@ -170,19 +198,15 @@ public class APIcalls {
         }
     }
 
-    public  static String register(UserDTO userDTO, String password){
+    public static String register(UserDTO userDTO, String password){
         try {
             String url = "http://localhost:8080/api/market/register";  // Absolute URL
-
-//            URI uri = UriComponentsBuilder.fromUriString(url)
-//                    .buildAndExpand(mapper.writeValueAsString(userDTO), password)
-//                    .toUri();
 
             URI uri = UriComponentsBuilder.fromUriString(url).queryParam("userDTO", mapper.writeValueAsString(userDTO))
                     .queryParam("password",password).build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add("accept", "/");
+            headers.add("accept", "*/*");
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
@@ -356,7 +380,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -410,7 +434,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -437,7 +461,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -453,18 +477,20 @@ public class APIcalls {
 
     public static String addProductToStore(String userID, String storeID, ProductDTO productDTO){
         try {
-            String url = "http://localhost:8080/api/market/addProductToStore/{userId}/{storeId}/{productDTO}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/addProductToStore";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(userID, storeID, mapper.writeValueAsString(productDTO))
-                    .toUri();
+                    .queryParam("userId", userID)
+                    .queryParam("storeId",storeID)
+                    .queryParam("productDTO",mapper.writeValueAsString(productDTO))
+                    .build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -491,7 +517,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.DELETE,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -507,7 +533,7 @@ public class APIcalls {
 
     public static String updateProductInStore(String userID, String storeID, ProductDTO productDTO){
         try {
-            String url = "http://localhost:8080/api/market/updateProductInStore/{userId}/{storeId}/{productDTO}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/updateProductInStore";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, storeID, mapper.writeValueAsString(productDTO))
@@ -518,7 +544,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -545,7 +571,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
@@ -572,7 +598,7 @@ public class APIcalls {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });

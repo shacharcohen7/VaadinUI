@@ -23,17 +23,13 @@ public class ShoppingCartPresenter {
 
     public String getUserName(){
         if(isMember()){
-            return getMemberName();
+            return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
         }
         return "Guest";
     }
 
     public boolean isMember(){
         return APIcalls.isMember(userID);
-    }
-
-    public String getMemberName(){
-        return APIcalls.getUser(userID).getUserName();
     }
 
     public String getStoreName(String storeID){

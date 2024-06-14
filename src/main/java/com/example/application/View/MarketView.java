@@ -3,6 +3,7 @@ package com.example.application.View;
 import com.example.application.Model.Product;
 import com.example.application.Presenter.MarketPresenter;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.StoreDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -129,14 +130,14 @@ public class MarketView extends VerticalLayout {
     public void createAllStoresLayout(){
         VerticalLayout storesLayout = new VerticalLayout();
         storesLayout.add(new H1("All Stores:"));
-        List<String> allStoresID = presenter.getAllStoresID();
-        HorizontalLayout storeNames = new HorizontalLayout();
-        for(int i=0 ; i<allStoresID.size(); i++){
-            String storeID = allStoresID.get(i);
-            storeNames.add(new Button(presenter.getStoreName(storeID), event -> {
-                UI.getCurrent().access(() -> goToStore(storeID));}));
+        List<StoreDTO> allStoresDtos = presenter.getAllStores();
+        HorizontalLayout storeNamesLayout = new HorizontalLayout();
+        for(int i=0 ; i<allStoresDtos.size(); i++){
+            StoreDTO storeDto = allStoresDtos.get(i);
+            storeNamesLayout.add(new Button(storeDto.getStoreName(), event -> {
+                UI.getCurrent().access(() -> goToStore(storeDto.getStore_ID()));}));
         }
-        storesLayout.add(storeNames);
+        storesLayout.add(storeNamesLayout);
         add(storesLayout);
     }
 
@@ -210,6 +211,6 @@ public class MarketView extends VerticalLayout {
 
     public void logout(){
         this.removeAll();
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
+        buildView();
     }
 }

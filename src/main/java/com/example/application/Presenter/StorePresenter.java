@@ -22,7 +22,7 @@ public class StorePresenter {
 
     public String getUserName(){
         if(isMember()){
-            return getMemberName();
+            return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
         }
         return "Guest";
     }
@@ -54,10 +54,6 @@ public class StorePresenter {
 
     public boolean isMember(){
         return APIcalls.isMember(userID);
-    }
-
-    public String getMemberName(){
-        return APIcalls.getUser(userID).getUserName();
     }
 
     public String getStoreName(){

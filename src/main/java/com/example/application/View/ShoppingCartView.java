@@ -181,5 +181,4 @@ public class ShoppingCartView extends VerticalLayout {
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
-
 }
