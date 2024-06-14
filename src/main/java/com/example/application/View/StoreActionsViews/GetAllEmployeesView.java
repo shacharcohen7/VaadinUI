@@ -2,6 +2,7 @@ package com.example.application.View.StoreActionsViews;
 
 import com.example.application.Presenter.StoreActionsPresenters.GetAllEmployeesPresenter;
 import com.example.application.Presenter.StoreActionsPresenters.RemoveProductFromStorePresenter;
+import com.example.application.Util.UserDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -43,7 +44,9 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         ownersLayout.add(new H1("Store Owners:"));
         List<String> storeOwners = presenter.getStoreOwners();
         for(int i=0 ; i<storeOwners.size() ; i++){
-            ownersLayout.add(new Text("Store Owner - " + storeOwners.get(i)));
+            VerticalLayout ownerLayout = new VerticalLayout();
+            ownerLayout.add(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i))));
+            ownersLayout.add(ownerLayout);
         }
         add(ownersLayout);
     }
@@ -53,10 +56,13 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         managersLayout.add(new H1("Store Managers:"));
         List<String> storeManagers = presenter.getStoreManagers();
         for(int i=0 ; i<storeManagers.size() ; i++){
-            managersLayout.add(
-                    new Text("Store Manager - " + storeManagers.get(i)),
-                    new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i))));
-                    new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i)));
+            VerticalLayout managerLayout = new VerticalLayout();
+            managerLayout.add(
+                    new Text("Store Manager - " + presenter.getEmployeeUserName(storeManagers.get(i))),
+                    new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i))),
+                    new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i)))
+            );
+            managersLayout.add(managerLayout);
         }
         add(managersLayout);
     }
