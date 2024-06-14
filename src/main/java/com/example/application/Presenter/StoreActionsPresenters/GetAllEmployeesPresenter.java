@@ -1,7 +1,10 @@
 package com.example.application.Presenter.StoreActionsPresenters;
 
+import com.example.application.Model.APIcalls;
+import com.example.application.Util.UserDTO;
 import com.example.application.View.StoreActionsViews.GetAllEmployeesView;
 import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,23 +20,25 @@ public class GetAllEmployeesPresenter {
         this.storeID = storeID;
     }
 
+    public String getEmployeeUserName(String memberID){
+        return APIcalls.getMemberName(memberID);
+    }
+
     public List<String> getStoreOwners(){
-        //call getInfoAboutRoles and retrieve all store owner usernames
+//        return APIcalls.getStoreOwners(storeID);
         return new LinkedList<String>();
     }
 
     public List<String> getStoreManagers(){
-        //call getInfoAboutRoles and retrieve all store manager usernames
+//        return APIcalls.getStoreMangers(storeID);
         return new LinkedList<String>();
     }
 
-    public boolean hasInventoryPermissions(String username){
-        //call getManagerAuthorisations and retrieve inventoryPermissions
-        return false;
+    public boolean hasInventoryPermissions(String memberID){
+        return APIcalls.hasInventoryPermission(memberID, storeID);
     }
 
-    public boolean hasPurchasePermissions(String username){
-        //call getManagerAuthorisations and retrieve purchasePermissions
-        return false;
+    public boolean hasPurchasePermissions(String memberID){
+        return APIcalls.hasPurchasePermission(memberID, storeID);
     }
 }
