@@ -19,11 +19,11 @@ public class SignInPresenter {
     public void onSignInButtonClicked(String username, LocalDate birthdate, String country, String city,
                                       String address, String name, String password) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String memberID = APIcalls.register(new UserDTO(userID, username, birthdate.format(formatter), country, city, address, name), password);
-        if (memberID != null){
-            view.SignInSuccess("Registration performed");
+        String result = APIcalls.register(new UserDTO(userID, username, birthdate.format(formatter), country, city, address, name), password);
+        if (result != null && result.startsWith("member-")) {
+            view.SignInSuccess("Registration performed.");
         } else {
-            view.SignInFailure("Invalid input.");
+            view.SignInFailure(result);
         }
     }
 }

@@ -15,12 +15,12 @@ public class LoginPresenter {
     }
 
     public void onLoginButtonClicked(String username, String password) {
-        String memberID = APIcalls.login(userID, username, password);
-        if (memberID != null) {
-            VaadinSession.getCurrent().setAttribute("memberID", memberID);
+        String result = APIcalls.login(userID, username, password);
+        if (result != null && result.startsWith("member-")) {
+            VaadinSession.getCurrent().setAttribute("memberID", result);
             view.loginSuccess();
         } else {
-            view.loginFailure("Invalid input.");
+            view.loginFailure(result);
         }
     }
 }

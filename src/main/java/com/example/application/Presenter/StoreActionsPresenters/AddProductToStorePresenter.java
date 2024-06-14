@@ -18,10 +18,11 @@ public class AddProductToStorePresenter {
     }
 
     public void onAddButtonClicked(String productName, int price, int quantity, String description, String category) {
-        if (APIcalls.addProductToStore(userID, storeID, new ProductDTO(productName, price, quantity, description, category)).contains("success")) {
+        String result = APIcalls.addProductToStore(userID, storeID, new ProductDTO(productName, price, quantity, description, category));
+        if (result.contains("success")) {
             view.addSuccess("Product was added");
         } else {
-            view.addFailure("Invalid input.");
+            view.addFailure(result);
         }
     }
 }

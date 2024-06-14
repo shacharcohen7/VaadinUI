@@ -1,15 +1,15 @@
 package com.example.application.Model;
 
-import com.example.application.Util.APIResponse;
-import com.example.application.Util.ProductDTO;
-import com.example.application.Util.StoreDTO;
-import com.example.application.Util.UserDTO;
+import com.example.application.Util.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -107,6 +107,9 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
         catch (Exception e){
             System.err.println("error occurred");
             return null;
@@ -141,6 +144,7 @@ public class APIcalls {
             return null;
         }
     }
+
 
     public static List<ProductDTO> getStoreProducts(String storeID){
         try {
@@ -283,12 +287,12 @@ public class APIcalls {
         }
     }
 
-    public static String register(UserDTO userDTO, String password){
+    public static String register(UserDTO userDTO, String password) {
         try {
             String url = "http://localhost:8080/api/market/register";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url).queryParam("userDTO", mapper.writeValueAsString(userDTO))
-                    .queryParam("password",password).build().toUri();
+                    .queryParam("password", password).build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
@@ -303,12 +307,14 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        } catch (HttpClientErrorException e) {
+            // Extract error message from the response body
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An error occurred.";
         }
-        catch (Exception e){
-            System.err.println("error occurred");
-            return null;
-        }
-}
+    }
 
     public static List<ProductDTO> generalProductSearch(String userID, String productName, String categoryStr, List<String> keywords){
         try {
@@ -333,6 +339,41 @@ public class APIcalls {
                 data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
             }
             return data;
+        } catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static List<ProductDTO> inStoreProductSearch(String userID, String productName, String categoryStr, List<String> keywords, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/inStoreProductSearch/{userId}/{productName}/{categoryStr}/{keywords}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, productName, categoryStr, keywords, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<ProductDTO> data = new LinkedList<ProductDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
+            }
+            return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -473,6 +514,9 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
         catch (Exception e){
             System.err.println("error occurred");
             return null;
@@ -499,6 +543,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -527,6 +574,9 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
         catch (Exception e){
             System.err.println("error occurred");
             return null;
@@ -553,6 +603,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -582,6 +635,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -694,6 +750,18 @@ public class APIcalls {
         catch (Exception e){
             System.err.println("error occurred");
             return null;
+        }
+    }
+
+    private static String extractErrorMessageFromJson(String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(json);
+            JsonNode errorMessageNode = rootNode.path("errorMassage");
+            return errorMessageNode.asText("An unknown error occurred.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An unknown error occurred.";
         }
     }
 }

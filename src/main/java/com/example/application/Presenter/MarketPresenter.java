@@ -42,7 +42,8 @@ public class MarketPresenter {
 
     public void onSearchButtonClicked(String productName, String category,
                                       Set<String> keywords, int minPrice, int maxPrice, int minStoreRating) {
-        view.showGeneralSearchResult(APIcalls.generalProductSearch(userID, productName, category, new ArrayList<>(keywords)));
+        List <String> keywordsList = new ArrayList<>(keywords);
+        view.showGeneralSearchResult(APIcalls.generalProductSearch(userID, productName, category, keywordsList));
     }
 
     public List<StoreDTO> getAllStores(){

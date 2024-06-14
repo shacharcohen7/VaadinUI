@@ -114,7 +114,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         IntegerField maxPriceField = new IntegerField("maximum price");
         Button searchButton = new Button("search", event -> {
             presenter.onSearchButtonClicked(productNameField.getValue(), categoryField.getValue(),
-                    keywordsField.getValue(), minPriceField.getValue(),
+                    keywordsField.getValue(), minPriceField.getValue() != null ? minPriceField.getValue() : null,
                     maxPriceField.getValue());
         });
         Button clearButton = new Button("clear", event -> {
@@ -233,25 +233,30 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         add(otherActionsLayout);
     }
 
-    public void showInStoreSearchResult(HashMap<String, ProductDTO> productsFound){
+    public void showInStoreSearchResult(List<ProductDTO> productsFound){
         productsFoundLayout.removeAll();
-        productsFoundLayout.add(new H1("Search results:"));
-        for (ProductDTO productDto : productsFound.values()) {
-            IntegerField quantityField = new IntegerField();
-            quantityField.setLabel("quantity");
-            quantityField.setMin(0);
-            quantityField.setMax(10);
-            quantityField.setValue(1);
-            quantityField.setStepButtonsVisible(true);
-            productsFoundLayout.add(
-                    new HorizontalLayout(new Text("name: " + productDto.getName())),
-                    new HorizontalLayout(new Text("description: " + productDto.getDescription())),
-                    new HorizontalLayout(new Text("price: " + productDto.getPrice())),
-                    quantityField,
-                    new Button("Add to Cart", event -> {
-                        presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
-                    })
-            );
+        if (productsFound == null || productsFound.isEmpty()) {
+            productsFoundLayout.add(new H1("No products found."));
+        } else {
+            productsFoundLayout.add(new H1("Search results:"));
+            for (int i=0 ; i < productsFound.size() ; i++) {
+                ProductDTO productDto = productsFound.get(i);
+                IntegerField quantityField = new IntegerField();
+                quantityField.setLabel("quantity");
+                quantityField.setMin(0);
+                quantityField.setMax(10);
+                quantityField.setValue(1);
+                quantityField.setStepButtonsVisible(true);
+                productsFoundLayout.add(
+                        new HorizontalLayout(new Text("name: " + productDto.getName())),
+                        new HorizontalLayout(new Text("description: " + productDto.getDescription())),
+                        new HorizontalLayout(new Text("price: " + productDto.getPrice())),
+                        quantityField,
+                        new Button("Add to Cart", event -> {
+                            presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
+                        })
+                );
+            }
         }
     }
 
