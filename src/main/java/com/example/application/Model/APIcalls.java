@@ -1,15 +1,15 @@
 package com.example.application.Model;
 
-import com.example.application.Util.APIResponse;
-import com.example.application.Util.ProductDTO;
-import com.example.application.Util.StoreDTO;
-import com.example.application.Util.UserDTO;
+import com.example.application.Util.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -106,6 +106,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -250,9 +253,12 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        } catch (HttpClientErrorException e) {
+            // Extract error message from the response body
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         } catch (Exception e) {
-            System.err.println("error occurred");
-            return null;
+            e.printStackTrace();
+            return "An error occurred.";
         }
     }
 
@@ -279,6 +285,8 @@ public class APIcalls {
                 data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
             }
             return data;
+        } catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -309,6 +317,9 @@ public class APIcalls {
                 data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
             }
             return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -449,6 +460,9 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
         catch (Exception e){
             System.err.println("error occurred");
             return null;
@@ -475,6 +489,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -503,6 +520,9 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
         catch (Exception e){
             System.err.println("error occurred");
             return null;
@@ -529,6 +549,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -558,6 +581,9 @@ public class APIcalls {
             APIResponse<String> responseBody = response.getBody();
             String data = responseBody.getData();
             return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
             System.err.println("error occurred");
@@ -670,6 +696,18 @@ public class APIcalls {
         catch (Exception e){
             System.err.println("error occurred");
             return null;
+        }
+    }
+
+    private static String extractErrorMessageFromJson(String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(json);
+            JsonNode errorMessageNode = rootNode.path("errorMassage");
+            return errorMessageNode.asText("An unknown error occurred.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An unknown error occurred.";
         }
     }
 }
