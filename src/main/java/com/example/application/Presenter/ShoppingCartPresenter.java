@@ -3,6 +3,7 @@ package com.example.application.Presenter;
 import com.example.application.Model.APIcalls;
 import com.example.application.Model.MarketModel;
 import com.example.application.Model.Product;
+import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.ShoppingCartView;
 import com.vaadin.flow.server.VaadinSession;
@@ -41,9 +42,8 @@ public class ShoppingCartPresenter {
         return APIcalls.getCategories();
     }
 
-    public Map<String, Map<Product, Integer>> getStoreToProductsCart(){
-        //call getCart()
-        return MarketModel.getCart();
+    public CartDTO getCart(){
+        return APIcalls.getCart(userID);
     }
 
     public void removeProductCart(){
@@ -58,6 +58,16 @@ public class ShoppingCartPresenter {
         if(APIcalls.logout(userID).contains("success")){
             view.logout();
         }
+    }
+
+    public ProductDTO getProduct(String productName, String storeID){
+        List<ProductDTO> storeProducts = APIcalls.getStoreProducts(storeID);
+        for(int i=0 ; i<storeProducts.size() ; i++){
+            if(storeProducts.get(i).getName().equals(productName)){
+                return storeProducts.get(i);
+            }
+        }
+        return null;
     }
 
     public int getTotalPrice(){
