@@ -21,8 +21,12 @@ public class RemoveProductFromStorePresenter {
     }
 
     public List<String> getAllProductNames(){
-        //call getStoreProducts() and retrieve product names
-        return new LinkedList<String>();
+        List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
+        List<String> productNames = new LinkedList<String>();
+        for(int i=0 ;i<products.size() ; i++){
+            productNames.add(products.get(i).getName());
+        }
+        return productNames;
     }
 
     public void onRemoveButtonClicked(String productName) {

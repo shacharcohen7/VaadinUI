@@ -29,16 +29,16 @@ public class StorePresenter {
         return "Guest";
     }
 
+    public List<String> getCategories(){
+        return APIcalls.getCategories();
+    }
+
     public boolean isStoreOwner(){
         return APIcalls.isStoreOwner(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
     public boolean isStoreManager(){
         return APIcalls.isStoreManager(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
-    }
-
-    public boolean isAdmin(){
-        return true;
     }
 
     public boolean hasInventoryPermissions(){

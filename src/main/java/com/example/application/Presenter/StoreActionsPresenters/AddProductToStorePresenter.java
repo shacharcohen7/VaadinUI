@@ -6,6 +6,8 @@ import com.example.application.Util.ProductDTO;
 import com.example.application.View.MemberViews.OpenStoreView;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
 
+import java.util.List;
+
 public class AddProductToStorePresenter {
     private AddProductToStoreView view;
     private String userID;
@@ -15,6 +17,10 @@ public class AddProductToStorePresenter {
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;
+    }
+
+    public List<String> getCategories(){
+        return APIcalls.getCategories();
     }
 
     public void onAddButtonClicked(String productName, int price, int quantity, String description, String category) {

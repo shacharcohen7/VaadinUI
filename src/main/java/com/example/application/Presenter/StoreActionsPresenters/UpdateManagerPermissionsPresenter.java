@@ -1,5 +1,6 @@
 package com.example.application.Presenter.StoreActionsPresenters;
 
+import com.example.application.Model.APIcalls;
 import com.example.application.View.StoreActionsViews.AppointStoreManagerView;
 import com.example.application.View.StoreActionsViews.UpdateManagerPermissionsView;
 
@@ -18,24 +19,23 @@ public class UpdateManagerPermissionsPresenter {
     }
 
     public List<String> getStoreManagers(){
-        //call getInfoAboutRoles and retrieve all store manager usernames
-        return new LinkedList<String>();
+        return APIcalls.getStoreMangers(storeID);
     }
 
-    public boolean hasInventoryPermissions(String username){
-        //call getManagerAuthorisations and retrieve inventoryPermissions
-        return false;
+    public String getEmployeeUserName(String memberID){
+        return APIcalls.getMemberName(memberID);
     }
 
-    public boolean hasPurchasePermissions(String username){
-        //call getManagerAuthorisations and retrieve purchasePermissions
-        return false;
+    public boolean hasInventoryPermissions(String memberID){
+        return APIcalls.hasInventoryPermission(memberID, storeID);
+    }
+
+    public boolean hasPurchasePermissions(String memberID){
+        return APIcalls.hasPurchasePermission(memberID, storeID);
     }
 
     public void onUpdateButtonClicked(String usernameToUpdate, boolean inventoryPermissions, boolean purchasePermissions) {
-        //call updateManagerPermissions()
-        boolean success = true;
-        if (success) {
+        if (APIcalls.updateStoreManagerPermissions(userID, usernameToUpdate, storeID, inventoryPermissions, purchasePermissions).contains("success")) {
             view.updateSuccess("Permissions were updated successfully");
         } else {
             view.updateFailure("Appointment failed.");

@@ -45,7 +45,7 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         List<String> storeOwners = presenter.getStoreOwners();
         for(int i=0 ; i<storeOwners.size() ; i++){
             VerticalLayout ownerLayout = new VerticalLayout();
-            ownerLayout.add(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i))));
+            ownerLayout.add(new HorizontalLayout(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i)))));
             ownersLayout.add(ownerLayout);
         }
         add(ownersLayout);
@@ -58,9 +58,9 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         for(int i=0 ; i<storeManagers.size() ; i++){
             VerticalLayout managerLayout = new VerticalLayout();
             managerLayout.add(
-                    new Text("Store Manager - " + presenter.getEmployeeUserName(storeManagers.get(i))),
-                    new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i))),
-                    new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i)))
+                    new HorizontalLayout(new Text("Store Manager - " + presenter.getEmployeeUserName(storeManagers.get(i)))),
+                    new HorizontalLayout(new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i)))),
+                    new HorizontalLayout(new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i))))
             );
             managersLayout.add(managerLayout);
         }

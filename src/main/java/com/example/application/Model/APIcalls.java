@@ -145,6 +145,30 @@ public class APIcalls {
         }
     }
 
+    public static List<String> getCategories(){
+        try {
+            String url = "http://localhost:8080/api/market/getCategories";  // Absolute URL
+
+            URI uri = new URI(url);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
 
     public static List<ProductDTO> getStoreProducts(String storeID){
         try {
@@ -677,8 +701,10 @@ public class APIcalls {
             String url = "http://localhost:8080/api/market/updateProductInStore";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(userID, storeID, mapper.writeValueAsString(productDTO))
-                    .toUri();
+                    .queryParam("userId", userID)
+                    .queryParam("storeId",storeID)
+                    .queryParam("productDTO",mapper.writeValueAsString(productDTO))
+                    .build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
@@ -729,6 +755,33 @@ public class APIcalls {
     public static String appointStoreManager(String userID, String appointedUsername, String storeID, boolean invPer, boolean purPer){
         try {
             String url = "http://localhost:8080/api/market/appointStoreManager/{userId}/{appointedId}/{storeId}/{invPer}/{purPer}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, appointedUsername, storeID, invPer, purPer)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static String updateStoreManagerPermissions(String userID, String appointedUsername, String storeID, boolean invPer, boolean purPer){
+        try {
+            String url = "http://localhost:8080/api/market/updateStoreManagerPermissions/{userId}/{appointedId}/{storeId}/{invPer}/{purPer}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, appointedUsername, storeID, invPer, purPer)
