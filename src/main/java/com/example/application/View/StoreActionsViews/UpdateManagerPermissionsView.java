@@ -2,6 +2,7 @@ package com.example.application.View.StoreActionsViews;
 
 import com.example.application.Presenter.StoreActionsPresenters.AppointStoreManagerPresenter;
 import com.example.application.Presenter.StoreActionsPresenters.UpdateManagerPermissionsPresenter;
+import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
@@ -13,6 +14,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +37,22 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
         presenter = new UpdateManagerPermissionsPresenter(this, userID, storeID);
         makeStoreQuery();
         storeManagerField = new ComboBox<String>("Store Manager");
-        storeManagerField.setItems(presenter.getStoreManagers());
+        List<String> storeManagersMemberID = presenter.getStoreManagers();
+        List<String> storeManagerNames = new LinkedList<String>();
+        Map<String,String> usernameToMemberID = new HashMap<String,String>();
+        for(int i=0 ; i<storeManagersMemberID.size() ; i++){
+            storeManagerNames.add(presenter.getEmployeeUserName(storeManagersMemberID.get(i)));
+            usernameToMemberID.put(presenter.getEmployeeUserName(storeManagersMemberID.get(i)), storeManagersMemberID.get(i));
+        }
+        storeManagerField.setItems(storeManagerNames);
         inventoryPermissions = new ComboBox<Boolean>("Inventory Permissions");
         inventoryPermissions.setItems(true, false);
         purchasePermissions = new ComboBox<Boolean>("Purchase Permissions");
         purchasePermissions.setItems(true, false);
+        storeManagerField.addValueChangeListener(event -> {
+            inventoryPermissions.setValue(presenter.hasInventoryPermissions(usernameToMemberID.get(event.getValue())));
+            purchasePermissions.setValue(presenter.hasPurchasePermissions(usernameToMemberID.get(event.getValue())));
+        });
         updateButton = new Button("Update", event -> {
             presenter.onUpdateButtonClicked(storeManagerField.getValue(), inventoryPermissions.getValue(),
                     purchasePermissions.getValue());

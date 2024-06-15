@@ -37,6 +37,10 @@ public class ShoppingCartPresenter {
         return APIcalls.getStore(storeID).getStoreName();
     }
 
+    public List<String> getCategories(){
+        return APIcalls.getCategories();
+    }
+
     public Map<String, Map<Product, Integer>> getStoreToProductsCart(){
         //call getCart()
         return MarketModel.getCart();

@@ -2,6 +2,7 @@ package com.example.application.View.StoreActionsViews;
 
 import com.example.application.Presenter.StoreActionsPresenters.AddProductToStorePresenter;
 import com.example.application.Presenter.StoreActionsPresenters.UpdateProductInStorePresenter;
+import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
@@ -27,7 +28,7 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
     private IntegerField priceField;
     private IntegerField quantityField;
     private TextField descriptionField;
-    private TextField categoryField;
+    private ComboBox<String> categoryField;
     private Button updateButton;
     private Button cancelButton;
 
@@ -39,10 +40,18 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
         makeStoreQuery();
         productNameField = new ComboBox<String>("product");
         productNameField.setItems(presenter.getAllProductNames());
-        priceField = new IntegerField("", "price");
-        quantityField = new IntegerField("", "quantity");
-        categoryField = new TextField("","category");
-        descriptionField = new TextField("","description");
+        priceField = new IntegerField("price");
+        quantityField = new IntegerField("quantity");
+        categoryField = new ComboBox<String>("category");
+        categoryField.setItems(presenter.getCategories());
+        descriptionField = new TextField("description");
+        productNameField.addValueChangeListener(event -> {
+            ProductDTO product = presenter.getProductByName(event.getValue());
+            priceField.setValue(product.getPrice());
+            quantityField.setValue(product.getQuantity());
+            categoryField.setValue(product.getCategoryStr());
+            descriptionField.setValue(product.getDescription());
+        });
         updateButton = new Button("Update", event -> {
             presenter.onUpdateButtonClicked(productNameField.getValue(), priceField.getValue(),
                     quantityField.getValue(), descriptionField.getValue(), categoryField.getValue());

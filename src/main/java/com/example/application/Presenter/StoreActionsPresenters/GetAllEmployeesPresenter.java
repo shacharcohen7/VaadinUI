@@ -25,13 +25,11 @@ public class GetAllEmployeesPresenter {
     }
 
     public List<String> getStoreOwners(){
-//        return APIcalls.getStoreOwners(storeID);
-        return new LinkedList<String>();
+        return APIcalls.getStoreOwners(storeID);
     }
 
     public List<String> getStoreManagers(){
-//        return APIcalls.getStoreMangers(storeID);
-        return new LinkedList<String>();
+        return APIcalls.getStoreMangers(storeID);
     }
 
     public boolean hasInventoryPermissions(String memberID){

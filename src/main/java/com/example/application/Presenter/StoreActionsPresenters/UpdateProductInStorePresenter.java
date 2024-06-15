@@ -20,8 +20,26 @@ public class UpdateProductInStorePresenter {
     }
 
     public List<String> getAllProductNames(){
-        //call getStoreProducts() and retrieve product names
-        return new LinkedList<String>();
+        List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
+        List<String> productNames = new LinkedList<String>();
+        for(int i=0 ;i<products.size() ; i++){
+            productNames.add(products.get(i).getName());
+        }
+        return productNames;
+    }
+
+    public ProductDTO getProductByName(String productName){
+        List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
+        for(int i=0 ;i<products.size() ; i++){
+            if(products.get(i).getName().equals(productName)) {
+                return products.get(i);
+            }
+        }
+        return null;
+    }
+
+    public List<String> getCategories(){
+        return APIcalls.getCategories();
     }
 
     public void onUpdateButtonClicked(String productName, int price, int quantity, String description, String category) {

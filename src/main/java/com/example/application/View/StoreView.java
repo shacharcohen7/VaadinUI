@@ -4,6 +4,7 @@ import com.example.application.Presenter.StorePresenter;
 import com.example.application.Util.ProductDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
@@ -106,7 +107,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         VerticalLayout searchLayout = new VerticalLayout();
         searchLayout.add(new Text("Search for product:"));
         TextField productNameField = new TextField("product name");
-        TextField categoryField = new TextField("category");
+        ComboBox<String> categoryField = new ComboBox<String>("category");
+        categoryField.setItems(presenter.getCategories());
         MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<String>("keywords");
         keywordsField.setItems("clothes", "shoes", "food", "optic", "electricity", "toys", "health", "sport",
                 "women", "men", "children", "beauty", "travel", "gifts", "office", "coffee", "home");

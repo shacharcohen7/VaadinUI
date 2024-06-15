@@ -50,12 +50,16 @@ public class MarketPresenter {
         return APIcalls.getAllStores();
     }
 
+    public List<String> getCategories(){
+        return APIcalls.getCategories();
+    }
+
     public String getStoreName(String storeID){
         return APIcalls.getStore(storeID).getStoreName();
     }
 
     public boolean isAdmin(){
-        return true;
+        return false;
     }
 
     public void logOut(){

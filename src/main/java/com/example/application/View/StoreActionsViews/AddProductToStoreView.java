@@ -3,6 +3,7 @@ package com.example.application.View.StoreActionsViews;
 import com.example.application.Presenter.MemberPresenters.OpenStorePresenter;
 import com.example.application.Presenter.StoreActionsPresenters.AddProductToStorePresenter;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -26,7 +27,7 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
     private IntegerField priceField;
     private IntegerField quantityField;
     private TextField descriptionField;
-    private TextField categoryField;
+    private ComboBox<String> categoryField;
     private Button addButton;
     private Button cancelButton;
 
@@ -36,11 +37,12 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         presenter = new AddProductToStorePresenter(this, userID, storeID);
         makeStoreQuery();
-        productNameField = new TextField("","product name");
-        priceField = new IntegerField("", "price");
-        quantityField = new IntegerField("", "quantity");
-        categoryField = new TextField("","category");
-        descriptionField = new TextField("","description");
+        productNameField = new TextField("product name");
+        priceField = new IntegerField("price");
+        quantityField = new IntegerField("quantity");
+        categoryField = new ComboBox<String>("category");
+        categoryField.setItems(presenter.getCategories());
+        descriptionField = new TextField("description");
         addButton = new Button("Add", event -> {
             presenter.onAddButtonClicked(productNameField.getValue(), priceField.getValue(),
                     quantityField.getValue(), descriptionField.getValue(), categoryField.getValue());
