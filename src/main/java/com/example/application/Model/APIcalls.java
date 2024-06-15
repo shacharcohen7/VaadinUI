@@ -367,7 +367,7 @@ public class APIcalls {
         }
     }
 
-    public static List<ProductDTO> generalProductSearch(String userID, String productName, String categoryStr, List<String> keywords){
+    public static Map<String, ProductDTO> generalProductSearch(String userID, String productName, String categoryStr, List<String> keywords){
         try {
             String url = "http://localhost:8080/api/market/generalProductSearch/{userId}/{productName}/{categoryStr}/{keywords}";  // Absolute URL
 
@@ -379,15 +379,16 @@ public class APIcalls {
             headers.add("accept", "*/*");
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
-            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+            ResponseEntity<APIResponse<Map<String, String>>> response = restTemplate.exchange(uri,  // Use the URI object here
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    new ParameterizedTypeReference<APIResponse<Map<String, String>>>() {
                     });
-            APIResponse<List<String>> responseBody = response.getBody();
-            List<ProductDTO> data = new LinkedList<ProductDTO>();
-            for(int i=0 ; i<responseBody.getData().size() ; i++){
-                data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
+            APIResponse<Map<String, String>> responseBody = response.getBody();
+            Map<String,ProductDTO> data = new HashMap<>(); //<storeid, product>
+            for (Map.Entry<String, String> entry : responseBody.getData().entrySet()) {
+                ProductDTO productDTO = mapper.readValue(entry.getValue(), ProductDTO.class);
+                data.put(entry.getKey(), productDTO); // Assuming the key from the map should be used
             }
             return data;
         } catch (HttpClientErrorException e) {
@@ -850,6 +851,33 @@ public class APIcalls {
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
                     HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static String removeProductFromBasket(String productName, int quantity, String storeId,String userId){
+        try {
+            String url = "http://localhost:8080/api/market/removeProductFromBasket/{productName}/{storeId}/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(productName, quantity, storeId, userId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
                     entity,
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });

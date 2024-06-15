@@ -8,7 +8,10 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -36,7 +39,15 @@ public class ShoppingCartView extends VerticalLayout {
     public void buildView(){
         this.presenter = new ShoppingCartPresenter(this, userID);
         createTopLayout();
-        add(new VerticalLayout(new H1("Shopping Cart")));
+        H1 header = new H1("Shopping Cart");
+        VerticalLayout layout = new VerticalLayout(header);
+        layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
+        // Set spacing and alignment if needed
+        layout.setSpacing(false);
+        layout.setAlignItems(Alignment.CENTER);
+
+        // Add the layout to your UI or another container
+        add(layout);
         cartLayout = new VerticalLayout();
         createCartProductsLayout();
         createSummaryLayout();
@@ -44,11 +55,12 @@ public class ShoppingCartView extends VerticalLayout {
 
     public void createTopLayout(){
         HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
-        Button homeButton = new Button("Home", event -> {
+        Button homeButton = new Button("Home",new Icon(VaadinIcon.HOME), event -> {
             getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
-        Button shoppingCartButton = new Button("Shopping Cart", event -> {
+        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART), event -> {
             getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
@@ -94,23 +106,40 @@ public class ShoppingCartView extends VerticalLayout {
         Map<String, Map<String, List<Integer>>> storeToProductsCart = presenter.getCart().getStoreToProducts();
         for (String storeID : storeToProductsCart.keySet()) {
             VerticalLayout basketLayout = new VerticalLayout();
+            // Set background color and border style using CSS
+            basketLayout.getStyle()
+                    .set("background-color", "#fff0f0") // Light pink background color
+                    .set("border", "2px solid #e91e63"); // Pink border with 1px width
+
+            // Optionally, you can set padding and margin
+            basketLayout.setPadding(true);
+            basketLayout.setMargin(true);
+            basketLayout.setAlignItems(Alignment.CENTER);
+            basketLayout.setJustifyContentMode(JustifyContentMode.CENTER);
             basketLayout.add(new H1(presenter.getStoreName(storeID)));
+
             Map<String, List<Integer>> basket = storeToProductsCart.get(storeID);
             for (String productName : basket.keySet()) {
                 ProductDTO product = presenter.getProduct(productName, storeID);
+                Div productDiv = new Div();
+                productDiv.getStyle()
+                        .set("border", "1px solid #ccc") // Light gray border around each product block
+                        .set("padding", "10px") // Padding inside the product block
+                        .set("margin", "10px 0"); // Margin between product blocks
                 IntegerField quantityField = new IntegerField();
                 quantityField.setLabel("quantity");
                 quantityField.setMin(0);
                 quantityField.setMax(10);
                 quantityField.setValue(basket.get(productName).get(0));
                 quantityField.setStepButtonsVisible(true);
-                basketLayout.add(
-                        new HorizontalLayout(new Text("name: " + productName)),
-                        new HorizontalLayout(new Text("description: " + product.getDescription())),
-                        new HorizontalLayout(new Text("price: " + basket.get(productName).get(1))),
+                productDiv.add(
+                        new HorizontalLayout(new Text("Name: " + productName)),
+                        new HorizontalLayout(new Text("Description: " + product.getDescription())),
+                        new HorizontalLayout(new Text("Price: " + basket.get(productName).get(1))),
                         quantityField,
-                        new Button("Remove from Cart", event -> {presenter.removeProductCart();})
+                        new Button("Remove from Cart", event -> presenter.removeProductCart(productName, quantityField.getValue(), storeID,userID))
                 );
+                basketLayout.add(productDiv);
             }
             cartLayout.add(basketLayout);
         }

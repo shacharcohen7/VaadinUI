@@ -46,11 +46,12 @@ public class ShoppingCartPresenter {
         return APIcalls.getCart(userID);
     }
 
-    public void removeProductCart(){
-        //call removeProductCart()
-        boolean success = MarketModel.removeFromCart();
-        if (success){
-            view.removeProductCartResult("Product was removed from cart");
+    public void removeProductCart(String productName, int quantity, String storeID, String userID){
+        String result = APIcalls.removeProductFromBasket(productName,quantity , storeID,userID);
+        if (result != null && result.contains("success")) {
+            view.removeProductCartResult(result);
+        } else {
+            view.removeProductCartResult(result);
         }
     }
 

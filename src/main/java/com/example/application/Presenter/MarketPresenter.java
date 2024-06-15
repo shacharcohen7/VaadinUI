@@ -68,15 +68,11 @@ public class MarketPresenter {
         }
     }
 
-    public void onAddToCartButtonClicked(ProductDTO product, int quantity){
-        //call AddProductCart()
-        boolean success = MarketModel.addToCart();
-        String message;
-        if (success) {
-            message = "Product was added to cart";
+    public void onAddToCartButtonClicked(ProductDTO product, int quantity, String storeID){
+        if (APIcalls.addProductToBasket(product.getName(), quantity, storeID, userID).contains("success")) {
+            view.addProductCartResult("Product was added to cart");
         } else {
-            message = "Failed adding product to cart";
+            view.addProductCartResult("Failed adding product to cart");
         }
-        view.addProductCartResult(message);
     }
 }
