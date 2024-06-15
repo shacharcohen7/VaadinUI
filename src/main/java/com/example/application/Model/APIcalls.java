@@ -145,6 +145,33 @@ public class APIcalls {
         }
     }
 
+    public static CartDTO getCart(String userID){
+        try {
+            String url = "http://localhost:8080/api/user/getCart/{id}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            return mapper.readValue(responseBody.getData(), CartDTO.class);
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
     public static List<String> getCategories(){
         try {
             String url = "http://localhost:8080/api/market/getCategories";  // Absolute URL
@@ -613,6 +640,36 @@ public class APIcalls {
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, storeName, storeDes)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static String addProductToBasket(String productName, int quantity, String storeID, String userID){
+        try {
+            String url = "http://localhost:8080/api/market/addProductToBasket/{productName}/{quantity}/{storeId}/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(productName, quantity, storeID, userID)
                     .toUri();
 
             HttpHeaders headers = new HttpHeaders();

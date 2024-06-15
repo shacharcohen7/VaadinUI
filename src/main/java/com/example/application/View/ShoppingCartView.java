@@ -91,22 +91,23 @@ public class ShoppingCartView extends VerticalLayout {
     }
 
     public void createCartProductsLayout() {
-        Map<String, Map<Product, Integer>> storeToProductsCart = presenter.getStoreToProductsCart();
+        Map<String, Map<String, List<Integer>>> storeToProductsCart = presenter.getCart().getStoreToProducts();
         for (String storeID : storeToProductsCart.keySet()) {
             VerticalLayout basketLayout = new VerticalLayout();
             basketLayout.add(new H1(presenter.getStoreName(storeID)));
-            Map<Product, Integer> storeProducts = storeToProductsCart.get(storeID);
-            for (Product product : storeProducts.keySet()) {
+            Map<String, List<Integer>> basket = storeToProductsCart.get(storeID);
+            for (String productName : basket.keySet()) {
+                ProductDTO product = presenter.getProduct(productName, storeID);
                 IntegerField quantityField = new IntegerField();
                 quantityField.setLabel("quantity");
                 quantityField.setMin(0);
                 quantityField.setMax(10);
-                quantityField.setValue(storeProducts.get(product));
+                quantityField.setValue(basket.get(productName).get(0));
                 quantityField.setStepButtonsVisible(true);
                 basketLayout.add(
-                        new HorizontalLayout(new Text("name: " + product.getProductName())),
+                        new HorizontalLayout(new Text("name: " + productName)),
                         new HorizontalLayout(new Text("description: " + product.getDescription())),
-                        new HorizontalLayout(new Text("price: " + product.getPrice())),
+                        new HorizontalLayout(new Text("price: " + basket.get(productName).get(1))),
                         quantityField,
                         new Button("Remove from Cart", event -> {presenter.removeProductCart();})
                 );

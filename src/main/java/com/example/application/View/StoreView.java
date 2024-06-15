@@ -157,7 +157,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                     new HorizontalLayout(new Text("price: " + product.getPrice())),
                     quantityField,
                     new Button("Add to Cart", event -> {
-                        presenter.onAddToCartButtonClicked(product, quantityField.getValue());
+                        presenter.onAddToCartButtonClicked(product.getName(), quantityField.getValue());
                     })
             );
         }
@@ -255,7 +255,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                         new HorizontalLayout(new Text("price: " + productDto.getPrice())),
                         quantityField,
                         new Button("Add to Cart", event -> {
-                            presenter.onAddToCartButtonClicked(productDto, quantityField.getValue());
+                            presenter.onAddToCartButtonClicked(productDto.getName(), quantityField.getValue());
                         })
                 );
             }
