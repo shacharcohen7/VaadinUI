@@ -221,8 +221,11 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         VerticalLayout purchaseLayout = new VerticalLayout();
         purchaseLayout.add(new H1("Policies Actions:"),
                 new HorizontalLayout(
-                new Button("Update Discount Policy")
-        ));
+                        new Button("Purchase Policy", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
+                        })
+                )
+        );
         add(purchaseLayout);
     }
 
