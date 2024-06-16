@@ -12,10 +12,6 @@ public class PaymentServiceDTO {
 
     }
 
-    public PaymentServiceDTO(){
-
-    }
-
     public String getLicensedDealerNumber() {
         return licensedDealerNumber;
     }
@@ -24,7 +20,12 @@ public class PaymentServiceDTO {
         return paymentServiceName;
     }
 
+
     public String getUrl() {
         return url;
+    }
+
+    public PaymentServiceDTO(){
+
     }
 }
