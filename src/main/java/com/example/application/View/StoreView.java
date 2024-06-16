@@ -8,7 +8,11 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -58,11 +62,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
     public void createTopLayout(){
         HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
-        Button homeButton = new Button("Home", event -> {
+        Button homeButton = new Button("Home",new Icon(VaadinIcon.HOME), event -> {
             getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
-        Button shoppingCartButton = new Button("Shopping Cart", event -> {
+        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART), event -> {
             getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
@@ -103,41 +108,72 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         add(topLayout);
     }
 
-    public void createSearchLayout(){
-        VerticalLayout searchLayout = new VerticalLayout();
-        searchLayout.add(new Text("Search for product:"));
-        TextField productNameField = new TextField("product name");
-        ComboBox<String> categoryField = new ComboBox<String>("category");
+    public void createSearchLayout() {
+        // Create the main layout
+        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setWidthFull();
+        mainLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        mainLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
+
+        // Add the search text to the main layout
+        Text searchText = new Text("Search for product:");
+        HorizontalLayout searchTextLayout = new HorizontalLayout(searchText);
+        searchTextLayout.setWidthFull();
+        searchTextLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        // Create the search fields
+        TextField productNameField = new TextField("Product name");
+        ComboBox<String> categoryField = new ComboBox<>("Category");
         categoryField.setItems(presenter.getCategories());
-        MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<String>("keywords");
+        MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<>("Keywords");
         keywordsField.setItems("clothes", "shoes", "food", "optic", "electricity", "toys", "health", "sport",
                 "women", "men", "children", "beauty", "travel", "gifts", "office", "coffee", "home");
-        IntegerField minPriceField = new IntegerField("minimum price");
-        IntegerField maxPriceField = new IntegerField("maximum price");
-        Button searchButton = new Button("search", event -> {
+        IntegerField minPriceField = new IntegerField("Minimum price");
+        IntegerField maxPriceField = new IntegerField("Maximum price");
+
+        // Create the search and clear buttons
+        Button searchButton = new Button("Search", event -> {
             presenter.onSearchButtonClicked(productNameField.getValue(), categoryField.getValue(),
-                    keywordsField.getValue(), minPriceField.getValue() != null ? minPriceField.getValue() : null,
+                    keywordsField.getValue(), minPriceField.getValue(),
                     maxPriceField.getValue());
         });
-        Button clearButton = new Button("clear", event -> {
+        searchButton.getStyle().set("background-color", "#e91e63").set("color", "white");
+
+        Button clearButton = new Button("Clear", event -> {
             this.removeAll();
             this.buildView();
         });
+        clearButton.getStyle().set("background-color", "#cccccc").set("color", "white");
+
         productsFoundLayout = new VerticalLayout();
 
-        searchLayout.add(
-                new HorizontalLayout(
-                        productNameField,
-                        categoryField,
-                        keywordsField,
-                        minPriceField,
-                        maxPriceField
-                ),
-                new HorizontalLayout(searchButton, clearButton),
-                productsFoundLayout
+        // Create a horizontal layout for the search fields and buttons
+        HorizontalLayout searchFieldsLayout = new HorizontalLayout(
+                productNameField,
+                categoryField,
+                keywordsField,
+                minPriceField,
+                maxPriceField
         );
-        add(searchLayout);
+        searchFieldsLayout.setWidthFull();
+        searchFieldsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        searchFieldsLayout.setSpacing(true);
+        searchFieldsLayout.setPadding(true);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(searchButton, clearButton);
+        buttonsLayout.setWidthFull();
+        buttonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        buttonsLayout.setSpacing(true);
+        buttonsLayout.setPadding(true);
+
+        // Add all components to the main layout
+        mainLayout.add(searchTextLayout, searchFieldsLayout, buttonsLayout, productsFoundLayout);
+
+        // Add the main layout to the root layout
+        add(mainLayout);
     }
+
+
 
     public void createAllProductsLayout(){
         VerticalLayout allProductsLayout = new VerticalLayout();
@@ -148,7 +184,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             IntegerField quantityField = new IntegerField();
             quantityField.setLabel("quantity");
             quantityField.setMin(0);
-            quantityField.setMax(10);
+            quantityField.setMax(Math.min(10,product.getQuantity()));
             quantityField.setValue(1);
             quantityField.setStepButtonsVisible(true);
             allProductsLayout.add(
@@ -246,7 +282,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                 IntegerField quantityField = new IntegerField();
                 quantityField.setLabel("quantity");
                 quantityField.setMin(0);
-                quantityField.setMax(10);
+                quantityField.setMax(Math.min(10,productDto.getQuantity()));
                 quantityField.setValue(1);
                 quantityField.setStepButtonsVisible(true);
                 productsFoundLayout.add(

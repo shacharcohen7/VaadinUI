@@ -15,10 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class APIcalls {
     static RestTemplate restTemplate = new RestTemplate();;
@@ -367,7 +364,7 @@ public class APIcalls {
         }
     }
 
-    public static List<ProductDTO> generalProductSearch(String userID, String productName, String categoryStr, List<String> keywords){
+    public static Map<String, List<ProductDTO>> generalProductSearch(String userID, String productName, String categoryStr, List<String> keywords){
         try {
             String url = "http://localhost:8080/api/market/generalProductSearch/{userId}/{productName}/{categoryStr}/{keywords}";  // Absolute URL
 
@@ -379,15 +376,20 @@ public class APIcalls {
             headers.add("accept", "*/*");
             HttpEntity<String> entity = new HttpEntity<String>(headers);
 
-            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+            ResponseEntity<APIResponse<Map<String, List<String>>>> response = restTemplate.exchange(uri,  // Use the URI object here
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    new ParameterizedTypeReference<APIResponse<Map<String, List<String>>>>() {
                     });
-            APIResponse<List<String>> responseBody = response.getBody();
-            List<ProductDTO> data = new LinkedList<ProductDTO>();
-            for(int i=0 ; i<responseBody.getData().size() ; i++){
-                data.add(mapper.readValue(responseBody.getData().get(i), ProductDTO.class));
+            APIResponse<Map<String, List<String>>> responseBody = response.getBody();
+            Map<String,List<ProductDTO>> data = new HashMap<>(); //<storeid, list<product>>
+            for (Map.Entry<String, List<String>> entry : responseBody.getData().entrySet()) {
+                List<ProductDTO> productsDTOs = new ArrayList<>();
+                for (String productJson : entry.getValue()) {
+                    ProductDTO productDTO = mapper.readValue(productJson, ProductDTO.class);
+                    productsDTOs.add(productDTO);
+                }
+                data.put(entry.getKey(), productsDTOs);
             }
             return data;
         } catch (HttpClientErrorException e) {
@@ -862,6 +864,129 @@ public class APIcalls {
             return null;
         }
     }
+
+    public static String removeProductFromBasket(String productName, String storeId,String userId){
+        try {
+            String url = "http://localhost:8080/api/market/removeProductFromBasket/{productName}/{storeId}/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(productName, storeId, userId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static String modifyShoppingCart(String productName, int quantity,String storeId,String userId){
+        try {
+            String url = "http://localhost:8080/api/market/modifyShoppingCart/{productName}/{quantity}/{storeId}/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(productName, quantity,storeId, userId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static CartDTO getCartAfterValidation(String userID){
+        try {
+            String url = "http://localhost:8080/api/user/getCart/{id}";  // Absolute URL todo change this according nadav
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            return mapper.readValue(responseBody.getData(), CartDTO.class);
+        }
+         catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    //todo change this after nadav doing the function.
+    public static String purchase(UserDTO userDTO, PaymentDTO paymentDTO,CartDTO cartDTO){
+        try {
+            String url = "http://localhost:8080/api/market//purchase";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url).queryParam("userDTO", mapper.writeValueAsString(userDTO))
+                    .queryParam("paymentDTO", mapper.writeValueAsString(paymentDTO))
+                    .queryParam("cartDTO", mapper.writeValueAsString(cartDTO)).build().toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        } catch (HttpClientErrorException e) {
+            // Extract error message from the response body
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An error occurred.";
+        }
+    }
+
+
 
     private static String extractErrorMessageFromJson(String json) {
         try {

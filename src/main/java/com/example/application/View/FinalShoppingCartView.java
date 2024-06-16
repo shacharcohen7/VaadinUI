@@ -1,111 +1,65 @@
 package com.example.application.View;
 
-import com.example.application.Model.Product;
+import com.example.application.Presenter.FinalShoppingCartPresenter;
 import com.example.application.Presenter.ShoppingCartPresenter;
-import com.example.application.Presenter.StorePresenter;
+import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
-@Route("ShoppingCartView")
-public class ShoppingCartView extends VerticalLayout {
-    private ShoppingCartPresenter presenter;
+@Route("FinalShoppingCartView")
+public class FinalShoppingCartView extends VerticalLayout{
+    private FinalShoppingCartPresenter presenter;
     private String userID;
     private VerticalLayout cartLayout;
     private VerticalLayout paymentLayout;
+    private AtomicInteger remainingTime = new AtomicInteger(15); // 15 seconds
+    private TextField timerField;
+    private Button confirmAndPayButton;
+    private Button cancelButton;
 
-    public ShoppingCartView(){
+    public FinalShoppingCartView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         buildView();
     }
 
     public void buildView(){
-        this.presenter = new ShoppingCartPresenter(this, userID);
-        createTopLayout();
-        H1 header = new H1("Shopping Cart");
-        VerticalLayout layout = new VerticalLayout(header);
+        this.presenter = new FinalShoppingCartPresenter(this, userID);
+        H1 header = new H1("Final Shopping Cart");
+
+        // Timer field under the title
+        timerField = new TextField("Time Remaining");
+        timerField.setReadOnly(true);
+        timerField.setWidth("150px");
+
+        VerticalLayout layout = new VerticalLayout(header, timerField);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
-        // Set spacing and alignment if needed
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
-
-        // Add the layout to your UI or another container
         add(layout);
+
         cartLayout = new VerticalLayout();
         createCartProductsLayout();
         createSummaryLayout();
     }
 
-    public void createTopLayout(){
-        HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
-        Text helloMessage = new Text("Hello, " + presenter.getUserName());
-        Button homeButton = new Button("Home",new Icon(VaadinIcon.HOME), event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView"));
-        });
-        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART), event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
-        });
-        topLayout.add(helloMessage, homeButton, shoppingCartButton);
-        if(!presenter.isMember()){
-            Button loginButton = new Button("Log In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("LoginView"));
-            });
-            Button signInButton = new Button("Sign In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("SignInView"));
-            });
-            topLayout.add(loginButton, signInButton);
-        }
-        else{
-            Button openStoreButton = new Button("Open new Store", event -> {
-                getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
-            });
-            Button criticismButton = new Button("Write Criticism", event -> {
-
-            });
-            Button ratingButton = new Button("Rate us", event -> {
-
-            });
-            Button contactButton = new Button("Contact us", event -> {
-
-            });
-            Button historyButton = new Button("History", event -> {
-
-            });
-            Button myProfileButton = new Button("My Profile", event -> {
-                getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
-            });
-            Button logoutButton = new Button("Log Out", event -> {
-                logoutConfirm();
-            });
-
-            topLayout.add(openStoreButton, criticismButton,
-                    ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
-        }
-        add(topLayout);
-    }
-
     public void createCartProductsLayout() {
-        Map<String, Map<String, List<Integer>>> storeToProductsCart = presenter.getCart().getStoreToProducts();
+        Map<String, Map<String, List<Integer>>> storeToProductsCart = presenter.getFinalCart().getStoreToProducts();
         for (String storeID : storeToProductsCart.keySet()) {
             VerticalLayout basketLayout = new VerticalLayout();
             // Set background color and border style using CSS
@@ -174,13 +128,7 @@ public class ShoppingCartView extends VerticalLayout {
                 quantityField.setValue(basket.get(productName).get(0));
                 quantityField.setStepButtonsVisible(true);
 
-                Button modifyButton = new Button("Modify Quantity", event -> presenter.modifyProductCart(productName, quantityField.getValue(), storeID, userID));
-                modifyButton.getStyle().set("background-color", "#e91e63").set("color", "white");
-
-                Button removeButton = new Button("Remove from Cart", event -> presenter.removeProductCart(productName, storeID, userID));
-                removeButton.getStyle().set("background-color", "#e91e63").set("color", "white");
-
-                productLayout.add(productNameSpan, productDescriptionSpan, productPriceSpan, quantityField, modifyButton, removeButton);
+                productLayout.add(productNameSpan, productDescriptionSpan, productPriceSpan, quantityField);
                 currentRow.add(productLayout);
                 currentColumn++;
             }
@@ -193,26 +141,68 @@ public class ShoppingCartView extends VerticalLayout {
         add(cartLayout);
     }
 
-
-
-    public void createSummaryLayout(){
+    public void createSummaryLayout() {
         VerticalLayout summaryLayout = new VerticalLayout();
         summaryLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
-        summaryLayout.add(new H1("Total price: " + presenter.getTotalPrice()));
-        paymentLayout = new VerticalLayout();
-        paymentLayout = new VerticalLayout();
-        Button continueToPaymentButton = new Button("Continue to Payment", event -> {
-            // Pass any necessary parameters when navigating
-            getUI().ifPresent(ui -> ui.navigate("FinalShoppingCartView"));
-        });
-        paymentLayout.add(continueToPaymentButton);
-        summaryLayout.add(paymentLayout);
+
+        double totalPrice = presenter.getTotalPrice(); // Assuming presenter has a method to get the total price
+        summaryLayout.add(new H1("Total price: " + totalPrice));
+
+        confirmAndPayButton = new Button("Confirm and Pay", event -> {revealPaymentLayout();});
+        cancelButton = new Button("Cancel", event -> cancelCart());
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(confirmAndPayButton, cancelButton);
+        summaryLayout.add(buttonLayout);
         add(summaryLayout);
+
+        startCountdown();
     }
+
+    private void startCountdown() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (remainingTime.get() > 0) {
+                    remainingTime.decrementAndGet();
+                    getUI().ifPresent(ui -> ui.access(() -> timerField.setValue(formatTime(remainingTime.get()))));
+                } else {
+                    getUI().ifPresent(ui -> ui.access(() -> {
+                        timerField.setValue("Time expired!");
+                        timer.cancel();
+                        confirmAndPayButton.setEnabled(false);
+                        cancelCart();
+                    }));
+                }
+            }
+        }, 0, 1000);
+    }
+
+    private String formatTime(int seconds) {
+        int minutes = seconds / 60;
+        int secs = seconds % 60;
+        return String.format("%02d:%02d", minutes, secs);
+    }
+
+//    private void performPayment() {
+//        try {
+//            presenter.onSubmitButtonClicked(); // Assuming the presenter has a method to handle the purchase
+//            Notification.show("Payment Successful", 3000, Notification.Position.MIDDLE);
+//            getUI().ifPresent(ui -> ui.navigate("MarketView"));
+//        } catch (Exception e) {
+//            Notification.show("Payment Failed: " + e.getMessage(), 3000, Notification.Position.MIDDLE);
+//        }
+//    }
+
+    private void cancelCart() {
+        Notification.show("Payment Cancelled", 3000, Notification.Position.MIDDLE);
+        getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
+    }
+
 
     public void revealPaymentLayout(){
         paymentLayout.removeAll();
-        IntegerField holderIDField = new IntegerField("holder ID");
+        TextField holderIDField = new TextField("holder ID");
         TextField creditCardField = new TextField("credit card");
         ComboBox<Integer> yearComboBox = new ComboBox<Integer>("year");
         yearComboBox.setItems(2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032);
@@ -225,7 +215,7 @@ public class ShoppingCartView extends VerticalLayout {
                 new HorizontalLayout(monthComboBox, yearComboBox, cvvField),
                 new HorizontalLayout(
                         new Button("Submit", event -> {
-                            presenter.onSubmitButtonClicked(presenter.getTotalPrice(), creditCardField.getValue(),
+                            presenter.onSubmitButtonClicked(creditCardField.getValue(),
                                     cvvField.getValue(), monthComboBox.getValue(), yearComboBox.getValue(),
                                     holderIDField.getValue());
                         }),
@@ -237,39 +227,11 @@ public class ShoppingCartView extends VerticalLayout {
         );
     }
 
-    public void paymentFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-    public void paymentSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
-    }
-
-    public void removeProductCartResult(String message){
+    public void paymentResult(String message){
         Notification.show(message, 3000, Notification.Position.MIDDLE);
         this.removeAll();
         buildView();
     }
 
-    public void modifyProductCartResult(String message){
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        this.removeAll();
-        buildView();
-    }
 
-    public void logoutConfirm(){
-        ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Logout");
-        dialog.setText("Are you sure you want to log out?");
-        dialog.setCancelable(true);
-        dialog.addCancelListener(event -> dialog.close());
-        dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> presenter.logOut());
-        dialog.open();
-    }
-
-    public void logout(){
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
-    }
 }

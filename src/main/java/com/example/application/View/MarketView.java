@@ -11,8 +11,12 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -39,7 +43,15 @@ public class MarketView extends VerticalLayout {
     public void buildView(){
         presenter = new MarketPresenter(this, userID);
         createTopLayout();
-        add(new VerticalLayout(new H1("Welcome to The Market Place!")));
+        H1 header = new H1("Welcome to The Market Place!");
+        VerticalLayout layout = new VerticalLayout(header);
+        layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
+        // Set spacing and alignment if needed
+        layout.setSpacing(false);
+        layout.setAlignItems(Alignment.CENTER);
+
+        // Add the layout to your UI or another container
+        add(layout);
         createSearchLayout();
         createAllStoresLayout();
         if(presenter.isAdmin()){
@@ -49,11 +61,12 @@ public class MarketView extends VerticalLayout {
 
     public void createTopLayout(){
         HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
-        Button homeButton = new Button("Home");
-        Button shoppingCartButton = new Button("Shopping Cart", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
-        });
+        Button homeButton = new Button("Home", new Icon(VaadinIcon.HOME));
+        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART),
+                event -> getUI().ifPresent(ui -> ui.navigate("ShoppingCartView")));
+
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
         if(!presenter.isMember()){
             Button loginButton = new Button("Log In", event -> {
@@ -93,47 +106,81 @@ public class MarketView extends VerticalLayout {
     }
 
     public void createSearchLayout(){
-        VerticalLayout searchLayout = new VerticalLayout();
-        searchLayout.add(new Text("Search for product:"));
-        TextField productNameField = new TextField("product name");
-        ComboBox<String> categoryField = new ComboBox<String>("category");
+        // Create the main layout
+        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setWidthFull();
+        mainLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        mainLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
+
+
+        // Create the logo
+        Image logo = new Image("/logo.png", "Logo");
+        logo.setWidth("350px"); // Set appropriate size for the logo
+        logo.setHeight("200px");
+
+        // Add the logo to a centered horizontal layout
+        HorizontalLayout logoLayout = new HorizontalLayout(logo);
+        logoLayout.setWidthFull();
+        logoLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        // Add the search text to the main layout
+        Text searchText = new Text("Search for product:");
+        HorizontalLayout searchTextLayout = new HorizontalLayout(searchText);
+        searchTextLayout.setWidthFull();
+        searchTextLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        // Create the search fields
+        TextField productNameField = new TextField("Product name");
+        ComboBox<String> categoryField = new ComboBox<>("Category");
         categoryField.setItems(presenter.getCategories());
-        MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<String>("keywords");
+        MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<>("Keywords");
         keywordsField.setItems("clothes", "shoes", "food", "optic", "electricity", "toys", "health", "sport",
                 "women", "men", "children", "beauty", "travel", "gifts", "office", "coffee", "home");
-        IntegerField minPriceField = new IntegerField("minimum price");
-        IntegerField maxPriceField = new IntegerField("maximum price");
-        IntegerField minStoreRatingField = new IntegerField("minimum store rating");
-        Button searchButton = new Button("search", event -> {
+        IntegerField minPriceField = new IntegerField("Minimum price");
+        IntegerField maxPriceField = new IntegerField("Maximum price");
+        IntegerField minStoreRatingField = new IntegerField("Minimum store rating");
+
+        // Create the search and clear buttons
+        Button searchButton = new Button("Search", event -> {
             presenter.onSearchButtonClicked(productNameField.getValue(), categoryField.getValue(),
                     keywordsField.getValue(), minPriceField.getValue(),
                     maxPriceField.getValue(), minStoreRatingField.getValue());
         });
 
-
-        Button clearButton = new Button("clear", event -> {
+        Button clearButton = new Button("Clear", event -> {
             this.removeAll();
             this.buildView();
         });
+
         productsFoundLayout = new VerticalLayout();
 
-        searchLayout.add(
-                new HorizontalLayout(
-                        productNameField,
-                        categoryField,
-                        keywordsField,
-                        minPriceField,
-                        maxPriceField,
-                        minStoreRatingField
-                ),
-                new HorizontalLayout(searchButton, clearButton),
-                productsFoundLayout
+        // Create a horizontal layout for the search fields and buttons
+        HorizontalLayout searchFieldsLayout = new HorizontalLayout(
+                productNameField,
+                categoryField,
+                keywordsField,
+                minPriceField,
+                maxPriceField,
+                minStoreRatingField
         );
-        add(searchLayout);
+        searchFieldsLayout.setWidthFull();
+        searchFieldsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(searchButton, clearButton);
+        buttonsLayout.setWidthFull();
+        buttonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        // Add all components to the main layout
+        mainLayout.add(logoLayout, searchTextLayout, searchFieldsLayout, buttonsLayout, productsFoundLayout);
+
+        // Add the main layout to the root layout
+        add(mainLayout);
     }
+
 
     public void createAllStoresLayout(){
         VerticalLayout storesLayout = new VerticalLayout();
+        storesLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         storesLayout.add(new H1("All Stores:"));
         List<StoreDTO> allStoresDtos = presenter.getAllStores();
         HorizontalLayout storeNamesLayout = new HorizontalLayout();
@@ -176,30 +223,37 @@ public class MarketView extends VerticalLayout {
         getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
     }
 
-    public void showGeneralSearchResult(List<ProductDTO> productsFound){
+    public void showGeneralSearchResult(Map<String,List<ProductDTO>> productsFound){
         productsFoundLayout.removeAll();
         if (productsFound == null || productsFound.isEmpty()) {
             productsFoundLayout.add(new H1("No products found."));
         } else {
             productsFoundLayout.add(new H1("Search results:"));
 
-            for (ProductDTO product : productsFound) {
-                IntegerField quantityField = new IntegerField();
-                quantityField.setLabel("quantity");
-                quantityField.setMin(0);
-                quantityField.setMax(10);
-                quantityField.setValue(1);
-                quantityField.setStepButtonsVisible(true);
+            for (Map.Entry<String, List<ProductDTO>> entry : productsFound.entrySet()) {
+                String storeId = entry.getKey(); // Assuming the key is the store ID
+                String storeName = presenter.getStoreName(storeId);
+                for (int i=0; i<entry.getValue().size(); i++) {
+                    ProductDTO product = entry.getValue().get(i);
 
-                productsFoundLayout.add(
-                        new HorizontalLayout(new Text("name: " + product.getName())),
-                        new HorizontalLayout(new Text("description: " + product.getDescription())),
-                        new HorizontalLayout(new Text("price: " + product.getPrice())),
-                        quantityField,
-                        new Button("Add to Cart", event -> {
-                            presenter.onAddToCartButtonClicked(product, quantityField.getValue());
-                        })
-                );
+                    IntegerField quantityField = new IntegerField();
+                    quantityField.setLabel("quantity");
+                    quantityField.setMin(0);
+                    quantityField.setMax(Math.min(10,product.getQuantity()));
+                    quantityField.setValue(1);
+                    quantityField.setStepButtonsVisible(true);
+
+                    productsFoundLayout.add(
+                            new HorizontalLayout(new Text("store: " + storeName)),
+                            new HorizontalLayout(new Text("name: " + product.getName())),
+                            new HorizontalLayout(new Text("description: " + product.getDescription())),
+                            new HorizontalLayout(new Text("price: " + product.getPrice())),
+                            quantityField,
+                            new Button("Add to Cart", event -> {
+                                presenter.onAddToCartButtonClicked(product, quantityField.getValue(), storeId);
+                            })
+                    );
+                }
             }
         }
     }

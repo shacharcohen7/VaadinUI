@@ -31,20 +31,53 @@ public class LoginView extends VerticalLayout {
 
     public void buildView(){
         presenter = new LoginPresenter(this, userID);
-        userNameField = new TextField("", "username");
-        passwordField = new PasswordField("", "password");
+
+        userNameField = new TextField();
+        userNameField.setPlaceholder("Username");
+        userNameField.setWidth("300px");
+        userNameField.getStyle().set("margin-bottom", "10px");
+
+        passwordField = new PasswordField();
+        passwordField.setPlaceholder("Password");
+        passwordField.setWidth("300px");
+        passwordField.getStyle().set("margin-bottom", "20px");
+        //userNameField = new TextField("", "username");
+        //passwordField = new PasswordField("", "password");
         loginButton = new Button("Login", event -> {
             presenter.onLoginButtonClicked(userNameField.getValue(), passwordField.getValue());
         });
+        loginButton.getStyle().set("background-color", "#e91e63").set("color", "white");
+        loginButton.setWidth("140px");
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
-        add(
+        cancelButton.getStyle().set("background-color", "#cccccc").set("color", "white");
+        cancelButton.setWidth("140px");
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(loginButton, cancelButton);
+        buttonsLayout.setSpacing(true);
+        buttonsLayout.setPadding(true);
+        VerticalLayout loginFormLayout = new VerticalLayout();
+        loginFormLayout.setAlignItems(Alignment.CENTER);
+        loginFormLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        loginFormLayout.getStyle().set("background-color", "#fff0f0").set("border-radius", "10px")
+                .set("padding", "40px").set("box-shadow", "2px 2px 12px rgba(0, 0, 0, 0.1)");
+        loginFormLayout.add(
                 new H1("Log In"),
                 userNameField,
                 passwordField,
-                new HorizontalLayout(loginButton, cancelButton)
+                buttonsLayout
         );
+
+        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setSizeFull();
+        mainLayout.setAlignItems(Alignment.CENTER);
+        mainLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        mainLayout.add(loginFormLayout);
+
+        // Add the main layout to the view
+        add(mainLayout);
+
     }
 
     public void loginFailure(String message) {
