@@ -79,10 +79,11 @@ public class StorePresenter {
     }
 
     public void onAddToCartButtonClicked(String productName, int quantity){
-        if (APIcalls.addProductToBasket(productName, quantity, storeID, userID).contains("success")) {
-            view.addProductCartResult("Product was added to cart");
+        String result = APIcalls.addProductToBasket(productName, quantity, storeID, userID);
+        if (result.contains("success")) {
+            view.addProductCartResult(result);
         } else {
-            view.addProductCartResult("Failed adding product to cart");
+            view.addProductCartResult(result);
         }
     }
 

@@ -46,12 +46,21 @@ public class ShoppingCartPresenter {
         return APIcalls.getCart(userID);
     }
 
-    public void removeProductCart(String productName, int quantity, String storeID, String userID){
-        String result = APIcalls.removeProductFromBasket(productName,quantity , storeID,userID);
+    public void removeProductCart(String productName, String storeID, String userID){
+        String result = APIcalls.removeProductFromBasket(productName , storeID,userID);
         if (result != null && result.contains("success")) {
             view.removeProductCartResult(result);
         } else {
             view.removeProductCartResult(result);
+        }
+    }
+
+    public void modifyProductCart(String productName, int quantity,String storeID, String userID){
+        String result = APIcalls.modifyShoppingCart(productName ,quantity, storeID,userID);
+        if (result != null && result.contains("success")) {
+            view.modifyProductCartResult(result);
+        } else {
+            view.modifyProductCartResult(result);
         }
     }
 
@@ -72,8 +81,8 @@ public class ShoppingCartPresenter {
     }
 
     public int getTotalPrice(){
-        //call getTotalPrice()
-        return MarketModel.getTotalPrice();
+        int price = APIcalls.getCart(userID).getCartPrice();
+        return price;
     }
 
     public void onSubmitButtonClicked(int price, String creditCard, int cvv, int month, int year, int holderID) {

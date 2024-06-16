@@ -223,35 +223,37 @@ public class MarketView extends VerticalLayout {
         getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
     }
 
-    public void showGeneralSearchResult(Map<String,ProductDTO> productsFound){
+    public void showGeneralSearchResult(Map<String,List<ProductDTO>> productsFound){
         productsFoundLayout.removeAll();
         if (productsFound == null || productsFound.isEmpty()) {
             productsFoundLayout.add(new H1("No products found."));
         } else {
             productsFoundLayout.add(new H1("Search results:"));
 
-            for (Map.Entry<String, ProductDTO> entry : productsFound.entrySet()) {
+            for (Map.Entry<String, List<ProductDTO>> entry : productsFound.entrySet()) {
                 String storeId = entry.getKey(); // Assuming the key is the store ID
                 String storeName = presenter.getStoreName(storeId);
-                ProductDTO product = entry.getValue();
+                for (int i=0; i<entry.getValue().size(); i++) {
+                    ProductDTO product = entry.getValue().get(i);
 
-                IntegerField quantityField = new IntegerField();
-                quantityField.setLabel("quantity");
-                quantityField.setMin(0);
-                quantityField.setMax(10);
-                quantityField.setValue(1);
-                quantityField.setStepButtonsVisible(true);
+                    IntegerField quantityField = new IntegerField();
+                    quantityField.setLabel("quantity");
+                    quantityField.setMin(0);
+                    quantityField.setMax(Math.min(10,product.getQuantity()));
+                    quantityField.setValue(1);
+                    quantityField.setStepButtonsVisible(true);
 
-                productsFoundLayout.add(
-                        new HorizontalLayout(new Text("store: " + storeName)),
-                        new HorizontalLayout(new Text("name: " + product.getName())),
-                        new HorizontalLayout(new Text("description: " + product.getDescription())),
-                        new HorizontalLayout(new Text("price: " + product.getPrice())),
-                        quantityField,
-                        new Button("Add to Cart", event -> {
-                            presenter.onAddToCartButtonClicked(product, quantityField.getValue(), storeId);
-                        })
-                );
+                    productsFoundLayout.add(
+                            new HorizontalLayout(new Text("store: " + storeName)),
+                            new HorizontalLayout(new Text("name: " + product.getName())),
+                            new HorizontalLayout(new Text("description: " + product.getDescription())),
+                            new HorizontalLayout(new Text("price: " + product.getPrice())),
+                            quantityField,
+                            new Button("Add to Cart", event -> {
+                                presenter.onAddToCartButtonClicked(product, quantityField.getValue(), storeId);
+                            })
+                    );
+                }
             }
         }
     }
