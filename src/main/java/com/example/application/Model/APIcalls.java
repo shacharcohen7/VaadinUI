@@ -54,6 +54,62 @@ public class APIcalls {
         return "notFound";
     }
 
+    public static String init(UserDTO userDTO, String password, PaymentServiceDTO paymentServiceDTO, SupplyServiceDTO supplyServiceDTO) {
+        try {
+            String url = "http://localhost:8080/api/market/init";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .queryParam("userDTO", mapper.writeValueAsString(userDTO))
+                    .queryParam("password", password)
+                    .queryParam("paymentServiceDTO", mapper.writeValueAsString(paymentServiceDTO))
+                    .queryParam("supplyServiceDTO", mapper.writeValueAsString(supplyServiceDTO))
+                    .build().toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        } catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static boolean checkInitializedMarket(){
+        try {
+            String url = "http://localhost:8080/api/market/checkInitializedMarket";  // Absolute URL
+
+            URI uri = new URI(url);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<Boolean>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<Boolean>>() {
+                    });
+            APIResponse<Boolean> responseBody = response.getBody();
+            Boolean data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return false;
+        }
+    }
+
     public static boolean isMember(String userID){
         try {
             String url = "http://localhost:8080/api/member/isMember/{userId}";  // Absolute URL
