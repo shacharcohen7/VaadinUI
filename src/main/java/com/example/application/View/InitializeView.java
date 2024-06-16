@@ -69,13 +69,8 @@ public class InitializeView extends VerticalLayout {
                             countryField.getValue(), cityField.getValue(), addressField.getValue(), nameField.getValue());
                     PaymentServiceDTO paymentServiceDTO = new PaymentServiceDTO(paymentDealerNumberField.getValue(),
                             paymentServiceNameField.getValue(), urlField.getValue());
-                    HashSet<String> countriesSet = new HashSet<String>();
-                    countriesSet.add(countries.getValue());
-                    HashSet<String> citiesSet = new HashSet<String>();
-                    citiesSet.add(cities.getValue());
-                    SupplyServiceDTO supplyServiceDTO = new SupplyServiceDTO(supplyDealerNumberField.getValue(),
-                            supplyServiceName.getValue(), countriesSet, citiesSet);
-                    presenter.onInitializeButtonClicked(userDTO, passwordField.getValue(), paymentServiceDTO, supplyServiceDTO);
+                    presenter.onInitializeButtonClicked(userDTO, passwordField.getValue(), paymentServiceDTO, supplyDealerNumberField.getValue(),
+                            supplyServiceName.getValue(), countries.getValue(), cities.getValue());
                 })
         );
     }
