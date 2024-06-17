@@ -9,6 +9,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -59,7 +60,7 @@ public class InitializeView extends VerticalLayout {
         paymentServiceLayout.add(paymentDealerNumberField, paymentServiceNameField, urlField);
 
         VerticalLayout supplyServiceLayout = new VerticalLayout();
-        paymentServiceLayout.add(new H1("Payment Service:"));
+        paymentServiceLayout.add(new H1("Supply Service:"));
         TextField supplyDealerNumberField = new TextField("licensed dealer number");
         TextField supplyServiceName = new TextField("supply service name");
         TextField countries = new TextField("countries");
@@ -77,5 +78,14 @@ public class InitializeView extends VerticalLayout {
                             supplyServiceName.getValue(), countries.getValue(), cities.getValue());
                 })
         );
+    }
+
+    public void initializeFailed(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void initializeSuccess(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
     }
 }

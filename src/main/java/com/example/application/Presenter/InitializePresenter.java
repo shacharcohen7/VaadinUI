@@ -32,7 +32,10 @@ public class InitializePresenter {
                 countriesSet, citiesSet);
         if (data !=null && data.contains("user")){
             VaadinSession.getCurrent().setAttribute("userID", data);;
-            view.startMarket();
+            view.initializeSuccess("Market was initialized successfully");
+        }
+        else{
+            view.initializeFailed("Initialized failed");
         }
     }
 }
