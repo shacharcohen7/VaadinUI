@@ -34,6 +34,10 @@ public class InitializeView extends VerticalLayout {
         UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("StartSessionView")));
     }
 
+    public void startMarket(){
+        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+    }
+
     public void buildView(){
         VerticalLayout userLayout = new VerticalLayout();
         userLayout.add(new H1("User Details:"));

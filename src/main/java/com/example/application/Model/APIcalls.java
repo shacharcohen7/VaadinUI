@@ -58,14 +58,14 @@ public class APIcalls {
                               String supplyDealerNumberField, String supplyServiceName,
                               String countriesSet, String citiesSet) {
         try {
-            String url = "http://localhost:8080/api/market/init";  // Absolute URL
+            String url = "http://localhost:8080/api/market/initiate";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .queryParam("userDTO", mapper.writeValueAsString(userDTO))
                     .queryParam("password", password)
                     .queryParam("paymentServiceDTO", mapper.writeValueAsString(paymentServiceDTO))
                     .queryParam("supplyDealerNumberField", supplyDealerNumberField)
-                    .queryParam("supplyServiceName", supplyDealerNumberField)
+                    .queryParam("supplyServiceName", supplyServiceName)
                     .queryParam("countriesSet", countriesSet)
                     .queryParam("citiesSet", citiesSet)
                     .build().toUri();
@@ -84,7 +84,7 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         } catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
