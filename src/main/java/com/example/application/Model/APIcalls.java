@@ -981,13 +981,12 @@ public class APIcalls {
         }
     }
 
-    public static CartDTO getCartAfterValidation(String userID){
+    public static CartDTO getCartAfterValidation(String userID, UserDTO userDTO){
         try {
-            String url = "http://localhost:8080/api/user/getCart/{id}";  // Absolute URL todo change this according nadav
+            String url = "http://localhost:8080/api/market/getCartAfterValidation";  // Absolute URL todo change this according nadav
 
-            URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(userID)
-                    .toUri();
+            URI uri = UriComponentsBuilder.fromUriString(url).queryParam("userID", userID)
+                    .queryParam("userDTO", mapper.writeValueAsString(userDTO)).build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");

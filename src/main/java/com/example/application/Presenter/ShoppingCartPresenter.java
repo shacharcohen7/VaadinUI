@@ -85,6 +85,14 @@ public class ShoppingCartPresenter {
         return price;
     }
 
+    public void purchase(){
+        try {
+            CartDTO success = APIcalls.getCartAfterValidation(userID, APIcalls.getUser(userID));
+        } catch (Exception e) {
+            view.paymentSuccess(e.getMessage());
+        }
+    }
+
     public void onSubmitButtonClicked(int price, String creditCard, int cvv, int month, int year, int holderID) {
         //call payWithExternalPaymentService()
         boolean success = true;

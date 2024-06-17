@@ -195,15 +195,28 @@ public class ShoppingCartView extends VerticalLayout {
 
 
 
-    public void createSummaryLayout(){
+    public void createSummaryLayout() {
         VerticalLayout summaryLayout = new VerticalLayout();
         summaryLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         summaryLayout.add(new H1("Total price: " + presenter.getTotalPrice()));
-        paymentLayout = new VerticalLayout();
+
         paymentLayout = new VerticalLayout();
         Button continueToPaymentButton = new Button("Continue to Payment", event -> {
-            // Pass any necessary parameters when navigating
-            getUI().ifPresent(ui -> ui.navigate("FinalShoppingCartView"));
+            // Call the purchase function from the presenter
+            try {
+                presenter.purchase();
+                // If the purchase is successful, navigate to the FinalCartView
+                getUI().ifPresent(ui -> {
+                    try {
+                        ui.navigate("FinalCartView");
+                    } catch (Exception e) {
+                        Notification.show("Navigation to FinalCartView failed: " + e.getMessage(), 3000, Notification.Position.MIDDLE);
+                    }
+                });
+            } catch (Exception e) {
+                // Handle any errors during the purchase
+                Notification.show("Purchase failed: " + e.getMessage(), 3000, Notification.Position.MIDDLE);
+            }
         });
         paymentLayout.add(continueToPaymentButton);
         summaryLayout.add(paymentLayout);
