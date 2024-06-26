@@ -148,8 +148,9 @@ public class FinalShoppingCartView extends VerticalLayout{
         double totalPrice = presenter.getTotalPrice(); // Assuming presenter has a method to get the total price
         summaryLayout.add(new H1("Total price: " + totalPrice));
 
-        confirmAndPayButton = new Button("Confirm and Pay", event -> {revealPaymentLayout();});
-        cancelButton = new Button("Cancel", event -> cancelCart());
+        confirmAndPayButton = new Button("Confirm and Pay", event -> {
+            getUI().ifPresent(ui -> ui.navigate("PaymentView"));
+        });        cancelButton = new Button("Cancel", event -> cancelCart());
 
         HorizontalLayout buttonLayout = new HorizontalLayout(confirmAndPayButton, cancelButton);
         summaryLayout.add(buttonLayout);

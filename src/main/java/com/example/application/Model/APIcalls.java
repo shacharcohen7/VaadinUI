@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -1070,9 +1067,39 @@ public class APIcalls {
         }
     }
 
+    public static String setUserConfirmationPurchase(String userId){
+        try {
+            String url = "http://localhost:8080/api/market/setUserConfirmationPurchase/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
     public static CartDTO getCartAfterValidation(String userID){
         try {
-            String url = "http://localhost:8080/api/user/getCart/{id}";  // Absolute URL todo change this according nadav
+            String url = "http://localhost:8080/api/user/getCart/{id}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID)
@@ -1100,38 +1127,69 @@ public class APIcalls {
         }
     }
 
-    //todo change this after nadav doing the function.
-    public static String purchase(UserDTO userDTO, PaymentDTO paymentDTO,CartDTO cartDTO){
-        try {
-            String url = "http://localhost:8080/api/market//purchase";  // Absolute URL
+//    public static String purchase(UserDTO userDTO, PaymentDTO paymentDTO,CartDTO cartDTO){
+//        try {
+//            String url = "http://localhost:8080/api/market/purchase";  // Absolute URL
+//
+//            URI uri = UriComponentsBuilder.fromUriString(url)
+//                    .queryParam("userDTO", mapper.writeValueAsString(userDTO))
+//                    .queryParam("paymentDTO", mapper.writeValueAsString(paymentDTO))
+//                    .queryParam("cartDTO", mapper.writeValueAsString(cartDTO))
+//                    .build().toUri();
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("accept", "*/*");
+//            HttpEntity<String> entity = new HttpEntity<String>(headers);
+//
+//            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+//                    uri,  // Use the URI object here
+//                    HttpMethod.POST,
+//                    entity,
+//                    new ParameterizedTypeReference<APIResponse<String>>() {
+//                    });
+//            APIResponse<String> responseBody = response.getBody();
+//            String data = responseBody.getData();
+//            return data;
+//        } catch (HttpClientErrorException e) {
+//            // Extract error message from the response body
+//            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "An error occurred.";
+//        }
+//    }
 
-            URI uri = UriComponentsBuilder.fromUriString(url).queryParam("userDTO", mapper.writeValueAsString(userDTO))
-                    .queryParam("paymentDTO", mapper.writeValueAsString(paymentDTO))
-                    .queryParam("cartDTO", mapper.writeValueAsString(cartDTO)).build().toUri();
+    public static String purchase(UserDTO userDTO, PaymentDTO paymentDTO, CartDTO cartDTO) {
+        try {
+            String url = "http://localhost:8080/api/market/purchase";
+
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("userDTO", mapper.writeValueAsString(userDTO));
+            requestBody.put("paymentDTO", mapper.writeValueAsString(paymentDTO));
+            requestBody.put("cartDTO", mapper.writeValueAsString(cartDTO));
 
             HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
             headers.add("accept", "*/*");
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(requestBody), headers);
 
             ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
-                    uri,  // Use the URI object here
+                    url,
                     HttpMethod.POST,
                     entity,
-                    new ParameterizedTypeReference<APIResponse<String>>() {
-                    });
+                    new ParameterizedTypeReference<APIResponse<String>>() {}
+            );
+
             APIResponse<String> responseBody = response.getBody();
-            String data = responseBody.getData();
-            return data;
+            return responseBody.getData();
         } catch (HttpClientErrorException e) {
-            // Extract error message from the response body
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         } catch (Exception e) {
             e.printStackTrace();
             return "An error occurred.";
         }
     }
-
-
 
     private static String extractErrorMessageFromJson(String json) {
         try {
