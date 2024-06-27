@@ -3,11 +3,14 @@ package com.example.application.View;
 import com.example.application.Model.Product;
 import com.example.application.Presenter.ShoppingCartPresenter;
 import com.example.application.Presenter.StorePresenter;
+import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.UserDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
@@ -22,6 +25,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +93,7 @@ public class ShoppingCartView extends VerticalLayout {
 
             });
             Button historyButton = new Button("History", event -> {
-
+                getUI().ifPresent(ui -> ui.navigate("HistoryView"));
             });
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
@@ -202,39 +206,11 @@ public class ShoppingCartView extends VerticalLayout {
         paymentLayout = new VerticalLayout();
         paymentLayout = new VerticalLayout();
         Button continueToPaymentButton = new Button("Continue to Payment", event -> {
-            // Pass any necessary parameters when navigating
-            getUI().ifPresent(ui -> ui.navigate("FinalShoppingCartView"));
+            showUserDetailsDialog();
         });
         paymentLayout.add(continueToPaymentButton);
         summaryLayout.add(paymentLayout);
         add(summaryLayout);
-    }
-
-    public void revealPaymentLayout(){
-        paymentLayout.removeAll();
-        IntegerField holderIDField = new IntegerField("holder ID");
-        TextField creditCardField = new TextField("credit card");
-        ComboBox<Integer> yearComboBox = new ComboBox<Integer>("year");
-        yearComboBox.setItems(2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032);
-        ComboBox<Integer> monthComboBox = new ComboBox<Integer>("month");
-        monthComboBox.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
-        IntegerField cvvField = new IntegerField("cvv");
-
-        paymentLayout.add(
-                new HorizontalLayout(holderIDField, creditCardField),
-                new HorizontalLayout(monthComboBox, yearComboBox, cvvField),
-                new HorizontalLayout(
-                        new Button("Submit", event -> {
-                            presenter.onSubmitButtonClicked(presenter.getTotalPrice(), creditCardField.getValue(),
-                                    cvvField.getValue(), monthComboBox.getValue(), yearComboBox.getValue(),
-                                    holderIDField.getValue());
-                        }),
-                        new Button("Cancel", event -> {
-                            this.removeAll();
-                            buildView();
-                        })
-                )
-        );
     }
 
     public void paymentFailure(String message) {
@@ -256,6 +232,65 @@ public class ShoppingCartView extends VerticalLayout {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
         this.removeAll();
         buildView();
+    }
+
+    private void showUserDetailsDialog() {
+        ConfirmDialog dialog = new ConfirmDialog();
+        FormLayout formLayout = new FormLayout();
+        UserDTO userDTO = presenter.getUser();
+
+
+        TextField countryField = new TextField("Country");
+        countryField.setValue(userDTO.getCountry() != null ? userDTO.getCountry() : "");
+        TextField cityField = new TextField("City");
+        cityField.setValue(userDTO.getCity() != null ? userDTO.getCity() : "");
+        TextField addressField = new TextField("Address");
+        addressField.setValue(userDTO.getAddress() != null ? userDTO.getAddress() : "");
+        TextField dateOfBirthField = new TextField("Date of Birth (YYYY-MM-DD)");
+        dateOfBirthField.setValue(userDTO.getBirthday() != null ? userDTO.getBirthday() : "");
+        TextField nameField = new TextField("Name");
+        nameField.setValue(userDTO.getName() != null ? userDTO.getName() : "");
+
+
+//        if (presenter.isMember()) {
+//            if (userDTO != null) {
+//                countryField.setValue(userDTO.getCountry());
+//                cityField.setValue(userDTO.getCity());
+//                addressField.setValue(userDTO.getAddress());
+//                dateOfBirthField.setValue(userDTO.getBirthday());
+//                nameField.setValue(userDTO.getName());
+//            }
+//        }
+
+        formLayout.add(countryField, cityField, addressField, dateOfBirthField, nameField);
+
+        Button confirmButton = new Button("Confirm", event -> {
+            String country = countryField.getValue();
+            String city = cityField.getValue();
+            String address = addressField.getValue();
+            String dateOfBirth = dateOfBirthField.getValue();
+            String name = nameField.getValue();
+
+            UserDTO userDTO1 = new UserDTO(userID, presenter.getUserName(), dateOfBirth, country, city, address, name);
+
+            presenter.validationCart(userID,userDTO1);
+
+            dialog.close();
+        });
+
+        Button cancelButton = new Button("Cancel", event -> dialog.close());
+
+        dialog.add(formLayout, confirmButton, cancelButton);
+        dialog.open();
+    }
+
+    public void succssesCartValidation(CartDTO cartDTO){
+        VaadinSession.getCurrent().setAttribute("cartDTO", cartDTO);
+        getUI().ifPresent(ui -> ui.navigate("FinalShoppingCartView"));
+    }
+
+    public void failCartValidation(String message){
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
     public void logoutConfirm(){

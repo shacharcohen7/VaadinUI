@@ -13,14 +13,21 @@ public class FinalShoppingCartPresenter {
 
     private FinalShoppingCartView view;
     private String userID;
+    private CartDTO finalCart;
 
-    public FinalShoppingCartPresenter(FinalShoppingCartView view, String userID){
+    public FinalShoppingCartPresenter(FinalShoppingCartView view, String userID, CartDTO finalCart){
         this.view = view;
         this.userID = userID;
+        this.finalCart = finalCart;
     }
 
+    public UserDTO getUser(){
+        return APIcalls.getUser(userID);
+    }
+
+
     public CartDTO getFinalCart(){
-        return APIcalls.getCartAfterValidation(userID);
+        return finalCart;
     }
 
     public String getStoreName(String storeID){
@@ -38,15 +45,13 @@ public class FinalShoppingCartPresenter {
     }
 
     public int getTotalPrice(){
-        int price = APIcalls.getCartAfterValidation(userID).getCartPrice();
-        return price;
+        return finalCart.getCartPrice();
     }
 
     public void onSubmitButtonClicked(String creditCard, int cvv, int month, int year, String holderID) {
         UserDTO userDTO = APIcalls.getUser(userID);
         PaymentDTO paymentDTO = new PaymentDTO(holderID,creditCard,cvv,month,year);
-        CartDTO cartDTO = APIcalls.getCartAfterValidation(userID);
-        String result = APIcalls.purchase(userDTO,paymentDTO,cartDTO);
+        String result = APIcalls.purchase(userDTO,paymentDTO,finalCart);
         view.paymentResult(result);
     }
 }

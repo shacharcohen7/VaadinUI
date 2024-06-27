@@ -13,16 +13,17 @@ import java.time.format.DateTimeFormatter;
 public class PaymentPresenter {
     private PaymentView view;
     private String userID;
+    private CartDTO cartDTO;
 
-    public PaymentPresenter(PaymentView view, String userID){
+    public PaymentPresenter(PaymentView view, String userID, CartDTO cartDTO){
         this.view = view;
         this.userID = userID;
+        this.cartDTO = cartDTO;
     }
 
     public void onSubmitButtonClicked(String creditCard, int cvv, int month, int year, String holderID) {
         UserDTO userDTO = APIcalls.getUser(userID);
         PaymentDTO paymentDTO = new PaymentDTO(holderID,creditCard,cvv,month,year);
-        CartDTO cartDTO = APIcalls.getCartAfterValidation(userID);
         APIcalls.setUserConfirmationPurchase(userID);
         String result = APIcalls.purchase(userDTO,paymentDTO,cartDTO);
         view.paymentResult(result);

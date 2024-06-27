@@ -32,14 +32,17 @@ public class FinalShoppingCartView extends VerticalLayout{
     private TextField timerField;
     private Button confirmAndPayButton;
     private Button cancelButton;
+    private CartDTO cartDTO;
+
 
     public FinalShoppingCartView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        cartDTO = (CartDTO) VaadinSession.getCurrent().getAttribute("cartDTO");
         buildView();
     }
 
     public void buildView(){
-        this.presenter = new FinalShoppingCartPresenter(this, userID);
+        this.presenter = new FinalShoppingCartPresenter(this, userID, cartDTO);
         H1 header = new H1("Final Shopping Cart");
 
         // Timer field under the title

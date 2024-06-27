@@ -2,6 +2,7 @@ package com.example.application.View;
 
 import com.example.application.Presenter.GuestPresenters.SignInPresenter;
 import com.example.application.Presenter.PaymentPresenter;
+import com.example.application.Util.CartDTO;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -19,6 +20,7 @@ public class PaymentView extends VerticalLayout {
 
     private PaymentPresenter presenter;
     private String userID;
+    private CartDTO cartDTO;
     private TextField holderIDField;
     private TextField creditCardField;
     private ComboBox<Integer> yearComboBox;
@@ -29,11 +31,12 @@ public class PaymentView extends VerticalLayout {
 
     public PaymentView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        cartDTO = (CartDTO) VaadinSession.getCurrent().getAttribute("cartDTO");
         buildView();
     }
 
     private void buildView() {
-        presenter = new PaymentPresenter(this, userID);
+        presenter = new PaymentPresenter(this, userID, cartDTO);
 
         holderIDField = new TextField("Holder ID");
         holderIDField.setWidth("300px");

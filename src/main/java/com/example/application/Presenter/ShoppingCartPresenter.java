@@ -5,7 +5,11 @@ import com.example.application.Model.MarketModel;
 import com.example.application.Model.Product;
 import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.UserDTO;
 import com.example.application.View.ShoppingCartView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
@@ -28,6 +32,11 @@ public class ShoppingCartPresenter {
         }
         return "Guest";
     }
+
+    public UserDTO getUser(){
+        return APIcalls.getUser(userID);
+    }
+
 
     public boolean isMember(){
         return APIcalls.isMember(userID);
@@ -92,6 +101,16 @@ public class ShoppingCartPresenter {
             view.paymentSuccess("Payment performed successfully");
         } else {
             view.paymentFailure("Invalid payment details.");
+        }
+    }
+
+    public void validationCart(String userID, UserDTO userDTO){
+        String ans = APIcalls.getCartAfterValidation(userID,userDTO);
+        try {
+            CartDTO cartDTO = new ObjectMapper().readValue(ans, CartDTO.class);
+            view.succssesCartValidation(cartDTO);
+        } catch (Exception e) {
+            view.failCartValidation(ans);
         }
     }
 }

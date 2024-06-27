@@ -94,7 +94,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
             });
             Button historyButton = new Button("History", event -> {
-
+                getUI().ifPresent(ui -> ui.navigate("HistoryView"));
             });
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
