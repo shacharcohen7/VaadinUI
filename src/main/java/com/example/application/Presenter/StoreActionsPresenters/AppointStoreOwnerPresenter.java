@@ -3,6 +3,7 @@ package com.example.application.Presenter.StoreActionsPresenters;
 import com.example.application.Model.APIcalls;
 import com.example.application.View.StoreActionsViews.AppointStoreOwnerView;
 import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
+import com.vaadin.flow.server.VaadinSession;
 
 public class AppointStoreOwnerPresenter {
     private AppointStoreOwnerView view;
@@ -13,6 +14,16 @@ public class AppointStoreOwnerPresenter {
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;
+    }
+
+    public String getUserName(){
+        return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+    }
+
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public void onAppointButtonClicked(String usernameToAppoint) {

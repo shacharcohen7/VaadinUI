@@ -1,25 +1,19 @@
 package com.example.application.Presenter.MemberPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.MemberViews.OpenStoreView;
+import com.example.application.View.MemberViews.HistoryView;
+import com.example.application.View.MemberViews.NotificationsView;
 import com.vaadin.flow.server.VaadinSession;
 
-public class OpenStorePresenter {
-    private OpenStoreView view;
+import java.util.List;
+
+public class NotificationsPresenter {
+    private NotificationsView view;
     private String userID;
 
-    public OpenStorePresenter(OpenStoreView view, String userID){
+    public NotificationsPresenter(NotificationsView view, String userID) {
         this.view = view;
         this.userID = userID;
-    }
-
-    public void onDoneButtonClicked(String storeName, String description) {
-        if(APIcalls.openStore(userID, storeName, description) != null){
-            view.openSuccess("Store was opened");
-        }
-        else{
-            view.openFailure("Invalid input");
-        }
     }
 
     public void logOut(){
@@ -37,5 +31,9 @@ public class OpenStorePresenter {
 
     public boolean isMember(){
         return APIcalls.isMember(userID);
+    }
+
+    public List<String> getNotifications(){
+        return APIcalls.getNotifications(VaadinSession.getCurrent().getAttribute("memberID").toString());
     }
 }

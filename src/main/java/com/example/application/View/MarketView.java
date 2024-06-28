@@ -1,6 +1,5 @@
 package com.example.application.View;
 
-import com.example.application.Model.Product;
 import com.example.application.Presenter.MarketPresenter;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.StoreDTO;
@@ -81,26 +80,19 @@ public class MarketView extends VerticalLayout {
             Button openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
-            Button criticismButton = new Button("Write Criticism", event -> {
-
-            });
-            Button ratingButton = new Button("Rate us", event -> {
-
-            });
-            Button contactButton = new Button("Contact us", event -> {
-
-            });
             Button historyButton = new Button("History", event -> {
                 getUI().ifPresent(ui -> ui.navigate("HistoryView"));
             });
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
+            Button notificationsButton = new Button("Notifications", event -> {
+                getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
+            });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, criticismButton,
-                    ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
+            topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
         }
         add(topLayout);
     }

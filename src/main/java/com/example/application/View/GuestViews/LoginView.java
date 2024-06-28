@@ -85,7 +85,7 @@ public class LoginView extends VerticalLayout {
     }
 
     public void loginSuccess() {
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
+        getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
     }
 
 }

@@ -4,6 +4,7 @@ import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
 import com.example.application.View.StoreActionsViews.UpdateProductInStoreView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,10 @@ public class UpdateProductInStorePresenter {
         this.storeID = storeID;
     }
 
+    public String getUserName(){
+        return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+    }
+
     public List<String> getAllProductNames(){
         List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
         List<String> productNames = new LinkedList<String>();
@@ -26,6 +31,11 @@ public class UpdateProductInStorePresenter {
             productNames.add(products.get(i).getName());
         }
         return productNames;
+    }
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public ProductDTO getProductByName(String productName){

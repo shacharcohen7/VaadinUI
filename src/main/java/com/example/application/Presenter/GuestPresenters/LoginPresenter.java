@@ -1,7 +1,6 @@
 package com.example.application.Presenter.GuestPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Model.MarketModel;
 import com.example.application.View.GuestViews.LoginView;
 import com.vaadin.flow.server.VaadinSession;
 

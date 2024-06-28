@@ -39,7 +39,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         presenter = new StorePresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        add(new VerticalLayout(new H1("Welcome to " + presenter.getStoreName())));
+        H1 header = new H1("Welcome to " + presenter.getStoreName());
+        VerticalLayout layout = new VerticalLayout(header);
+        layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
+        layout.setSpacing(false);
+        layout.setAlignItems(Alignment.CENTER);
+        add(layout);
         createSearchLayout();
         createAllProductsLayout();
         if(presenter.isMember()){
@@ -64,12 +69,10 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         HorizontalLayout topLayout = new HorizontalLayout();
         topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         Text helloMessage = new Text("Hello, " + presenter.getUserName());
-        Button homeButton = new Button("Home",new Icon(VaadinIcon.HOME), event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView"));
-        });
-        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART), event -> {
-            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
-        });
+        Button homeButton = new Button("Home", new Icon(VaadinIcon.HOME), event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART),
+                event -> getUI().ifPresent(ui -> ui.navigate("ShoppingCartView")));
+
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
         if(!presenter.isMember()){
             Button loginButton = new Button("Log In", event -> {
@@ -84,26 +87,19 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
             Button openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
-            Button criticismButton = new Button("Write Criticism", event -> {
-
-            });
-            Button ratingButton = new Button("Rate us", event -> {
-
-            });
-            Button contactButton = new Button("Contact us", event -> {
-
-            });
             Button historyButton = new Button("History", event -> {
                 getUI().ifPresent(ui -> ui.navigate("HistoryView"));
             });
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
+            Button notificationsButton = new Button("Notifications", event -> {
+                getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
+            });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, criticismButton,
-                    ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
+            topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
         }
         add(topLayout);
     }

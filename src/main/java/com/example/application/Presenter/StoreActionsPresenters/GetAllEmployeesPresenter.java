@@ -32,6 +32,16 @@ public class GetAllEmployeesPresenter {
         return APIcalls.getStoreMangers(storeID);
     }
 
+    public String getUserName(){
+        return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+    }
+
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
+    }
+
     public boolean hasInventoryPermissions(String memberID){
         return APIcalls.hasInventoryPermission(memberID, storeID);
     }

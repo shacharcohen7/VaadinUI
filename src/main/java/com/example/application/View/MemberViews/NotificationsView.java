@@ -1,58 +1,52 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.MemberViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.AppointStoreOwnerPresenter;
-import com.example.application.Presenter.StoreActionsPresenters.RemoveProductFromStorePresenter;
+import com.example.application.Presenter.MemberPresenters.HistoryPresenter;
+import com.example.application.Presenter.MemberPresenters.NotificationsPresenter;
+import com.example.application.Util.AcquisitionDTO;
+import com.example.application.Util.ReceiptDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Route("AppointStoreOwnerView")
-public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParameter<String> {
-    private AppointStoreOwnerPresenter presenter;
-    private QueryParameters storeQuery;
+@Route("NotificationsView")
+
+public class NotificationsView extends VerticalLayout {
+    private NotificationsPresenter presenter;
     private String userID;
-    private String storeID;
-    private TextField usernameField;
-    private Button appointButton;
-    private Button cancelButton;
+    private Grid<AcquisitionDTO> acquisitionGrid;
+    private Grid<ReceiptDTO> receiptGrid;
+    private VerticalLayout receiptDetailsLayout;
+    private Button backButton;
 
-    public AppointStoreOwnerView(){}
-
-    public void buildView(){
+    public NotificationsView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
-        presenter = new AppointStoreOwnerPresenter(this, userID, storeID);
-        makeStoreQuery();
+        buildView();
+    }
+
+    public void buildView() {
+        presenter = new NotificationsPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Appoint Store Owner");
+        H1 header = new H1("Notifications");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        usernameField = new TextField("","user name");
-        appointButton = new Button("Appoint", event -> {
-            presenter.onAppointButtonClicked(usernameField.getValue());
-        });
-        cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
-        });
-        add(
-                usernameField,
-                new HorizontalLayout(appointButton, cancelButton)
-        );
+        createNotificationsLayout();
+        add(new Button("OK", event -> getUI().ifPresent(ui -> ui.navigate("MarketView"))));
     }
 
     public void createTopLayout(){
@@ -84,9 +78,13 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
         add(topLayout);
     }
 
-    public void appointmentSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+    public void createNotificationsLayout(){
+        VerticalLayout notificationsLayout = new VerticalLayout();
+        List<String> notifications = presenter.getNotifications();
+        for(int i=0 ; i<notifications.size() ; i++){
+            notificationsLayout.add(new HorizontalLayout(new Text(notifications.get(i))));
+        }
+        add(notificationsLayout);
     }
 
     public void logoutConfirm(){
@@ -101,24 +99,6 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
-    }
-
-    public void appointmentFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-    public void makeStoreQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("storeID", List.of(storeID));
-        storeQuery = new QueryParameters(parameters);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
-        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 }
