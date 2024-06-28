@@ -4,6 +4,7 @@ import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
 import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,6 +19,16 @@ public class RemoveProductFromStorePresenter {
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;
+    }
+
+    public String getUserName(){
+        return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+    }
+
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public List<String> getAllProductNames(){

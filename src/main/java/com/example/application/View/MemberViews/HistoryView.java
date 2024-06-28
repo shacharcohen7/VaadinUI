@@ -5,6 +5,7 @@ import com.example.application.Util.AcquisitionDTO;
 import com.example.application.Util.ReceiptDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
@@ -36,6 +37,12 @@ public class HistoryView extends VerticalLayout {
     public void buildView() {
         presenter = new HistoryPresenter(this, userID);
         createTopLayout();
+        H1 header = new H1("Acquisition History");
+        VerticalLayout layout = new VerticalLayout(header);
+        layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
+        layout.setSpacing(false);
+        layout.setAlignItems(Alignment.CENTER);
+        add(layout);
 
         acquisitionGrid = new Grid<>(AcquisitionDTO.class);
         acquisitionGrid.setColumns("date", "acquisitionId", "totalPrice");
@@ -64,7 +71,7 @@ public class HistoryView extends VerticalLayout {
         mainLayout.setSizeFull();
         mainLayout.setAlignItems(Alignment.CENTER);
         mainLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-        mainLayout.add(new H1("Acquisition History"), acquisitionGrid, receiptGrid, receiptDetailsLayout, backButton);
+        mainLayout.add(acquisitionGrid, receiptGrid, receiptDetailsLayout, backButton);
 
         add(mainLayout);
         presenter.loadAcquisitionHistory();
@@ -95,15 +102,6 @@ public class HistoryView extends VerticalLayout {
             Button openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
-            Button criticismButton = new Button("Write Criticism", event -> {
-                // Add functionality for writing criticism
-            });
-            Button ratingButton = new Button("Rate us", event -> {
-                // Add functionality for rating
-            });
-            Button contactButton = new Button("Contact us", event -> {
-                // Add functionality for contacting
-            });
             Button historyButton = new Button("History", event -> {
                 getUI().ifPresent(ui -> ui.navigate("HistoryView"));
             });
@@ -113,15 +111,25 @@ public class HistoryView extends VerticalLayout {
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, criticismButton, ratingButton, contactButton, historyButton, myProfileButton, logoutButton);
+            topLayout.add(openStoreButton, historyButton, myProfileButton, logoutButton);
         }
 
         add(topLayout);
     }
 
-    private void logoutConfirm() {
-        // Add your logout logic here
-        getUI().ifPresent(ui -> ui.navigate("LoginView"));
+    public void logoutConfirm(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Logout");
+        dialog.setText("Are you sure you want to log out?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Yes");
+        dialog.addConfirmListener(event -> presenter.logOut());
+        dialog.open();
+    }
+
+    public void logout(){
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void showAcquisitions(List<AcquisitionDTO> acquisitions) {

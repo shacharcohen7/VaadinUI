@@ -4,6 +4,7 @@ import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
 import com.example.application.View.StoreActionsViews.AddPurchasePolicyView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,16 @@ public class AddPurchasePolicyPresenter {
             rulesList.add(integer + " " + rulesMap.get(integer));
         }
         return rulesList;
+    }
+
+    public String getUserName(){
+        return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+    }
+
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public void onAddButtonClicked(List<Integer> ruleNums, List<String> operators) {

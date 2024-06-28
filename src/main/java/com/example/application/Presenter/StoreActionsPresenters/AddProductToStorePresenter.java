@@ -1,10 +1,10 @@
 package com.example.application.Presenter.StoreActionsPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Model.MarketModel;
 import com.example.application.Util.ProductDTO;
 import com.example.application.View.MemberViews.OpenStoreView;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;
 
@@ -19,8 +19,18 @@ public class AddProductToStorePresenter {
         this.storeID = storeID;
     }
 
+    public String getUserName(){
+        return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+    }
+
     public List<String> getCategories(){
         return APIcalls.getCategories();
+    }
+
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
     }
 
     public void onAddButtonClicked(String productName, int price, int quantity, String description, String category) {

@@ -27,6 +27,12 @@ public class HistoryPresenter {
         }
     }
 
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+            view.logout();
+        }
+    }
+
     public void onAcquisitionSelected(String acquisitionId) {
         try {
             Map<String, ReceiptDTO> receipts = APIcalls.getUserReceiptsByAcquisition(userID, acquisitionId);

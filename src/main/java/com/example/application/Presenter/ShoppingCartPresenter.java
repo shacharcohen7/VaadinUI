@@ -1,8 +1,6 @@
 package com.example.application.Presenter;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Model.MarketModel;
-import com.example.application.Model.Product;
 import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.UserDTO;
