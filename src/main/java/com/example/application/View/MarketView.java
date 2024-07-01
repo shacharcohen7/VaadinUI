@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
+//import org.springframework.messaging.simp.annotation.SubscribeMapping;
 
 import java.util.HashMap;
 import java.util.List;
@@ -263,6 +264,13 @@ public class MarketView extends VerticalLayout {
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> presenter.logOut());
         dialog.open();
+    }
+
+    //@SubscribeMapping("/topic/notifications")
+    public void handleNotification(String notificationMessage) {
+        UI.getCurrent().access(() -> {
+            Notification.show(notificationMessage);
+        });
     }
 
     public void logout(){

@@ -4,6 +4,7 @@ import com.example.application.Presenter.InitializePresenter;
 import com.example.application.Util.PaymentServiceDTO;
 import com.example.application.Util.SupplyServiceDTO;
 import com.example.application.Util.UserDTO;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
@@ -15,21 +16,38 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import jakarta.websocket.ClientEndpoint;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.Session;
+//import org.springframework.messaging.simp.stomp.StompFrameHandler;
+//import org.springframework.messaging.simp.stomp.StompHeaders;
+//import org.springframework.messaging.simp.stomp.StompSession;
+//import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.Transport;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
+import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Route("")
 public class InitializeView extends VerticalLayout {
+
     InitializePresenter presenter;
+    private Session session;
+    //private StompSession stompSession;
+    //WebSocketHandler webSocketHandler;
 
     public InitializeView(){
         presenter = new InitializePresenter(this);
+        //connectToWebSocket();
+
     }
+
 
     public void startSession(){
         UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("StartSessionView")));
@@ -88,4 +106,10 @@ public class InitializeView extends VerticalLayout {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
         UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
     }
+
+
+
+
+
+
 }
