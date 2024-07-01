@@ -103,12 +103,11 @@ public class ShoppingCartPresenter {
     }
 
     public void validationCart(String userID, UserDTO userDTO){
-        String ans = APIcalls.getCartAfterValidation(userID,userDTO);
         try {
-            CartDTO cartDTO = new ObjectMapper().readValue(ans, CartDTO.class);
+            CartDTO cartDTO = APIcalls.getCartAfterValidation(userID,userDTO);
             view.succssesCartValidation(cartDTO);
         } catch (Exception e) {
-            view.failCartValidation(ans);
+            view.failCartValidation("Cart validation failed");
         }
     }
 }

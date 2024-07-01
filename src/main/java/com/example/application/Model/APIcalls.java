@@ -1124,13 +1124,13 @@ public class APIcalls {
         }
     }
 
-    public static String getCartAfterValidation(String userID, UserDTO userDTO){
+    public static CartDTO getCartAfterValidation(String userID, UserDTO userDTO){
         try {
-            String url = "http://localhost:8080/api/user/getCartAfterValidation";  // Absolute URL
+            String url = "http://localhost:8080/api/market/getCartAfterValidation";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .queryParam("userId", userID)
-                    .queryParam("userDTO",userDTO)
+                    .queryParam("userID", userID)
+                    .queryParam("userDTO",mapper.writeValueAsString(userDTO))
                     .build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
@@ -1144,12 +1144,8 @@ public class APIcalls {
                     new ParameterizedTypeReference<APIResponse<String>>() {
                     });
             APIResponse<String> responseBody = response.getBody();
-            if (responseBody.getData() != null){
-                return responseBody.getData();
-            }
-            else {
-                return responseBody.getErrorMassage();
-            }
+            CartDTO data = mapper.readValue(responseBody.getData(), CartDTO.class);
+            return data;
         }
          catch (HttpClientErrorException e) {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
