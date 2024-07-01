@@ -28,7 +28,7 @@ public class FinalShoppingCartView extends VerticalLayout{
     private String userID;
     private VerticalLayout cartLayout;
     private VerticalLayout paymentLayout;
-    private AtomicInteger remainingTime = new AtomicInteger(15); // 15 seconds
+    private AtomicInteger remainingTime = new AtomicInteger(60);
     private TextField timerField;
     private Button confirmAndPayButton;
     private Button cancelButton;
@@ -39,6 +39,7 @@ public class FinalShoppingCartView extends VerticalLayout{
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         cartDTO = (CartDTO) VaadinSession.getCurrent().getAttribute("cartDTO");
         buildView();
+        Notification.show("You have 60 seconds to complete your payment.",3000, Notification.Position.MIDDLE);
     }
 
     public void buildView(){
@@ -50,7 +51,8 @@ public class FinalShoppingCartView extends VerticalLayout{
         timerField.setReadOnly(true);
         timerField.setWidth("150px");
 
-        VerticalLayout layout = new VerticalLayout(header, timerField);
+//        VerticalLayout layout = new VerticalLayout(header, timerField);
+        VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
