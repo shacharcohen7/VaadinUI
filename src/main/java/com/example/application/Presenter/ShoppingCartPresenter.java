@@ -5,6 +5,7 @@ import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.UserDTO;
 import com.example.application.View.ShoppingCartView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,6 +74,10 @@ public class ShoppingCartPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

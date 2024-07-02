@@ -1,6 +1,8 @@
 package com.example.application.View.AdminViews;
 
 import com.example.application.Presenter.AdminPresenters.AdminCloseStorePresenter;
+import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -10,10 +12,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Route("AdminCloseStoreView")
 public class AdminCloseStoreView  extends VerticalLayout {
@@ -25,6 +23,11 @@ public class AdminCloseStoreView  extends VerticalLayout {
 
     public AdminCloseStoreView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         buildView();
     }
 

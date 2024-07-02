@@ -1,9 +1,10 @@
 package com.example.application.View;
 
 import com.example.application.Presenter.FinalShoppingCartPresenter;
-import com.example.application.Presenter.ShoppingCartPresenter;
 import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
+import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
@@ -38,6 +39,11 @@ public class FinalShoppingCartView extends VerticalLayout{
     public FinalShoppingCartView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         cartDTO = (CartDTO) VaadinSession.getCurrent().getAttribute("cartDTO");
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         buildView();
     }
 

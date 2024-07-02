@@ -1,7 +1,9 @@
 package com.example.application.View.StoreActionsViews;
 
 import com.example.application.Presenter.StoreActionsPresenters.PurchasePolicyPresenter;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
@@ -29,6 +31,11 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         presenter = new PurchasePolicyPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();

@@ -1,9 +1,9 @@
 package com.example.application.View.StoreActionsViews;
 
 import com.example.application.Presenter.StoreActionsPresenters.AppointStoreManagerPresenter;
-import com.example.application.Presenter.StoreActionsPresenters.AppointStoreOwnerPresenter;
-import com.vaadin.flow.component.Component;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -17,7 +17,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,11 @@ public class AppointStoreManagerView extends VerticalLayout implements HasUrlPar
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         presenter = new AppointStoreManagerPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
