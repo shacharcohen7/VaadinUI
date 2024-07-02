@@ -18,6 +18,7 @@ public class NotificationsPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+
             view.logout();
         }
     }

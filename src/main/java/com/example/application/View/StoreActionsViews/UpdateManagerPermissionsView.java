@@ -1,9 +1,9 @@
 package com.example.application.View.StoreActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.AppointStoreManagerPresenter;
 import com.example.application.Presenter.StoreActionsPresenters.UpdateManagerPermissionsPresenter;
-import com.example.application.Util.ProductDTO;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -13,7 +13,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -38,6 +37,11 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         presenter = new UpdateManagerPermissionsPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
