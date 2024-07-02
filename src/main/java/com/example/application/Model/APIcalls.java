@@ -1,9 +1,13 @@
 package com.example.application.Model;
 
 import com.example.application.Util.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -281,25 +285,33 @@ public class APIcalls {
         }
     }
 
-    public static String addPurchaseRuleToStore(List<Integer> ruleNums, List<String> operators, String userID, String storeID){
+    public static String addPurchaseRuleToStore(List<TestRuleDTO> Rules, List<String> logicOperators, String userID, String storeID){
         try {
-            String url = "http://localhost:8080/api/market/addPurchaseRuleToStore/{ruleNums}/{operators}/{userId}/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/addPurchaseRuleToStore";  // Absolute URL
 
-            URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(ruleNums, operators, userID, storeID)
-                    .toUri();
+            List<String> stringRules = new ArrayList<>();
+            for (TestRuleDTO testRuleDTO : Rules){
+                stringRules.add(mapper.writeValueAsString(testRuleDTO));
+            }
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("userId", userID);
+            params.add("storeId", storeID);
+            params.put("testRules", stringRules);
+            params.put("operators", logicOperators);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 
-            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
                     HttpMethod.POST,
-                    entity,
-                    new ParameterizedTypeReference<APIResponse<String>>() {
-                    });
-            APIResponse<String> responseBody = response.getBody();
-            String data = responseBody.getData();
+                    requestEntity,
+                    String.class
+            );
+
+            String data = response.getBody();
             return data;
         }
         catch (HttpClientErrorException e){
@@ -805,6 +817,64 @@ public class APIcalls {
         }
     }
 
+    public static String reopenStore(String userID, String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/reopenStore/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static boolean isStoreOpen(String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/isStoreOpen/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<Boolean>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<Boolean>>() {
+                    });
+            APIResponse<Boolean> responseBody = response.getBody();
+            Boolean data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return false;
+        }
+    }
+
     public static String openStore(String userID, String storeName, String storeDes){
         try {
             String url = "http://localhost:8080/api/market/openStore/{userId}/{storeName}/{storeDes}";  // Absolute URL
@@ -986,6 +1056,60 @@ public class APIcalls {
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, appointedUsername, storeID, invPer, purPer)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static String fireStoreOwner(String userID, String appointedUsername, String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/fireStoreOwner/{userId}/{appointedId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, appointedUsername, storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("error occurred");
+            return null;
+        }
+    }
+
+    public static String fireStoreManager(String userID, String appointedUsername, String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/fireStoreManager/{userId}/{appointedId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, appointedUsername, storeID)
                     .toUri();
 
             HttpHeaders headers = new HttpHeaders();

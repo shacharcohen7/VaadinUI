@@ -242,7 +242,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                         new Button("Appoint Store Owner", event -> {
                             getUI().ifPresent(ui -> ui.navigate("AppointStoreOwnerView", storeQuery));
                         }),
-                        new Button("Fire Store Owner")
+                        new Button("Fire Store Owner", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("FireStoreOwnerView", storeQuery));
+                        })
                 ),
                 new HorizontalLayout(
                         new Button("Appoint Store Manager", event -> {
@@ -251,7 +253,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                         new Button("Update store manager permissions", event -> {
                             getUI().ifPresent(ui -> ui.navigate("UpdateManagerPermissionsView", storeQuery));
                         }),
-                        new Button("Fire Store Manager")
+                        new Button("Fire Store Manager", event -> {
+                            getUI().ifPresent(ui -> ui.navigate("FireStoreOwnerView", storeQuery));
+                        })
                 )
         );
         add(HRLayout);
@@ -261,13 +265,18 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         VerticalLayout otherActionsLayout = new VerticalLayout();
         otherActionsLayout.add(new H1("Other Actions:"));
         HorizontalLayout actions = new HorizontalLayout();
-        if(presenter.isOpened()){
+        if(presenter.isStoreOpen()){
             actions.add(new Button("Close Store", event -> {
                 closeStoreConfirm();
             }));
         }
         else{
-            actions.add(new Button("Reopen Store"));
+            actions.add(new Button("Reopen Store", event -> {
+                if(presenter.onReopenButtonClicked()){
+                    this.removeAll();
+                    buildView();
+                }
+            }));
         }
         actions.add(
                 new Button("Contact Clients"),
