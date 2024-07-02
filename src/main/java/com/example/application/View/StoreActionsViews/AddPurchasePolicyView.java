@@ -3,10 +3,12 @@ package com.example.application.View.StoreActionsViews;
 import com.example.application.Presenter.StoreActionsPresenters.AddProductToStorePresenter;
 import com.example.application.Presenter.StoreActionsPresenters.AddPurchasePolicyPresenter;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.TestRuleDTO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -30,9 +33,8 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
     private String userID;
     private String storeID;
     private VerticalLayout rulesLayout;
-    private List<Integer> ruleNums;
-    private List<String> possibleRules;
-    private List<String> operators;
+    private List<TestRuleDTO> Rules;
+    private List<String> logicOperators;
     private Button addButton;
     private Button cancelButton;
 
@@ -49,22 +51,21 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        ruleNums = new LinkedList<Integer>();
-        operators = new LinkedList<String>();
-        possibleRules = presenter.getAllPurchaseRules();
+        Rules = new LinkedList<TestRuleDTO>();
+        logicOperators = new LinkedList<String>();
         rulesLayout = new VerticalLayout();
-        ComboBox<String> ruleField = new ComboBox<String>("rule");
-        Button extendButton = new Button("extend", event -> extend());
-        extendButton.setEnabled(false);
-        extendButton.setDisableOnClick(true);
-        ruleField.setItems(possibleRules);
-        ruleField.addValueChangeListener(event -> {
-            ruleNums.add(Integer.parseInt("" + event.getValue().charAt(0)));
-            extendButton.setEnabled(true);
+        HorizontalLayout ruleLayout = new HorizontalLayout();
+        HorizontalLayout relevantFieldsLayout = new HorizontalLayout();
+        HorizontalLayout buttons = new HorizontalLayout();
+        ComboBox<String> ruleTypes = new ComboBox<String>("rule type");
+        ruleTypes.setItems("Age", "Amount", "Date", "Price", "Time");
+        ruleTypes.addValueChangeListener(event -> {
+            createRelevantFields(ruleTypes, buttons, relevantFieldsLayout);
         });
-        rulesLayout.add(ruleField, extendButton);
+        ruleLayout.add(ruleTypes, relevantFieldsLayout);
+        rulesLayout.add(ruleLayout);
         addButton = new Button("Add", event -> {
-            presenter.onAddButtonClicked(ruleNums, operators);
+            presenter.onAddButtonClicked(Rules, logicOperators);
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
@@ -104,23 +105,94 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
         add(topLayout);
     }
 
+    public void createRelevantFields(ComboBox<String> ruleTypes, HorizontalLayout buttons, HorizontalLayout relevantFieldsLayout){
+        relevantFieldsLayout.removeAll();
+        buttons.removeAll();
+        ComboBox<String> rangeField = new ComboBox<String>("range");
+        rangeField.setItems("Exact", "Below", "Above");
+        ComboBox<String> categoryField = new ComboBox<String>("category");
+        categoryField.setItems(presenter.getCategories());
+        ComboBox<String> productNameField = new ComboBox<String>("product name");
+        productNameField.setItems(presenter.getAllProductNames());
+        categoryField.addValueChangeListener(event -> {
+            if(!categoryField.isEmpty() & !productNameField.isEmpty()) {
+                Notification.show("Impossible to fill both category and product name fields",3000, Notification.Position.MIDDLE);
+                categoryField.clear();
+            }
+        });
+        productNameField.addValueChangeListener(event -> {
+            if(!categoryField.isEmpty() & !productNameField.isEmpty()) {
+                Notification.show("Impossible to fill both category and product name fields", 3000, Notification.Position.MIDDLE);
+                productNameField.clear();
+            }
+        });
+        TextField descriptionField = new TextField("description");
+        ComboBox<Boolean> containsField = new ComboBox<Boolean>("contains");
+        containsField.setItems(true, false);
+        relevantFieldsLayout.add(rangeField, categoryField, productNameField, descriptionField, containsField);
+        IntegerField ageField = new IntegerField("age");
+        IntegerField quantityField = new IntegerField("quantity");
+        DatePicker dateField = new DatePicker("date");
+        IntegerField priceField = new IntegerField("price");
+        TimePicker timeField = new TimePicker("time");
+        if(ruleTypes.getValue().equals("Age")){
+            relevantFieldsLayout.add(ageField);
+        }
+        if(ruleTypes.getValue().equals("Amount")){
+            relevantFieldsLayout.add(quantityField);
+        }
+        if(ruleTypes.getValue().equals("Date")){
+            relevantFieldsLayout.add(dateField);
+        }
+        if(ruleTypes.getValue().equals("Price")){
+            relevantFieldsLayout.add(priceField);
+        }
+        if(ruleTypes.getValue().equals("Time")){
+            relevantFieldsLayout.add(timeField);
+        }
+        Button applyButton = new Button("apply", event -> {
+            TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
+                    productNameField.getValue(), descriptionField.getValue(), containsField.getValue(), ageField.getValue(),
+                    quantityField.getValue(), dateField.getValue(), priceField.getValue(), timeField.getValue());
+            Rules.add(newRule);
+            ruleTypes.setEnabled(false);
+            rangeField.setEnabled(false);
+            categoryField.setEnabled(false);
+            productNameField.setEnabled(false);
+            descriptionField.setEnabled(false);
+            containsField.setEnabled(false);
+            ageField.setEnabled(false);
+            quantityField.setEnabled(false);
+            dateField.setEnabled(false);
+            priceField.setEnabled(false);
+            timeField.setEnabled(false);
+            Button extendButton = new Button("extend", buttonClickEvent -> extend());
+            extendButton.setDisableOnClick(true);
+            buttons.add(extendButton);
+        });
+        applyButton.setDisableOnClick(true);
+        buttons.add(applyButton);
+        rulesLayout.add(buttons);
+    }
+
     public void extend(){
+        HorizontalLayout ruleLayout = new HorizontalLayout();
+        HorizontalLayout relevantFieldsLayout = new HorizontalLayout();
+        HorizontalLayout buttons = new HorizontalLayout();
         ComboBox<String> operator = new ComboBox<String>("operator");
         operator.setItems("COND", "OR", "AND");
         operator.addValueChangeListener(event -> {
-            operators.add(event.getValue());
+            logicOperators.add(event.getValue());
+            operator.setEnabled(false);
         });
-
-        ComboBox<String> ruleField = new ComboBox<String>("rule");
-        Button extendButton = new Button("extend", event -> extend());
-        extendButton.setEnabled(false);
-        extendButton.setDisableOnClick(true);
-        ruleField.setItems(possibleRules);
-        ruleField.addValueChangeListener(event -> {
-            ruleNums.add(Integer.parseInt("" + event.getValue().charAt(0)));
-            extendButton.setEnabled(true);
+        rulesLayout.add(operator);
+        ComboBox<String> ruleTypes = new ComboBox<String>("rule type");
+        ruleTypes.setItems("Age", "Amount", "Date", "Price", "Time");
+        ruleTypes.addValueChangeListener(event -> {
+            createRelevantFields(ruleTypes, buttons, relevantFieldsLayout);
         });
-        rulesLayout.add(new HorizontalLayout(operator, ruleField), extendButton);
+        ruleLayout.add(ruleTypes, relevantFieldsLayout);
+        rulesLayout.add(ruleLayout);
     }
 
     public void addSuccess(String message) {

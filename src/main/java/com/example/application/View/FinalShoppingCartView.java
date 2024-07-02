@@ -28,7 +28,7 @@ public class FinalShoppingCartView extends VerticalLayout{
     private String userID;
     private VerticalLayout cartLayout;
     private VerticalLayout paymentLayout;
-    private AtomicInteger remainingTime = new AtomicInteger(60);
+    private AtomicInteger remainingTime = new AtomicInteger(15);
     private TextField timerField;
     private Button confirmAndPayButton;
     private Button cancelButton;

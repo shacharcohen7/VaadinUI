@@ -36,6 +36,10 @@ public class StorePresenter {
         return APIcalls.isStoreOwner(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
+    public boolean isStoreOpen(){
+        return APIcalls.isStoreOpen(storeID);
+    }
+
     public boolean isStoreManager(){
         return APIcalls.isStoreManager(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
@@ -46,11 +50,6 @@ public class StorePresenter {
 
     public boolean hasPurchasePermissions(){
         return APIcalls.hasPurchasePermission(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
-    }
-
-    public boolean isOpened(){
-        //call verifyStoreOwner()
-        return true;
     }
 
     public boolean isMember(){
@@ -88,5 +87,9 @@ public class StorePresenter {
 
     public boolean onCloseButtonClicked(){
         return APIcalls.closeStore(userID, storeID).contains("success");
+    }
+
+    public boolean onReopenButtonClicked(){
+        return APIcalls.reopenStore(userID, storeID).contains("success");
     }
 }

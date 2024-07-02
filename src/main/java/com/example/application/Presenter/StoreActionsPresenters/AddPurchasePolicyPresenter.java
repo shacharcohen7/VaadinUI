@@ -2,6 +2,7 @@ package com.example.application.Presenter.StoreActionsPresenters;
 
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.TestRuleDTO;
 import com.example.application.View.StoreActionsViews.AddProductToStoreView;
 import com.example.application.View.StoreActionsViews.AddPurchasePolicyView;
 import com.vaadin.flow.server.VaadinSession;
@@ -21,13 +22,17 @@ public class AddPurchasePolicyPresenter {
         this.storeID = storeID;
     }
 
-    public List<String> getAllPurchaseRules(){
-        Map<Integer, String> rulesMap = APIcalls.getAllPurchaseRules(userID, storeID);
-        List<String> rulesList = new LinkedList<String>();
-        for(Integer integer: rulesMap.keySet()){
-            rulesList.add(integer + " " + rulesMap.get(integer));
+    public List<String> getCategories(){
+        return APIcalls.getCategories();
+    }
+
+    public List<String> getAllProductNames(){
+        List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
+        List<String> productNames = new LinkedList<String>();
+        for(int i=0 ;i<products.size() ; i++){
+            productNames.add(products.get(i).getName());
         }
-        return rulesList;
+        return productNames;
     }
 
     public String getUserName(){
@@ -40,8 +45,8 @@ public class AddPurchasePolicyPresenter {
         }
     }
 
-    public void onAddButtonClicked(List<Integer> ruleNums, List<String> operators) {
-        String result = APIcalls.addPurchaseRuleToStore(ruleNums, operators, userID, storeID);
+    public void onAddButtonClicked(List<TestRuleDTO> Rules, List<String> logicOperators) {
+        String result = APIcalls.addPurchaseRuleToStore(Rules, logicOperators, userID, storeID);
         if (result.contains("success")) {
             view.addSuccess("Purchase policy was added");
         } else {
