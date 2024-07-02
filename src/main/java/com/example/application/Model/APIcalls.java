@@ -293,12 +293,14 @@ public class APIcalls {
             for (TestRuleDTO testRuleDTO : Rules){
                 stringRules.add(mapper.writeValueAsString(testRuleDTO));
             }
+            String jsonRules = mapper.writeValueAsString(stringRules);
+            String logicOp = mapper.writeValueAsString(logicOperators);
 
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("userId", userID);
             params.add("storeId", storeID);
-            params.put("testRules", stringRules);
-            params.put("operators", logicOperators);
+            params.add("testRules", jsonRules);
+            params.add("operators", logicOp);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
