@@ -2,13 +2,14 @@ package com.example.application.View;
 
 import com.example.application.Presenter.StorePresenter;
 import com.example.application.Util.ProductDTO;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -32,7 +33,13 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     private String storeID;
     private VerticalLayout productsFoundLayout;
 
-    public StoreView() {}
+    public StoreView() {
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
+    }
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();

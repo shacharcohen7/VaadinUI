@@ -1,7 +1,8 @@
 package com.example.application.View.GuestViews;
 
 import com.example.application.Presenter.GuestPresenters.LoginPresenter;
-import com.example.application.View.WebSocketHandler;
+import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
@@ -11,10 +12,6 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Route("LoginView")
 public class LoginView extends VerticalLayout  {
@@ -87,8 +84,8 @@ public class LoginView extends VerticalLayout  {
     }
 
     public void loginSuccess() {
-        webSocketHandler = new WebSocketHandler();
-        webSocketHandler.openConnection();
+        webSocketHandler = WebSocketHandler.getInstance();
+        webSocketHandler.openConnection(VaadinSession.getCurrent().getAttribute("memberID").toString(), UI.getCurrent());
         getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
     }
 

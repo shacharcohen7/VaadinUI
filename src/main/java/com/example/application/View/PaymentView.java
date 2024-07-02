@@ -1,11 +1,11 @@
 package com.example.application.View;
 
-import com.example.application.Presenter.GuestPresenters.SignInPresenter;
 import com.example.application.Presenter.PaymentPresenter;
 import com.example.application.Util.CartDTO;
+import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -31,6 +31,11 @@ public class PaymentView extends VerticalLayout {
 
     public PaymentView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         cartDTO = (CartDTO) VaadinSession.getCurrent().getAttribute("cartDTO");
         buildView();
     }

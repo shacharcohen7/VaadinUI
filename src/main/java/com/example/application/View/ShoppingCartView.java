@@ -1,16 +1,15 @@
 package com.example.application.View;
 
 import com.example.application.Presenter.ShoppingCartPresenter;
-import com.example.application.Presenter.StorePresenter;
 import com.example.application.Util.CartDTO;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.UserDTO;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -23,9 +22,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.awt.*;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +34,11 @@ public class ShoppingCartView extends VerticalLayout {
 
     public ShoppingCartView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         buildView();
     }
 

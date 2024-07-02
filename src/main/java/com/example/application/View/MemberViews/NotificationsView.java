@@ -1,9 +1,9 @@
 package com.example.application.View.MemberViews;
 
-import com.example.application.Presenter.MemberPresenters.HistoryPresenter;
 import com.example.application.Presenter.MemberPresenters.NotificationsPresenter;
 import com.example.application.Util.AcquisitionDTO;
 import com.example.application.Util.ReceiptDTO;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -12,16 +12,13 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 //import org.springframework.messaging.simp.annotation.SubscribeMapping;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Route("NotificationsView")
 
@@ -35,6 +32,11 @@ public class NotificationsView extends VerticalLayout {
 
     public NotificationsView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         buildView();
     }
 

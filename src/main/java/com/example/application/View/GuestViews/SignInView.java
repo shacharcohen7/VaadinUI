@@ -1,6 +1,8 @@
 package com.example.application.View.GuestViews;
 
 import com.example.application.Presenter.GuestPresenters.SignInPresenter;
+import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
@@ -11,10 +13,6 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Route("SignInView")
 public class SignInView extends VerticalLayout {
@@ -32,6 +30,11 @@ public class SignInView extends VerticalLayout {
 
     public SignInView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
         buildView();
     }
 

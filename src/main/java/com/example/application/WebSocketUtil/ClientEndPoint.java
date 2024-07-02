@@ -1,4 +1,4 @@
-package com.example.application.View;
+package com.example.application.WebSocketUtil;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
@@ -6,11 +6,23 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
 
 import java.time.Duration;
-
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ClientEndPoint implements WebSocketListener {
-    Session session ;
+    private Session session;
+    Set<UI> uiList = ConcurrentHashMap.newKeySet();
+    private final String memberID;
+
+    public ClientEndPoint(String memberID) {
+        //this.ui = ui;
+        this.memberID = memberID;
+    }
+
+    public void addUI(UI ui){
+        uiList.add(ui);
+    }
 
     @Override
     public void onWebSocketError(Throwable cause) {
@@ -20,7 +32,8 @@ public class ClientEndPoint implements WebSocketListener {
 
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
-        WebSocketListener.super.onWebSocketClose(statusCode, reason);
+        //WebSocketListener.super.onWebSocketClose(statusCode, reason);
+        System.out.println(reason);
     }
 
     @Override
@@ -36,7 +49,17 @@ public class ClientEndPoint implements WebSocketListener {
     public void onWebSocketText(String message) {
         System.out.println("Received message: " + message);
         //notifyMessageListeners(message);
-        UI.getCurrent().access(() -> Notification.show(message));
-        WebSocketListener.super.onWebSocketText(message);
+        for (UI ui: uiList) {
+            ui.access(() -> Notification.show(message));
+        }
+
+        //WebSocketListener.super.onWebSocketText(message);
+    }
+
+    public void close() {
+        if (session != null && session.isOpen()) {
+            session.close();
+        }
+
     }
 }
