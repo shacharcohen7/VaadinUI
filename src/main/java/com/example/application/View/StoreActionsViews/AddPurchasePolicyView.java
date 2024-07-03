@@ -157,6 +157,12 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
             relevantFieldsLayout.add(timeField);
         }
         Button applyButton = new Button("apply", event -> {
+            String ruleTypeVal = ruleTypes==null ? null: ruleTypes.getValue();
+            String rangeFieldVal = rangeField ==null ? null : rangeField.getValue();
+            String categoryFieldVal = categoryField ==null ? null :  categoryField.getValue();
+            String productNameFieldVal = productNameField ==null ? null :  productNameField.getValue();
+            String descriptionFieldVal = descriptionField==null ? null : descriptionField.getValue();
+            Boolean containsFieldVal = containsField==null ? null : containsField.getValue();
             TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
                     productNameField.getValue(), descriptionField.getValue(), containsField.getValue(), ageField.getValue(),
                     quantityField.getValue(), dateField.getValue(), priceField.getValue(), timeField.getValue());

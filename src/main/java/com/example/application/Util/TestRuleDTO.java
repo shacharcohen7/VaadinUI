@@ -9,7 +9,7 @@ public class TestRuleDTO {
     private String category;
     private String productName;
     private String description;
-    private boolean contains;
+    private Boolean contains;
 
     private Integer age;
     private Integer quantity;
@@ -17,7 +17,7 @@ public class TestRuleDTO {
     private Integer price;
     private LocalTime time;
 
-    public TestRuleDTO(String type, String range, String category, String productName, String description, boolean contains, Integer age, Integer quantity, LocalDate date, Integer price, LocalTime time) {
+    public TestRuleDTO(String type, String range, String category, String productName, String description, Boolean contains, Integer age, Integer quantity, LocalDate date, Integer price, LocalTime time) {
         this.type = type;
         this.range = range;
         this.category = category;
@@ -55,7 +55,7 @@ public class TestRuleDTO {
         return description;
     }
 
-    public boolean isContains() {
+    public Boolean isContains() {
         return contains;
     }
 
