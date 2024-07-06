@@ -1,22 +1,20 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters;
 
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.TestRuleDTO;
-import com.example.application.View.StoreActionsViews.AddProductToStoreView;
-import com.example.application.View.StoreActionsViews.AddPurchasePolicyView;
+import com.example.application.View.StoreManagementViews.PoliciesActionsViews.AddPurchaseRuleView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-public class AddPurchasePolicyPresenter {
-    private AddPurchasePolicyView view;
+public class AddPurchaseRulePresenter {
+    private AddPurchaseRuleView view;
     private String userID;
     private String storeID;
 
-    public AddPurchasePolicyPresenter(AddPurchasePolicyView view, String userID, String storeID){
+    public AddPurchaseRulePresenter(AddPurchaseRuleView view, String userID, String storeID){
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;

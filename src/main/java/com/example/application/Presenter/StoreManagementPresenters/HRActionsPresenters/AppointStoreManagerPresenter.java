@@ -1,16 +1,15 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.StoreActionsViews.AppointStoreOwnerView;
-import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
+import com.example.application.View.StoreManagementViews.HRActionsViews.AppointStoreManagerView;
 import com.vaadin.flow.server.VaadinSession;
 
-public class AppointStoreOwnerPresenter {
-    private AppointStoreOwnerView view;
+public class AppointStoreManagerPresenter {
+    private AppointStoreManagerView view;
     private String userID;
     private String storeID;
 
-    public AppointStoreOwnerPresenter(AppointStoreOwnerView view, String userID, String storeID){
+    public AppointStoreManagerPresenter(AppointStoreManagerView view, String userID, String storeID){
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;
@@ -26,8 +25,8 @@ public class AppointStoreOwnerPresenter {
         }
     }
 
-    public void onAppointButtonClicked(String usernameToAppoint) {
-        if (APIcalls.appointStoreOwner(userID, usernameToAppoint, storeID).contains("success")) {
+    public void onAppointButtonClicked(String usernameToAppoint, boolean inventoryPermissions, boolean purchasePermissions) {
+        if (APIcalls.appointStoreManager(userID, usernameToAppoint, storeID, inventoryPermissions, purchasePermissions).contains("success")) {
             view.appointmentSuccess("Appointment performed successfully");
         } else {
             view.appointmentFailure("Invalid input.");

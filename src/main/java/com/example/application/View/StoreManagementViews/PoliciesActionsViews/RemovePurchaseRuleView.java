@@ -1,8 +1,9 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.FireStoreManagerPresenter;
-import com.example.application.Presenter.StoreActionsPresenters.FireStoreOwnerPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.RemovePurchaseRulePresenter;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -10,7 +11,6 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
@@ -20,40 +20,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("FireStoreManagerView")
-public class FireStoreManagerView  extends VerticalLayout implements HasUrlParameter<String> {
-    private FireStoreManagerPresenter presenter;
+@Route("RemovePurchaseRuleView")
+public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlParameter<String> {
+    private RemovePurchaseRulePresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private ComboBox<String> storeOwnerField;
-    private Button fireButton;
+    private ComboBox<String> purchasePolicyField;
+    private Button removeButton;
     private Button cancelButton;
 
-    public FireStoreManagerView(){}
+    public RemovePurchaseRuleView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
-        presenter = new FireStoreManagerPresenter(this, userID, storeID);
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
+        presenter = new RemovePurchaseRulePresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Remove Product from Store");
+        H1 header = new H1("Remove Purchase Rule");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
-        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        storeOwnerField = new ComboBox<String>("store owner");
-        storeOwnerField.setItems(presenter.getStoreOwners());
-        fireButton = new Button("Fire", event -> {
-            fireConfirm();
+        purchasePolicyField = new ComboBox<String>("rule");
+        purchasePolicyField.setItems(presenter.getStoreCurrentPurchaseRules());
+        removeButton = new Button("Remove", event -> {
+            removeConfirm();
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
         add(
-                storeOwnerField,
-                new HorizontalLayout(fireButton, cancelButton)
+                purchasePolicyField,
+                new HorizontalLayout(removeButton, cancelButton)
         );
     }
 
@@ -102,23 +107,23 @@ public class FireStoreManagerView  extends VerticalLayout implements HasUrlParam
         buildView();
     }
 
-    public void fireConfirm(){
+    public void removeConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Remove Product");
-        dialog.setText("Are you sure you want to remove this product from store?");
+        dialog.setHeader("Remove Purchase Rule");
+        dialog.setText("Are you sure you want to remove this purchase rule?");
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> presenter.onFireButtonClicked(storeOwnerField.getValue()));
+        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(purchasePolicyField.getValue()));
         dialog.open();
     }
 
-    public void fireSuccess(String message) {
+    public void removeSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+        getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
     }
 
-    public void fireFailure(String message) {
+    public void removeFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 

@@ -111,7 +111,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("checkInitializedMarket error occurred");
             return false;
         }
     }
@@ -139,7 +139,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("isMember error occurred");
             return false;
         }
     }
@@ -170,7 +170,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getMemberName error occurred");
             return null;
         }
     }
@@ -199,7 +199,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getAllStores error occurred");
             return null;
         }
     }
@@ -226,7 +226,7 @@ public class APIcalls {
             return mapper.readValue(responseBody.getData(), CartDTO.class);
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getCart error occurred");
             return null;
         }
     }
@@ -253,7 +253,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getStoreCurrentPurchaseRules error occurred");
             return null;
         }
     }
@@ -280,7 +280,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getAllPurchaseRules error occurred");
             return null;
         }
     }
@@ -320,7 +320,34 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("addPurchaseRuleToStore error occurred");
+            return null;
+        }
+    }
+
+    public static String removePurchaseRuleFromStore(int ruleNum, String userId, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/removePurchaseRuleFromStore/{ruleNum}/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(ruleNum, userId, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println("removePurchaseRuleFromStore error occurred");
             return null;
         }
     }
@@ -345,7 +372,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getCategories error occurred");
             return null;
         }
     }
@@ -372,7 +399,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getNotifications error occurred");
             return null;
         }
     }
@@ -403,7 +430,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getStoreProducts error occurred");
             return null;
         }
     }
@@ -430,7 +457,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getStoreOwners error occurred");
             return null;
         }
     }
@@ -457,7 +484,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getStoreMangers error occurred");
             return null;
         }
     }
@@ -485,7 +512,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getStore error occurred");
             return null;
         }
     }
@@ -513,7 +540,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getUser error occurred");
             return null;
         }
     }
@@ -543,7 +570,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         } catch (Exception e) {
             e.printStackTrace();
-            return "An error occurred.";
+            return "register An error occurred.";
         }
     }
 
@@ -579,7 +606,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("generalProductSearch error occurred");
             return null;
         }
     }
@@ -612,7 +639,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("inStoreProductSearch error occurred");
             return null;
         }
     }
@@ -640,7 +667,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("isStoreOwner error occurred");
             return false;
         }
     }
@@ -668,7 +695,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("isStoreManager error occurred");
             return false;
         }
     }
@@ -696,7 +723,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("hasInventoryPermission error occurred");
             return false;
         }
     }
@@ -724,7 +751,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("hasPurchasePermission error occurred");
             return false;
         }
     }
@@ -754,7 +781,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("logout error occurred");
             return null;
         }
     }
@@ -784,7 +811,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("login error occurred");
             return null;
         }
     }
@@ -814,7 +841,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("closeStore error occurred");
             return null;
         }
     }
@@ -844,14 +871,14 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("reopenStore error occurred");
             return null;
         }
     }
 
     public static boolean isStoreOpen(String storeID){
         try {
-            String url = "http://localhost:8080/api/market/isStoreOpen/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/store/isStoreOpen/{storeID}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(storeID)
@@ -872,7 +899,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("isStoreOpen error occurred");
             return false;
         }
     }
@@ -902,7 +929,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("openStore error occurred");
             return null;
         }
     }
@@ -932,7 +959,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("addProductToBasket error occurred");
             return null;
         }
     }
@@ -964,7 +991,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("addProductToStore error occurred");
             return null;
         }
     }
@@ -991,7 +1018,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("removeProductFromStore error occurred");
             return null;
         }
     }
@@ -1020,7 +1047,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("updateProductInStore error occurred");
             return null;
         }
     }
@@ -1047,7 +1074,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("appointStoreOwner error occurred");
             return null;
         }
     }
@@ -1074,14 +1101,14 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("appointStoreManager error occurred");
             return null;
         }
     }
 
     public static String fireStoreOwner(String userID, String appointedUsername, String storeID){
         try {
-            String url = "http://localhost:8080/api/market/fireStoreOwner/{userId}/{appointedId}/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/fireStoreOwner/{nominatorUserId}/{nominatedUsername}/{storeID}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, appointedUsername, storeID)
@@ -1101,14 +1128,14 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("fireStoreOwner error occurred");
             return null;
         }
     }
 
     public static String fireStoreManager(String userID, String appointedUsername, String storeID){
         try {
-            String url = "http://localhost:8080/api/market/fireStoreManager/{userId}/{appointedId}/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/fireStoreManager/{nominatorUserId}/{nominatedUsername}/{storeID}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, appointedUsername, storeID)
@@ -1128,7 +1155,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("fireStoreManager error occurred");
             return null;
         }
     }
@@ -1155,7 +1182,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("updateStoreManagerPermissions error occurred");
             return null;
         }
     }
@@ -1185,7 +1212,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("removeProductFromBasket error occurred");
             return null;
         }
     }
@@ -1215,7 +1242,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("modifyShoppingCart error occurred");
             return null;
         }
     }
@@ -1245,7 +1272,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("setUserConfirmationPurchase error occurred");
             return null;
         }
     }
@@ -1277,7 +1304,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getCartAfterValidation error occurred");
             return null;
         }
     }
@@ -1310,7 +1337,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         } catch (Exception e) {
             e.printStackTrace();
-            return "An error occurred.";
+            return "purchase An error occurred.";
         }
     }
 
@@ -1342,7 +1369,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getUserAcquisitionsHistory error occurred");
             return null;
         }
     }
@@ -1376,7 +1403,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println("getUserReceiptsByAcquisition error occurred");
             return null;
         }
     }
@@ -1389,7 +1416,7 @@ public class APIcalls {
             return errorMessageNode.asText("An unknown error occurred.");
         } catch (Exception e) {
             e.printStackTrace();
-            return "An unknown error occurred.";
+            return "extractErrorMessageFromJson An unknown error occurred.";
         }
     }
 }

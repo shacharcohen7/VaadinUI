@@ -254,7 +254,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
                             getUI().ifPresent(ui -> ui.navigate("UpdateManagerPermissionsView", storeQuery));
                         }),
                         new Button("Fire Store Manager", event -> {
-                            getUI().ifPresent(ui -> ui.navigate("FireStoreOwnerView", storeQuery));
+                            getUI().ifPresent(ui -> ui.navigate("FireStoreManagerView", storeQuery));
                         })
                 )
         );

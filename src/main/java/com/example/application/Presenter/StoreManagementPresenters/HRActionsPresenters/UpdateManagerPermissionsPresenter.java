@@ -1,11 +1,9 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.StoreActionsViews.AppointStoreManagerView;
-import com.example.application.View.StoreActionsViews.UpdateManagerPermissionsView;
+import com.example.application.View.StoreManagementViews.HRActionsViews.UpdateManagerPermissionsView;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class UpdateManagerPermissionsPresenter {
