@@ -254,7 +254,10 @@ public class ShoppingCartView extends VerticalLayout {
 
         formLayout.add(countryField, cityField, addressField, dateOfBirthField, nameField);
 
-        Button confirmButton = new Button("Confirm", event -> {
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Confirm");
+        dialog.addConfirmListener(event -> {
             String country = countryField.getValue();
             String city = cityField.getValue();
             String address = addressField.getValue();
@@ -267,10 +270,7 @@ public class ShoppingCartView extends VerticalLayout {
 
             dialog.close();
         });
-
-        Button cancelButton = new Button("Cancel", event -> dialog.close());
-
-        dialog.add(formLayout, confirmButton, cancelButton);
+        dialog.add(formLayout);
         dialog.open();
     }
 
