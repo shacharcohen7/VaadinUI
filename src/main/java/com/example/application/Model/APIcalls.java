@@ -2,6 +2,8 @@ package com.example.application.Model;
 
 import com.example.application.Util.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,6 +23,8 @@ import java.util.*;
 public class APIcalls {
     static RestTemplate restTemplate = new RestTemplate();;
     static ObjectMapper mapper = new ObjectMapper();
+
+
 
     public static String startSession() {
         String url = "http://localhost:8080/api/market/enterSystem";  // Absolute URL
@@ -111,7 +115,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -139,7 +143,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -170,7 +174,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -199,7 +203,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -226,7 +230,7 @@ public class APIcalls {
             return mapper.readValue(responseBody.getData(), CartDTO.class);
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -253,7 +257,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -280,21 +284,24 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
 
     public static String addPurchaseRuleToStore(List<TestRuleDTO> Rules, List<String> logicOperators, String userID, String storeID){
         try {
+            ObjectMapper mapper2 = new ObjectMapper();
+            mapper2.registerModule(new JavaTimeModule());
+            mapper2.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             String url = "http://localhost:8080/api/market/addPurchaseRuleToStore";  // Absolute URL
 
             List<String> stringRules = new ArrayList<>();
             for (TestRuleDTO testRuleDTO : Rules){
-                stringRules.add(mapper.writeValueAsString(testRuleDTO));
+                stringRules.add(mapper2.writeValueAsString(testRuleDTO));
             }
-            String jsonRules = mapper.writeValueAsString(stringRules);
-            String logicOp = mapper.writeValueAsString(logicOperators);
+            String jsonRules = mapper2.writeValueAsString(stringRules);
+            String logicOp = mapper2.writeValueAsString(logicOperators);
 
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("userId", userID);
@@ -320,7 +327,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -345,7 +352,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -372,7 +379,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -403,7 +410,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -430,7 +437,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -457,7 +464,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -485,7 +492,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -513,7 +520,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -579,7 +586,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -612,7 +619,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -640,7 +647,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -668,7 +675,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -696,7 +703,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -724,7 +731,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -754,7 +761,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -784,7 +791,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -814,7 +821,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -844,7 +851,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -872,7 +879,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return false;
         }
     }
@@ -902,7 +909,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -932,7 +939,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -964,7 +971,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -991,7 +998,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1020,7 +1027,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1047,7 +1054,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1074,7 +1081,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1101,7 +1108,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1128,7 +1135,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1155,7 +1162,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1185,7 +1192,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1215,7 +1222,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1245,7 +1252,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1277,7 +1284,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1342,7 +1349,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -1376,7 +1383,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println("error occurred");
+            System.err.println(e.getMessage());
             return null;
         }
     }
