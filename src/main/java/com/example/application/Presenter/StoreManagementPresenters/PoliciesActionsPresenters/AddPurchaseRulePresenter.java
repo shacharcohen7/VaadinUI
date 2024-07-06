@@ -46,7 +46,7 @@ public class AddPurchaseRulePresenter {
     public void onAddButtonClicked(List<TestRuleDTO> Rules, List<String> logicOperators) {
         String result = APIcalls.addPurchaseRuleToStore(Rules, logicOperators, userID, storeID);
         if (result.contains("success")) {
-            view.addSuccess("Purchase policy was added");
+            view.addSuccess("Purchase rule was added");
         } else {
             view.addFailure(result);
         }
