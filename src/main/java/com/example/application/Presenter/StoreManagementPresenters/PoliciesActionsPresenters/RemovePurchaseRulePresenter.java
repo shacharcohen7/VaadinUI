@@ -42,7 +42,7 @@ public class RemovePurchaseRulePresenter {
     public void onRemoveButtonClicked(String rule) {
         String result = APIcalls.removePurchaseRuleFromStore(descriptionToNum.get(rule), userID, storeID);
         if (result.contains("success")) {
-            view.removeSuccess("Purchase policy was removed");
+            view.removeSuccess("Purchase rule was removed");
         } else {
             view.removeFailure(result);
         }

@@ -61,7 +61,7 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
         HorizontalLayout ruleLayout = new HorizontalLayout();
         HorizontalLayout relevantFieldsLayout = new HorizontalLayout();
         HorizontalLayout buttons = new HorizontalLayout();
-        ComboBox<String> ruleTypes = new ComboBox<String>("rule type");
+        ComboBox<String> ruleTypes = new ComboBox<String>("rule type *");
         ruleTypes.setItems("Age", "Amount", "Date", "Price", "Time");
         ruleTypes.addValueChangeListener(event -> {
             createRelevantFields(ruleTypes, buttons, relevantFieldsLayout);
@@ -112,7 +112,7 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
     public void createRelevantFields(ComboBox<String> ruleTypes, HorizontalLayout buttons, HorizontalLayout relevantFieldsLayout){
         relevantFieldsLayout.removeAll();
         buttons.removeAll();
-        ComboBox<String> rangeField = new ComboBox<String>("range");
+        ComboBox<String> rangeField = new ComboBox<String>("range *");
         rangeField.setItems("Exact", "Below", "Above");
         ComboBox<String> categoryField = new ComboBox<String>("category");
         categoryField.setItems(presenter.getCategories());
@@ -130,15 +130,15 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
                 productNameField.clear();
             }
         });
-        TextField descriptionField = new TextField("description");
-        ComboBox<Boolean> containsField = new ComboBox<Boolean>("contains");
-        containsField.setItems(true, false);
+        TextField descriptionField = new TextField("description *");
+        ComboBox<String> containsField = new ComboBox<String>("contains");
+        containsField.setItems("basket must contain", "basket must not contain");
         relevantFieldsLayout.add(rangeField, categoryField, productNameField, descriptionField, containsField);
-        IntegerField ageField = new IntegerField("age");
-        IntegerField quantityField = new IntegerField("quantity");
-        DatePicker dateField = new DatePicker("date");
-        IntegerField priceField = new IntegerField("price");
-        TimePicker timeField = new TimePicker("time");
+        IntegerField ageField = new IntegerField("age *");
+        IntegerField quantityField = new IntegerField("quantity *");
+        DatePicker dateField = new DatePicker("date *");
+        IntegerField priceField = new IntegerField("price *");
+        TimePicker timeField = new TimePicker("time *");
         if(ruleTypes.getValue().equals("Age")){
             relevantFieldsLayout.add(ageField);
         }
@@ -179,13 +179,11 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
             else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
                 Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);
             }
-            else if(ruleTypes.getValue() == "Amount"){
-                if(quantityField.isEmpty()){
-                    Notification.show("Please fill quantity field",3000, Notification.Position.MIDDLE);
-                }
-                if(categoryField.isEmpty() && productNameField.isEmpty()){
-                    Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
-                }
+            else if(ruleTypes.getValue() == "Amount" && quantityField.isEmpty()){
+                Notification.show("Please fill quantity field",3000, Notification.Position.MIDDLE);
+            }
+            else if(ruleTypes.getValue() == "Amount" && categoryField.isEmpty() && productNameField.isEmpty()){
+                Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
             }
             else if(ruleTypes.getValue() == "Date" && dateField.isEmpty()){
                 Notification.show("Please fill date field",3000, Notification.Position.MIDDLE);
@@ -197,8 +195,15 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
                 Notification.show("Please fill time field",3000, Notification.Position.MIDDLE);
             }
             else {
+                Boolean contain = null;
+                if(containsField.getValue().equals("basket must contain")){
+                    contain = true;
+                }
+                else if(containsField.getValue().equals("basket must not contain")){
+                    contain = false;
+                }
                 TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
-                        productNameField.getValue(), descriptionField.getValue(), containsField.getValue(), ageField.getValue(),
+                        productNameField.getValue(), descriptionField.getValue(), contain, ageField.getValue(),
                         quantityField.getValue(), dateField.getValue(), priceField.getValue(), timeField.getValue());
                 Rules.add(newRule);
                 ruleTypes.setEnabled(false);
@@ -286,7 +291,7 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
         HorizontalLayout relevantFieldsLayout = new HorizontalLayout();
         HorizontalLayout buttons = new HorizontalLayout();
         ComboBox<String> operator = new ComboBox<String>("operator");
-        operator.setItems("COND", "OR", "AND");
+        operator.setItems("ONLY IF", "OR", "AND");
         operator.addValueChangeListener(event -> {
             logicOperators.add(event.getValue());
             operator.setEnabled(false);

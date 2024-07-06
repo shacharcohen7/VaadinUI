@@ -26,7 +26,7 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private ComboBox<String> purchasePolicyField;
+    private ComboBox<String> purchaseRuleField;
     private Button removeButton;
     private Button cancelButton;
 
@@ -48,16 +48,16 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        purchasePolicyField = new ComboBox<String>("rule");
-        purchasePolicyField.setItems(presenter.getStoreCurrentPurchaseRules());
+        purchaseRuleField = new ComboBox<String>("rule");
+        purchaseRuleField.setItems(presenter.getStoreCurrentPurchaseRules());
         removeButton = new Button("Remove", event -> {
             removeConfirm();
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+            getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
         });
         add(
-                purchasePolicyField,
+                purchaseRuleField,
                 new HorizontalLayout(removeButton, cancelButton)
         );
     }
@@ -114,7 +114,7 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(purchasePolicyField.getValue()));
+        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(purchaseRuleField.getValue()));
         dialog.open();
     }
 

@@ -51,7 +51,7 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
             getUI().ifPresent(ui -> ui.navigate("AddPurchaseRuleView", storeQuery));
         });
         ComposeRulesButton = new Button("Compose Rules", event -> {
-            getUI().ifPresent(ui -> ui.navigate("AddPurchaseRuleView", storeQuery));
+            getUI().ifPresent(ui -> ui.navigate("ComposePurchaseRuleView", storeQuery));
         });
         RemoveRuleButton = new Button("Remove Rule", event -> {
             getUI().ifPresent(ui -> ui.navigate("RemovePurchaseRuleView", storeQuery));

@@ -332,6 +332,35 @@ public class APIcalls {
         }
     }
 
+    public static String composeCurrentPurchaseRules(int ruleIndex1, int ruleIndex2, String operator, String userId, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/composeCurrentPurchaseRules/{ruleIndex1}/{ruleIndex2}/{operator}/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(ruleIndex1, ruleIndex2, operator, userId, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("addPurchaseRuleToStore error occurred");
+            return null;
+        }
+    }
+
     public static String removePurchaseRuleFromStore(int ruleNum, String userId, String storeId){
         try {
             String url = "http://localhost:8080/api/market/removePurchaseRuleFromStore/{ruleNum}/{userId}/{storeId}";  // Absolute URL
