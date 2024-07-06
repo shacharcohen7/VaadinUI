@@ -327,6 +327,33 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
+            System.err.println("addPurchaseRuleToStore error occurred");
+            return null;
+        }
+    }
+
+    public static String removePurchaseRuleFromStore(int ruleNum, String userId, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/removePurchaseRuleFromStore/{ruleNum}/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(ruleNum, userId, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
             System.err.println(e.getMessage());
             return null;
         }
@@ -550,7 +577,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         } catch (Exception e) {
             e.printStackTrace();
-            return "An error occurred.";
+            return "register An error occurred.";
         }
     }
 
@@ -858,7 +885,7 @@ public class APIcalls {
 
     public static boolean isStoreOpen(String storeID){
         try {
-            String url = "http://localhost:8080/api/market/isStoreOpen/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/store/isStoreOpen/{storeID}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(storeID)
@@ -1088,7 +1115,7 @@ public class APIcalls {
 
     public static String fireStoreOwner(String userID, String appointedUsername, String storeID){
         try {
-            String url = "http://localhost:8080/api/market/fireStoreOwner/{userId}/{appointedId}/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/fireStoreOwner/{nominatorUserId}/{nominatedUsername}/{storeID}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, appointedUsername, storeID)
@@ -1115,7 +1142,7 @@ public class APIcalls {
 
     public static String fireStoreManager(String userID, String appointedUsername, String storeID){
         try {
-            String url = "http://localhost:8080/api/market/fireStoreManager/{userId}/{appointedId}/{storeId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/fireStoreManager/{nominatorUserId}/{nominatedUsername}/{storeID}";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID, appointedUsername, storeID)
@@ -1317,7 +1344,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         } catch (Exception e) {
             e.printStackTrace();
-            return "An error occurred.";
+            return "purchase An error occurred.";
         }
     }
 
@@ -1396,7 +1423,7 @@ public class APIcalls {
             return errorMessageNode.asText("An unknown error occurred.");
         } catch (Exception e) {
             e.printStackTrace();
-            return "An unknown error occurred.";
+            return "extractErrorMessageFromJson An unknown error occurred.";
         }
     }
 }

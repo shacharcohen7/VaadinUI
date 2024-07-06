@@ -1,9 +1,8 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.InventoryActionPresenters;
 
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
-import com.example.application.View.MemberViews.OpenStoreView;
-import com.example.application.View.StoreActionsViews.AddProductToStoreView;
+import com.example.application.View.StoreManagementViews.InventoryActionsViews.AddProductToStoreView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.StoreActionsViews.PurchasePolicyView;
+import com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchasePolicyView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;

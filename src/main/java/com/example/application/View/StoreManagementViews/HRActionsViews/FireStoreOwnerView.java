@@ -1,7 +1,6 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.HRActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.FireStoreOwnerPresenter;
-import com.example.application.Presenter.StoreActionsPresenters.RemoveProductFromStorePresenter;
+import com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters.FireStoreOwnerPresenter;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -37,7 +36,7 @@ public class FireStoreOwnerView extends VerticalLayout implements HasUrlParamete
         presenter = new FireStoreOwnerPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Remove Product from Store");
+        H1 header = new H1("Fire Store Owner");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
@@ -104,8 +103,8 @@ public class FireStoreOwnerView extends VerticalLayout implements HasUrlParamete
 
     public void fireConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Remove Product");
-        dialog.setText("Are you sure you want to remove this product from store?");
+        dialog.setHeader("Fire Store Owner");
+        dialog.setText("Are you sure you want to fire this store owner?");
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");

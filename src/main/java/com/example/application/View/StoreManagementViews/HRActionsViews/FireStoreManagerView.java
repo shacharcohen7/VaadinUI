@@ -1,18 +1,17 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.HRActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.AppointStoreOwnerPresenter;
-import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters.FireStoreManagerPresenter;
 import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -20,44 +19,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("AppointStoreOwnerView")
-public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParameter<String> {
-    private AppointStoreOwnerPresenter presenter;
+@Route("FireStoreManagerView")
+public class FireStoreManagerView  extends VerticalLayout implements HasUrlParameter<String> {
+    private FireStoreManagerPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private TextField usernameField;
-    private Button appointButton;
+    private ComboBox<String> storeManagerField;
+    private Button fireButton;
     private Button cancelButton;
 
-    public AppointStoreOwnerView(){}
+    public FireStoreManagerView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
-        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
-        if (memberIdObj!=null){
-            String memberId = memberIdObj.toString();
-            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
-        }
-        presenter = new AppointStoreOwnerPresenter(this, userID, storeID);
+        presenter = new FireStoreManagerPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Appoint Store Owner");
+        H1 header = new H1("Fire Store Manager");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
-        layout.setAlignItems(Alignment.CENTER);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(layout);
-        usernameField = new TextField("","user name");
-        appointButton = new Button("Appoint", event -> {
-            presenter.onAppointButtonClicked(usernameField.getValue());
+        storeManagerField = new ComboBox<String>("store manager");
+        storeManagerField.setItems(presenter.getStoreManagers());
+        fireButton = new Button("Fire", event -> {
+            fireConfirm();
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
         add(
-                usernameField,
-                new HorizontalLayout(appointButton, cancelButton)
+                storeManagerField,
+                new HorizontalLayout(fireButton, cancelButton)
         );
     }
 
@@ -90,11 +85,6 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
         add(topLayout);
     }
 
-    public void appointmentSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
-    }
-
     public void logoutConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Logout");
@@ -111,7 +101,23 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
         buildView();
     }
 
-    public void appointmentFailure(String message) {
+    public void fireConfirm(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Fire Store Manager");
+        dialog.setText("Are you sure you want to fire this store manager?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Yes");
+        dialog.addConfirmListener(event -> presenter.onFireButtonClicked(storeManagerField.getValue()));
+        dialog.open();
+    }
+
+    public void fireSuccess(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+    }
+
+    public void fireFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 

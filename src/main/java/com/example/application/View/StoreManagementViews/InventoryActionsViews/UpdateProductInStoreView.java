@@ -1,6 +1,6 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.InventoryActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.UpdateProductInStorePresenter;
+import com.example.application.Presenter.StoreManagementPresenters.InventoryActionPresenters.UpdateProductInStorePresenter;
 import com.example.application.Util.ProductDTO;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;

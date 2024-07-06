@@ -1,12 +1,9 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Util.UserDTO;
-import com.example.application.View.StoreActionsViews.GetAllEmployeesView;
-import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
+import com.example.application.View.StoreManagementViews.HRActionsViews.GetAllEmployeesView;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class GetAllEmployeesPresenter {

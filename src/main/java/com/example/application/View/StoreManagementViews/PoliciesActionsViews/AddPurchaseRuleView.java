@@ -1,7 +1,6 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.AddPurchasePolicyPresenter;
-import com.example.application.Util.ProductDTO;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.AddPurchaseRulePresenter;
 import com.example.application.Util.TestRuleDTO;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
@@ -22,14 +21,13 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
 
-@Route("AddPurchasePolicyView")
-public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParameter<String> {
-    private AddPurchasePolicyPresenter presenter;
+@Route("AddPurchaseRuleView")
+public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParameter<String> {
+    private AddPurchaseRulePresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
@@ -39,7 +37,7 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
     private Button addButton;
     private Button cancelButton;
 
-    public AddPurchasePolicyView(){}
+    public AddPurchaseRuleView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -48,10 +46,10 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new AddPurchasePolicyPresenter(this, userID, storeID);
+        presenter = new AddPurchaseRulePresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Add Purchase Policy");
+        H1 header = new H1("Add Purchase Rule");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
@@ -157,12 +155,110 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
             relevantFieldsLayout.add(timeField);
         }
         Button applyButton = new Button("apply", event -> {
-            String ruleTypeVal = ruleTypes==null ? null: ruleTypes.getValue();
-            String rangeFieldVal = rangeField ==null ? null : rangeField.getValue();
-            String categoryFieldVal = categoryField ==null ? null :  categoryField.getValue();
-            String productNameFieldVal = productNameField ==null ? null :  productNameField.getValue();
-            String descriptionFieldVal = descriptionField==null ? null : descriptionField.getValue();
-            Boolean containsFieldVal = containsField==null ? null : containsField.getValue();
+//            String ruleTypeVal = ruleTypes==null ? null: ruleTypes.getValue();
+//            String rangeFieldVal = rangeField ==null ? null : rangeField.getValue();
+//            String categoryFieldVal = categoryField ==null ? null :  categoryField.getValue();
+//            String productNameFieldVal = productNameField ==null ? null :  productNameField.getValue();
+//            String descriptionFieldVal = descriptionField==null ? null : descriptionField.getValue();
+//            Boolean containsFieldVal = containsField==null ? null : containsField.getValue();
+//            apply(ruleTypes, rangeField, categoryField,
+//                    productNameField, descriptionField, containsField, ageField,
+//                    quantityField, dateField, priceField, timeField, buttons, event.getSource());
+            if(ruleTypes.isEmpty()){
+                Notification.show("Please fill ruleType field",3000, Notification.Position.MIDDLE);
+            }
+            else if(rangeField.isEmpty()){
+                Notification.show("Please fill range field",3000, Notification.Position.MIDDLE);
+            }
+            else if(descriptionField.isEmpty()){
+                Notification.show("Please fill description field",3000, Notification.Position.MIDDLE);
+            }
+            else if(containsField.isEmpty()){
+                Notification.show("Please fill contain field",3000, Notification.Position.MIDDLE);
+            }
+            else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
+                Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);
+            }
+            else if(ruleTypes.getValue() == "Amount"){
+                if(quantityField.isEmpty()){
+                    Notification.show("Please fill quantity field",3000, Notification.Position.MIDDLE);
+                }
+                if(categoryField.isEmpty() && productNameField.isEmpty()){
+                    Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
+                }
+            }
+            else if(ruleTypes.getValue() == "Date" && dateField.isEmpty()){
+                Notification.show("Please fill date field",3000, Notification.Position.MIDDLE);
+            }
+            else if(ruleTypes.getValue() == "Price" && priceField.isEmpty()){
+                Notification.show("Please fill price field",3000, Notification.Position.MIDDLE);
+            }
+            else if(ruleTypes.getValue() == "Time" && timeField.isEmpty()){
+                Notification.show("Please fill time field",3000, Notification.Position.MIDDLE);
+            }
+            else {
+                TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
+                        productNameField.getValue(), descriptionField.getValue(), containsField.getValue(), ageField.getValue(),
+                        quantityField.getValue(), dateField.getValue(), priceField.getValue(), timeField.getValue());
+                Rules.add(newRule);
+                ruleTypes.setEnabled(false);
+                rangeField.setEnabled(false);
+                categoryField.setEnabled(false);
+                productNameField.setEnabled(false);
+                descriptionField.setEnabled(false);
+                containsField.setEnabled(false);
+                ageField.setEnabled(false);
+                quantityField.setEnabled(false);
+                dateField.setEnabled(false);
+                priceField.setEnabled(false);
+                timeField.setEnabled(false);
+                Button extendButton = new Button("extend", buttonClickEvent -> extend());
+                extendButton.setDisableOnClick(true);
+                buttons.add(extendButton);
+                event.getSource().setEnabled(false);
+            }
+        });
+        buttons.add(applyButton);
+        rulesLayout.add(buttons);
+    }
+
+    public void apply(ComboBox<String> ruleTypes, ComboBox<String> rangeField, ComboBox<String> categoryField,
+                      ComboBox<String> productNameField, TextField descriptionField, ComboBox<Boolean> containsField,
+                      IntegerField ageField, IntegerField quantityField, DatePicker dateField, IntegerField priceField,
+                      TimePicker timeField, HorizontalLayout buttons, Button applyButton){
+        if(ruleTypes.isEmpty()){
+            Notification.show("Please fill ruleType field",3000, Notification.Position.MIDDLE);
+        }
+        if(rangeField.isEmpty()){
+            Notification.show("Please fill range field",3000, Notification.Position.MIDDLE);
+        }
+        if(descriptionField.isEmpty()){
+            Notification.show("Please fill description field",3000, Notification.Position.MIDDLE);
+        }
+        if(containsField.isEmpty()){
+            Notification.show("Please fill contain field",3000, Notification.Position.MIDDLE);
+        }
+        else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
+            Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);
+        }
+        else if(ruleTypes.getValue() == "Amount"){
+            if(quantityField.isEmpty()){
+                Notification.show("Please fill quantity field",3000, Notification.Position.MIDDLE);
+            }
+            if(categoryField.isEmpty() && productNameField.isEmpty()){
+                Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
+            }
+        }
+        else if(ruleTypes.getValue() == "Date" && dateField.isEmpty()){
+            Notification.show("Please fill date field",3000, Notification.Position.MIDDLE);
+        }
+        else if(ruleTypes.getValue() == "Price" && priceField.isEmpty()){
+            Notification.show("Please fill price field",3000, Notification.Position.MIDDLE);
+        }
+        else if(ruleTypes.getValue() == "Time" && timeField.isEmpty()){
+            Notification.show("Please fill time field",3000, Notification.Position.MIDDLE);
+        }
+        else {
             TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
                     productNameField.getValue(), descriptionField.getValue(), containsField.getValue(), ageField.getValue(),
                     quantityField.getValue(), dateField.getValue(), priceField.getValue(), timeField.getValue());
@@ -181,10 +277,8 @@ public class AddPurchasePolicyView extends VerticalLayout implements HasUrlParam
             Button extendButton = new Button("extend", buttonClickEvent -> extend());
             extendButton.setDisableOnClick(true);
             buttons.add(extendButton);
-        });
-        applyButton.setDisableOnClick(true);
-        buttons.add(applyButton);
-        rulesLayout.add(buttons);
+            applyButton.setEnabled(false);
+        }
     }
 
     public void extend(){

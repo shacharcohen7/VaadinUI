@@ -1,9 +1,7 @@
-package com.example.application.Presenter.StoreActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Util.ProductDTO;
-import com.example.application.View.StoreActionsViews.FireStoreOwnerView;
-import com.example.application.View.StoreActionsViews.RemoveProductFromStoreView;
+import com.example.application.View.StoreManagementViews.HRActionsViews.FireStoreOwnerView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
@@ -31,11 +29,16 @@ public class FireStoreOwnerPresenter {
     }
 
     public List<String> getStoreOwners(){
-        return APIcalls.getStoreOwners(storeID);
+        List<String> memberIDs = APIcalls.getStoreOwners(storeID);
+        List<String> names = new LinkedList<>();
+        for(int i=0 ; i<memberIDs.size() ; i++){
+            names.add(APIcalls.getMemberName(memberIDs.get(i)));
+        }
+        return names;
     }
 
-    public void onFireButtonClicked(String productName) {
-        if (APIcalls.fireStoreOwner(userID, storeID, productName).contains("success")) {
+    public void onFireButtonClicked(String appointedUserName) {
+        if (APIcalls.fireStoreOwner(userID, appointedUserName, storeID).contains("success")) {
             view.fireSuccess("Store owner was fired successfully");
         } else {
             view.fireFailure("Invalid input.");

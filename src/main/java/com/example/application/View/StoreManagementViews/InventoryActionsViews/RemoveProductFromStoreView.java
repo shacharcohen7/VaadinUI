@@ -1,56 +1,65 @@
-package com.example.application.View.MemberViews;
+package com.example.application.View.StoreManagementViews.InventoryActionsViews;
 
-import com.example.application.Presenter.MemberPresenters.NotificationsPresenter;
-import com.example.application.Util.AcquisitionDTO;
-import com.example.application.Util.ReceiptDTO;
+import com.example.application.Presenter.StoreManagementPresenters.InventoryActionPresenters.RemoveProductFromStorePresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
-//import org.springframework.messaging.simp.annotation.SubscribeMapping;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Route("NotificationsView")
-
-public class NotificationsView extends VerticalLayout {
-    private NotificationsPresenter presenter;
+@Route("RemoveProductFromStoreView")
+public class RemoveProductFromStoreView extends VerticalLayout implements HasUrlParameter<String> {
+    private RemoveProductFromStorePresenter presenter;
+    private QueryParameters storeQuery;
     private String userID;
-    private Grid<AcquisitionDTO> acquisitionGrid;
-    private Grid<ReceiptDTO> receiptGrid;
-    private VerticalLayout receiptDetailsLayout;
-    private Button backButton;
+    private String storeID;
+    private ComboBox<String> productNameField;
+    private Button removeButton;
+    private Button cancelButton;
 
-    public NotificationsView() {
+    public RemoveProductFromStoreView(){}
+
+    public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
         if (memberIdObj!=null){
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        buildView();
-    }
-
-    public void buildView() {
-        presenter = new NotificationsPresenter(this, userID);
+        presenter = new RemoveProductFromStorePresenter(this, userID, storeID);
+        makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Notifications");
+        H1 header = new H1("Remove Product from Store");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        createNotificationsLayout();
-        add(new Button("OK", event -> getUI().ifPresent(ui -> ui.navigate("MarketView"))));
+        productNameField = new ComboBox<String>("product");
+        productNameField.setItems(presenter.getAllProductNames());
+        removeButton = new Button("Remove", event -> {
+            removeConfirm();
+        });
+        cancelButton = new Button("Cancel", event -> {
+            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+        });
+        add(
+                productNameField,
+                new HorizontalLayout(removeButton, cancelButton)
+        );
     }
 
     public void createTopLayout(){
@@ -82,18 +91,6 @@ public class NotificationsView extends VerticalLayout {
         add(topLayout);
     }
 
-    public void createNotificationsLayout(){
-        VerticalLayout notificationsLayout = new VerticalLayout();
-        List<String> notifications = presenter.getNotifications();
-        if(notifications.size() == 0){
-            notificationsLayout.add(new HorizontalLayout(new Text("No notifications")));
-        }
-        for(int i=0 ; i<notifications.size() ; i++){
-            notificationsLayout.add(new HorizontalLayout(new Text(notifications.get(i))));
-        }
-        add(notificationsLayout);
-    }
-
     public void logoutConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Logout");
@@ -105,15 +102,41 @@ public class NotificationsView extends VerticalLayout {
         dialog.open();
     }
 
-
-//    @SubscribeMapping("/topic/notifications")
-//    public void handleNotification(String notificationMessage) {
-//        UI.getCurrent().access(() -> {
-//            Notification.show(notificationMessage);
-//        });
-//    }
-
     public void logout(){
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
+        this.removeAll();
+        buildView();
+    }
+
+    public void removeConfirm(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Remove Product");
+        dialog.setText("Are you sure you want to remove this product from store?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(event -> dialog.close());
+        dialog.setConfirmText("Yes");
+        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(productNameField.getValue()));
+        dialog.open();
+    }
+
+    public void removeSuccess(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+    }
+
+    public void removeFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void makeStoreQuery(){
+        Map<String, List<String>> parameters = new HashMap<>();
+        parameters.put("storeID", List.of(storeID));
+        storeQuery = new QueryParameters(parameters);
+    }
+
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
+        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
+        storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
+        buildView();
     }
 }

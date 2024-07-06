@@ -1,16 +1,19 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.HRActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.PurchasePolicyPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters.AppointStoreManagerPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -18,16 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("PurchasePolicyView")
-public class PurchasePolicyView extends VerticalLayout implements HasUrlParameter<String> {
-    private PurchasePolicyPresenter presenter;
+@Route("AppointStoreManagerView")
+public class AppointStoreManagerView extends VerticalLayout implements HasUrlParameter<String> {
+    private AppointStoreManagerPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private Button BackButton;
-    private Button AddPolicyButton;
+    private TextField usernameField;
+    private ComboBox<Boolean> inventoryPermissions;
+    private ComboBox<Boolean> purchasePermissions;
+    private Button appointButton;
+    private Button cancelButton;
 
-    public PurchasePolicyView(){}
+    public AppointStoreManagerView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -36,23 +42,33 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new PurchasePolicyPresenter(this, userID, storeID);
+        presenter = new AppointStoreManagerPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Purchase Policy");
+        H1 header = new H1("Appoint Store Owner");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        AddPolicyButton = new Button("Add New Policy", event -> {
-            getUI().ifPresent(ui -> ui.navigate("AddPurchasePolicyView", storeQuery));
+        usernameField = new TextField("","user name");
+        inventoryPermissions = new ComboBox<Boolean>("Inventory Permissions");
+        inventoryPermissions.setItems(true, false);
+        purchasePermissions = new ComboBox<Boolean>("Purchase Permissions");
+        purchasePermissions.setItems(true, false);
+        appointButton = new Button("Appoint", event -> {
+            presenter.onAppointButtonClicked(usernameField.getValue(), inventoryPermissions.getValue(),
+                    purchasePermissions.getValue());
         });
-        BackButton = new Button("Back To Store", event -> {
+        cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
-        createPurchaseLayout();
-        add(new HorizontalLayout(AddPolicyButton, BackButton));
+        add(
+                usernameField,
+                inventoryPermissions,
+                purchasePermissions,
+                new HorizontalLayout(appointButton, cancelButton)
+        );
     }
 
     public void createTopLayout(){
@@ -84,13 +100,9 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
         add(topLayout);
     }
 
-    public void createPurchaseLayout(){
-        add(new H1("Store Purchase Policies:"));
-        List<String> purchaseRules = presenter.getStoreCurrentPurchaseRules();
-        for(int i=0 ; i<purchaseRules.size() ; i++){
-            add(new HorizontalLayout(new Text(purchaseRules.get(i))),
-                    new Button("Remove", event -> {}));
-        }
+    public void appointmentSuccess(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
     }
 
     public void logoutConfirm(){
@@ -109,8 +121,13 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
         buildView();
     }
 
+    public void appointmentFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
     public void makeStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
+        parameters.put("userID", List.of(userID));
         parameters.put("storeID", List.of(storeID));
         storeQuery = new QueryParameters(parameters);
     }

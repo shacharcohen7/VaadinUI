@@ -1,6 +1,6 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.GetAllEmployeesPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.PurchasePolicyPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -18,15 +18,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("GetAllEmployeesView")
-public class GetAllEmployeesView extends VerticalLayout implements HasUrlParameter<String> {
-    private GetAllEmployeesPresenter presenter;
+@Route("PurchasePolicyView")
+public class PurchasePolicyView extends VerticalLayout implements HasUrlParameter<String> {
+    private PurchasePolicyPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private Button OKButton;
+    private Button BackButton;
+    private Button AddRuleButton;
+    private Button ComposeRulesButton;
+    private Button RemoveRuleButton;
 
-    public GetAllEmployeesView(){}
+    public PurchasePolicyView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -35,21 +38,29 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new GetAllEmployeesPresenter(this, userID, storeID);
+        presenter = new PurchasePolicyPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("All Employees");
+        H1 header = new H1("Store Purchase Policy");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        OKButton = new Button("OK", event -> {
+        AddRuleButton = new Button("Add New Rule", event -> {
+            getUI().ifPresent(ui -> ui.navigate("AddPurchaseRuleView", storeQuery));
+        });
+        ComposeRulesButton = new Button("Compose Rules", event -> {
+            getUI().ifPresent(ui -> ui.navigate("AddPurchaseRuleView", storeQuery));
+        });
+        RemoveRuleButton = new Button("Remove Rule", event -> {
+            getUI().ifPresent(ui -> ui.navigate("RemovePurchaseRuleView", storeQuery));
+        });
+        BackButton = new Button("Back To Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
-        createOwnersLayout();
-        createManagersLayout();
-        add(OKButton);
+        createPurchaseLayout();
+        add(new HorizontalLayout(AddRuleButton, ComposeRulesButton, RemoveRuleButton, BackButton));
     }
 
     public void createTopLayout(){
@@ -81,32 +92,14 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         add(topLayout);
     }
 
-    public void createOwnersLayout(){
-        VerticalLayout ownersLayout = new VerticalLayout();
-        ownersLayout.add(new H1("Store Owners:"));
-        List<String> storeOwners = presenter.getStoreOwners();
-        for(int i=0 ; i<storeOwners.size() ; i++){
-            VerticalLayout ownerLayout = new VerticalLayout();
-            ownerLayout.add(new HorizontalLayout(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i)))));
-            ownersLayout.add(ownerLayout);
+    public void createPurchaseLayout(){
+        List<String> purchaseRules = presenter.getStoreCurrentPurchaseRules();
+        if(purchaseRules.size() == 0){
+            add(new HorizontalLayout(new Text("No purchase rules")));
         }
-        add(ownersLayout);
-    }
-
-    public void createManagersLayout(){
-        VerticalLayout managersLayout = new VerticalLayout();
-        managersLayout.add(new H1("Store Managers:"));
-        List<String> storeManagers = presenter.getStoreManagers();
-        for(int i=0 ; i<storeManagers.size() ; i++){
-            VerticalLayout managerLayout = new VerticalLayout();
-            managerLayout.add(
-                    new HorizontalLayout(new Text("Store Manager - " + presenter.getEmployeeUserName(storeManagers.get(i)))),
-                    new HorizontalLayout(new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i)))),
-                    new HorizontalLayout(new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i))))
-            );
-            managersLayout.add(managerLayout);
+        for(int i=0 ; i<purchaseRules.size() ; i++){
+            add(new HorizontalLayout(new Text(i + 1 + ". " + purchaseRules.get(i))));
         }
-        add(managersLayout);
     }
 
     public void logoutConfirm(){

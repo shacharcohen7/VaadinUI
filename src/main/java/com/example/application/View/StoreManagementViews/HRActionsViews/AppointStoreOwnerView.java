@@ -1,11 +1,10 @@
-package com.example.application.View.StoreActionsViews;
+package com.example.application.View.StoreManagementViews.HRActionsViews;
 
-import com.example.application.Presenter.StoreActionsPresenters.UpdateManagerPermissionsPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters.AppointStoreOwnerPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
@@ -13,27 +12,25 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@Route("UpdateManagerPermissionsView")
-public class UpdateManagerPermissionsView extends VerticalLayout implements HasUrlParameter<String> {
-    private UpdateManagerPermissionsPresenter presenter;
+@Route("AppointStoreOwnerView")
+public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParameter<String> {
+    private AppointStoreOwnerPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private ComboBox<String> storeManagerField;
-    private ComboBox<Boolean> inventoryPermissions;
-    private ComboBox<Boolean> purchasePermissions;
-    private Button updateButton;
+    private TextField usernameField;
+    private Button appointButton;
     private Button cancelButton;
 
-    public UpdateManagerPermissionsView(){}
+    public AppointStoreOwnerView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -42,44 +39,25 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new UpdateManagerPermissionsPresenter(this, userID, storeID);
+        presenter = new AppointStoreOwnerPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Update Store Manager Permissions");
+        H1 header = new H1("Appoint Store Owner");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        storeManagerField = new ComboBox<String>("Store Manager");
-        List<String> storeManagersMemberID = presenter.getStoreManagers();
-        List<String> storeManagerNames = new LinkedList<String>();
-        Map<String,String> usernameToMemberID = new HashMap<String,String>();
-        for(int i=0 ; i<storeManagersMemberID.size() ; i++){
-            storeManagerNames.add(presenter.getEmployeeUserName(storeManagersMemberID.get(i)));
-            usernameToMemberID.put(presenter.getEmployeeUserName(storeManagersMemberID.get(i)), storeManagersMemberID.get(i));
-        }
-        storeManagerField.setItems(storeManagerNames);
-        inventoryPermissions = new ComboBox<Boolean>("Inventory Permissions");
-        inventoryPermissions.setItems(true, false);
-        purchasePermissions = new ComboBox<Boolean>("Purchase Permissions");
-        purchasePermissions.setItems(true, false);
-        storeManagerField.addValueChangeListener(event -> {
-            inventoryPermissions.setValue(presenter.hasInventoryPermissions(usernameToMemberID.get(event.getValue())));
-            purchasePermissions.setValue(presenter.hasPurchasePermissions(usernameToMemberID.get(event.getValue())));
-        });
-        updateButton = new Button("Update", event -> {
-            presenter.onUpdateButtonClicked(storeManagerField.getValue(), inventoryPermissions.getValue(),
-                    purchasePermissions.getValue());
+        usernameField = new TextField("","user name");
+        appointButton = new Button("Appoint", event -> {
+            presenter.onAppointButtonClicked(usernameField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
         add(
-                storeManagerField,
-                inventoryPermissions,
-                purchasePermissions,
-                new HorizontalLayout(updateButton, cancelButton)
+                usernameField,
+                new HorizontalLayout(appointButton, cancelButton)
         );
     }
 
@@ -112,13 +90,9 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
         add(topLayout);
     }
 
-    public void updateSuccess(String message) {
+    public void appointmentSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
         getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
-    }
-
-    public void updateFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
     public void logoutConfirm(){
@@ -135,6 +109,10 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
     public void logout(){
         this.removeAll();
         buildView();
+    }
+
+    public void appointmentFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
     public void makeStoreQuery(){
