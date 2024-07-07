@@ -1,20 +1,21 @@
-package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.DiscountPresenters;
 
 import com.example.application.Model.APIcalls;
+import com.example.application.Util.DiscountValueDTO;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.TestRuleDTO;
-import com.example.application.View.StoreManagementViews.PoliciesActionsViews.AddPurchaseRuleView;
+import com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews.AddCondDiscountView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class AddPurchaseRulePresenter {
-    private AddPurchaseRuleView view;
+public class AddCondDiscountPresenter {
+    private AddCondDiscountView view;
     private String userID;
     private String storeID;
 
-    public AddPurchaseRulePresenter(AddPurchaseRuleView view, String userID, String storeID){
+    public AddCondDiscountPresenter(AddCondDiscountView view, String userID, String storeID){
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;
@@ -43,10 +44,10 @@ public class AddPurchaseRulePresenter {
         }
     }
 
-    public void onAddButtonClicked(List<TestRuleDTO> Rules, List<String> logicOperators) {
-        String result = APIcalls.addPurchaseRuleToStore(Rules, logicOperators, userID, storeID);
+    public void onAddButtonClicked(List<TestRuleDTO> Rules, List<String> logicOperators, List<DiscountValueDTO> discs, List<String> numericOperators) {
+        String result = APIcalls.addDiscountCondRuleToStore(Rules, logicOperators, discs, numericOperators, userID, storeID);
         if (result.contains("success")) {
-            view.addSuccess("Purchase rule was added");
+            view.addSuccess("Discount rule was added");
         } else {
             view.addFailure(result);
         }

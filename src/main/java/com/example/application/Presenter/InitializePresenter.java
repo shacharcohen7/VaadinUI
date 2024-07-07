@@ -22,20 +22,21 @@ public class InitializePresenter {
             view.startSession();
         }
         else{
-            view.buildView();
+            APIcalls.init();
+            view.startSession();
         }
     }
 
-    public void onInitializeButtonClicked(UserDTO userDTO, String password, PaymentServiceDTO paymentServiceDTO, String supplyDealerNumberField,
-                                          String supplyServiceName, String countriesSet, String citiesSet){
-        String data = APIcalls.init(userDTO, password, paymentServiceDTO, supplyDealerNumberField, supplyServiceName,
-                countriesSet, citiesSet);
-        if (data !=null && data.contains("user")){
-            VaadinSession.getCurrent().setAttribute("userID", data);;
-            view.initializeSuccess("Market was initialized successfully");
-        }
-        else{
-            view.initializeFailed("Initialized failed");
-        }
-    }
+//    public void onInitializeButtonClicked(UserDTO userDTO, String password, PaymentServiceDTO paymentServiceDTO, String supplyDealerNumberField,
+//                                          String supplyServiceName, String countriesSet, String citiesSet){
+//        String data = APIcalls.init(userDTO, password, paymentServiceDTO, supplyDealerNumberField, supplyServiceName,
+//                countriesSet, citiesSet);
+//        if (data !=null && data.contains("user")){
+//            VaadinSession.getCurrent().setAttribute("userID", data);;
+//            view.initializeSuccess("Market was initialized successfully");
+//        }
+//        else{
+//            view.initializeFailed("Initialized failed");
+//        }
+//    }
 }

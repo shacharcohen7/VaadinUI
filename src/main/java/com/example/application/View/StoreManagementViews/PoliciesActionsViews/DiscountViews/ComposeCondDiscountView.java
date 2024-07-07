@@ -1,7 +1,7 @@
-package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews;
 
-import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.ComposePurchaseRulePresenter;
-import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.RemovePurchaseRulePresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.DiscountPresenters.ComposeCondDiscountPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.DiscountPresenters.ComposeSimpleDiscountPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -21,19 +21,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("ComposePurchaseRuleView")
-public class ComposePurchaseRuleView extends VerticalLayout implements HasUrlParameter<String> {
-    private ComposePurchaseRulePresenter presenter;
+@Route("ComposeCondDiscountView")
+public class ComposeCondDiscountView extends VerticalLayout implements HasUrlParameter<String> {
+    private ComposeCondDiscountPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private ComboBox<String> purchaseRuleField1;
-    private ComboBox<String> purchaseRuleField2;
-    private ComboBox<String> operatorField;
+    private ComboBox<String> discountField1;
+    private ComboBox<String> discountField2;
+    private ComboBox<String> logicalOperatorField;
+    private ComboBox<String> numericalOperatorField;
     private Button composeButton;
     private Button cancelButton;
 
-    public ComposePurchaseRuleView(){}
+    public ComposeCondDiscountView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -42,30 +43,32 @@ public class ComposePurchaseRuleView extends VerticalLayout implements HasUrlPar
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new ComposePurchaseRulePresenter(this, userID, storeID);
+        presenter = new ComposeCondDiscountPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Remove Purchase Rule");
+        H1 header = new H1("Compose Conditional Discount");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        purchaseRuleField1 = new ComboBox<String>("first rule");
-        purchaseRuleField1.setItems(presenter.getStoreCurrentPurchaseRules());
-        purchaseRuleField2 = new ComboBox<String>("second rule");
-        purchaseRuleField2.setItems(presenter.getStoreCurrentPurchaseRules());
-        operatorField = new ComboBox<String>("operator");
-        operatorField.setItems("ONLY IF", "OR", "AND");
+        discountField1 = new ComboBox<String>("first discount");
+        discountField1.setItems(presenter.getStoreCurrentCondDiscountRules());
+        discountField2 = new ComboBox<String>("second discount");
+        discountField2.setItems(presenter.getStoreCurrentCondDiscountRules());
+        logicalOperatorField = new ComboBox<String>("logical operator");
+        logicalOperatorField.setItems("XOR", "OR", "AND");
+        numericalOperatorField = new ComboBox<String>("numerical operator");
+        numericalOperatorField.setItems("MAX", "ADD");
         composeButton = new Button("Compose", event -> {
-            presenter.onComposeButtonClicked(purchaseRuleField1.getValue(),
-                    purchaseRuleField2.getValue(), operatorField.getValue());
+            presenter.onComposeButtonClicked(discountField1.getValue(),
+                    discountField2.getValue(), logicalOperatorField.getValue(), numericalOperatorField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
+            getUI().ifPresent(ui -> ui.navigate("DiscountPolicyView", storeQuery));
         });
         add(
-                new HorizontalLayout(purchaseRuleField1, operatorField, purchaseRuleField2),
+                new HorizontalLayout(discountField1, discountField2, logicalOperatorField, numericalOperatorField),
                 new HorizontalLayout(composeButton, cancelButton)
         );
     }
@@ -117,7 +120,7 @@ public class ComposePurchaseRuleView extends VerticalLayout implements HasUrlPar
 
     public void composeSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
+        getUI().ifPresent(ui -> ui.navigate("DiscountPolicyView", storeQuery));
     }
 
     public void composeFailure(String message) {

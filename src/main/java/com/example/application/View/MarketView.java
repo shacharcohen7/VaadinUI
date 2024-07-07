@@ -197,19 +197,7 @@ public class MarketView extends VerticalLayout {
         Button closeStoreButton = new Button("Close Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView"));
         });
-        Button deleteMemberButton = new Button("Delete Member", event -> {
-
-        });
-        Button contactClientsButton = new Button("Contact Clients", event -> {
-
-        });
-        Button getHistoryButton = new Button("Market History", event -> {
-
-        });
-        Button marketProgressButton = new Button("Watch Market Progress", event -> {
-
-        });
-        adminLayout.add(new HorizontalLayout(closeStoreButton, deleteMemberButton, contactClientsButton, getHistoryButton, marketProgressButton));
+        adminLayout.add(new HorizontalLayout(closeStoreButton));
         add(adminLayout);
     }
 

@@ -53,59 +53,59 @@ public class InitializeView extends VerticalLayout {
         UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("StartSessionView")));
     }
 
-    public void startMarket(){
-        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
-    }
-
-    public void buildView(){
-        VerticalLayout userLayout = new VerticalLayout();
-        userLayout.add(new H1("User Details:"));
-        TextField userNameField = new TextField("username");
-        DatePicker birthdateField = new DatePicker("birthdate");
-        TextField countryField = new TextField("country");
-        TextField cityField = new TextField("city");
-        TextField addressField = new TextField("address");
-        TextField nameField = new TextField("name");
-        PasswordField passwordField = new PasswordField("password");
-        userLayout.add(new HorizontalLayout(userNameField, birthdateField, countryField),
-                new HorizontalLayout(cityField, addressField, nameField, passwordField));
-
-        VerticalLayout paymentServiceLayout = new VerticalLayout();
-        paymentServiceLayout.add(new H1("Payment Service:"));
-        TextField paymentDealerNumberField = new TextField("licensed dealer number");
-        TextField paymentServiceNameField = new TextField("payment service name");
-        TextField urlField = new TextField("url");
-        paymentServiceLayout.add(paymentDealerNumberField, paymentServiceNameField, urlField);
-
-        VerticalLayout supplyServiceLayout = new VerticalLayout();
-        paymentServiceLayout.add(new H1("Supply Service:"));
-        TextField supplyDealerNumberField = new TextField("licensed dealer number");
-        TextField supplyServiceName = new TextField("supply service name");
-        TextField countries = new TextField("countries");
-        TextField cities = new TextField("cities");
-        supplyServiceLayout.add(supplyDealerNumberField, supplyServiceName, countries, cities);
-
-        add(userLayout, paymentServiceLayout, supplyServiceLayout,
-                new Button("Initialize", event -> {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    UserDTO userDTO = new UserDTO("", userNameField.getValue(), birthdateField.getValue().format(formatter),
-                            countryField.getValue(), cityField.getValue(), addressField.getValue(), nameField.getValue());
-                    PaymentServiceDTO paymentServiceDTO = new PaymentServiceDTO(paymentDealerNumberField.getValue(),
-                            paymentServiceNameField.getValue(), urlField.getValue());
-                    presenter.onInitializeButtonClicked(userDTO, passwordField.getValue(), paymentServiceDTO, supplyDealerNumberField.getValue(),
-                            supplyServiceName.getValue(), countries.getValue(), cities.getValue());
-                })
-        );
-    }
-
-    public void initializeFailed(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-    public void initializeSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
-    }
+//    public void startMarket(){
+//        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+//    }
+//
+//    public void buildView(){
+//        VerticalLayout userLayout = new VerticalLayout();
+//        userLayout.add(new H1("User Details:"));
+//        TextField userNameField = new TextField("username");
+//        DatePicker birthdateField = new DatePicker("birthdate");
+//        TextField countryField = new TextField("country");
+//        TextField cityField = new TextField("city");
+//        TextField addressField = new TextField("address");
+//        TextField nameField = new TextField("name");
+//        PasswordField passwordField = new PasswordField("password");
+//        userLayout.add(new HorizontalLayout(userNameField, birthdateField, countryField),
+//                new HorizontalLayout(cityField, addressField, nameField, passwordField));
+//
+//        VerticalLayout paymentServiceLayout = new VerticalLayout();
+//        paymentServiceLayout.add(new H1("Payment Service:"));
+//        TextField paymentDealerNumberField = new TextField("licensed dealer number");
+//        TextField paymentServiceNameField = new TextField("payment service name");
+//        TextField urlField = new TextField("url");
+//        paymentServiceLayout.add(paymentDealerNumberField, paymentServiceNameField, urlField);
+//
+//        VerticalLayout supplyServiceLayout = new VerticalLayout();
+//        paymentServiceLayout.add(new H1("Supply Service:"));
+//        TextField supplyDealerNumberField = new TextField("licensed dealer number");
+//        TextField supplyServiceName = new TextField("supply service name");
+//        TextField countries = new TextField("countries");
+//        TextField cities = new TextField("cities");
+//        supplyServiceLayout.add(supplyDealerNumberField, supplyServiceName, countries, cities);
+//
+//        add(userLayout, paymentServiceLayout, supplyServiceLayout,
+//                new Button("Initialize", event -> {
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//                    UserDTO userDTO = new UserDTO("", userNameField.getValue(), birthdateField.getValue().format(formatter),
+//                            countryField.getValue(), cityField.getValue(), addressField.getValue(), nameField.getValue());
+//                    PaymentServiceDTO paymentServiceDTO = new PaymentServiceDTO(paymentDealerNumberField.getValue(),
+//                            paymentServiceNameField.getValue(), urlField.getValue());
+//                    presenter.onInitializeButtonClicked(userDTO, passwordField.getValue(), paymentServiceDTO, supplyDealerNumberField.getValue(),
+//                            supplyServiceName.getValue(), countries.getValue(), cities.getValue());
+//                })
+//        );
+//    }
+//
+//    public void initializeFailed(String message) {
+//        Notification.show(message, 3000, Notification.Position.MIDDLE);
+//    }
+//
+//    public void initializeSuccess(String message) {
+//        Notification.show(message, 3000, Notification.Position.MIDDLE);
+//        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+//    }
 
 
 
