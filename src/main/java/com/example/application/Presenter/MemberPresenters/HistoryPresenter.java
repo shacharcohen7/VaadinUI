@@ -5,6 +5,7 @@ import com.example.application.Util.AcquisitionDTO;
 import com.example.application.Util.ReceiptDTO;
 import com.example.application.View.MemberViews.HistoryView;
 import com.vaadin.flow.server.VaadinSession;
+import org.eclipse.jetty.util.Scanner;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class HistoryPresenter {
         try {
             List<AcquisitionDTO> acquisitions = APIcalls.getUserAcquisitionsHistory(userID);
             view.showAcquisitions(acquisitions);
+            //getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView"));
         } catch (Exception e) {
             view.showError("Failed to load acquisition history.");
         }
@@ -40,6 +42,21 @@ public class HistoryPresenter {
         } catch (Exception e) {
             view.showError("Failed to load receipt details.");
         }
+    }
+
+    public String cancelAcquisition(String userId ,String acquisitionId){
+        String val = APIcalls.cancelAcquisition(userId , acquisitionId);
+        if (val!=null){
+            if (val.equals("-1")){
+
+                return "failed to cancel";
+            }
+            else {
+                loadAcquisitionHistory();
+                return "cancel successfully acquisitionId- "+acquisitionId;
+            }
+        }
+        return "failed to cancel";
     }
 
     public String getUserName(){
