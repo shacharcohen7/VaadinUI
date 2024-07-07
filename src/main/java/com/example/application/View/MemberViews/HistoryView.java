@@ -114,10 +114,13 @@ public class HistoryView extends VerticalLayout {
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
+            Button notificationsButton = new Button("Notifications", event -> {
+                getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
+            });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, historyButton, myProfileButton, logoutButton);
+            topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
         }
 
         add(topLayout);

@@ -22,7 +22,9 @@ public class PaymentView extends VerticalLayout {
     private String userID;
     private CartDTO cartDTO;
     private TextField holderIDField;
+    private TextField holderNameField;
     private TextField creditCardField;
+    private TextField currencyField;
     private ComboBox<Integer> yearComboBox;
     private ComboBox<Integer> monthComboBox;
     private IntegerField cvvField;
@@ -46,6 +48,12 @@ public class PaymentView extends VerticalLayout {
         holderIDField = new TextField("Holder ID");
         holderIDField.setWidth("300px");
 
+        holderNameField = new TextField("Holder Name");
+        holderNameField.setWidth("300px");
+
+        currencyField = new TextField("Currency");
+        currencyField.setWidth("300px");
+
         creditCardField = new TextField("Credit Card");
         creditCardField.setWidth("300px");
 
@@ -62,11 +70,13 @@ public class PaymentView extends VerticalLayout {
 
         submitButton = new Button("Submit", event -> {
             presenter.onSubmitButtonClicked(
+                    holderIDField.getValue(),
+                    holderNameField.getValue(),
+                    currencyField.getValue(),
                     creditCardField.getValue(),
                     cvvField.getValue(),
                     monthComboBox.getValue(),
-                    yearComboBox.getValue(),
-                    holderIDField.getValue()
+                    yearComboBox.getValue()
             );
         });
         submitButton.getStyle().set("background-color", "#e91e63").set("color", "white");
@@ -87,8 +97,8 @@ public class PaymentView extends VerticalLayout {
                 .set("padding", "40px").set("box-shadow", "2px 2px 12px rgba(0, 0, 0, 0.1)");
         paymentFormLayout.add(
                 new H1("Payment Details"),
-                new HorizontalLayout(holderIDField, creditCardField),
-                new HorizontalLayout(monthComboBox, yearComboBox, cvvField),
+                new HorizontalLayout(holderIDField, holderNameField, currencyField),
+                new HorizontalLayout(creditCardField, monthComboBox, yearComboBox, cvvField),
                 buttonsLayout
         );
 
