@@ -2,10 +2,13 @@ package com.example.application.View.GuestViews;
 
 import com.example.application.Presenter.GuestPresenters.SignInPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -40,6 +43,13 @@ public class SignInView extends VerticalLayout {
 
     public void buildView(){
         presenter = new SignInPresenter(this, userID);
+        createTopLayout();
+        H1 header = new H1("Sign In");
+        VerticalLayout layout = new VerticalLayout(header);
+        layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
+        layout.setSpacing(false);
+        layout.setAlignItems(Alignment.CENTER);
+        add(layout);
         userNameField = new TextField("username");
         userNameField.setWidth("300px");
         birthdateField = new DatePicker("birthdate");
@@ -76,7 +86,6 @@ public class SignInView extends VerticalLayout {
         signInFormLayout.getStyle().set("background-color", "#fff0f0").set("border-radius", "10px")
                 .set("padding", "40px").set("box-shadow", "2px 2px 12px rgba(0, 0, 0, 0.1)");
         signInFormLayout.add(
-                new H1("Sign In"),
                 new HorizontalLayout(nameField, birthdateField),
                 new HorizontalLayout(countryField, cityField),
                 new HorizontalLayout(addressField, userNameField),
@@ -91,6 +100,24 @@ public class SignInView extends VerticalLayout {
 
         // Add the main layout to the view
         add(mainLayout);
+    }
+
+    public void createTopLayout(){
+        HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
+        Text helloMessage = new Text("Hello, Guest");
+        Button homeButton = new Button("Home", new Icon(VaadinIcon.HOME), event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART),
+                event -> getUI().ifPresent(ui -> ui.navigate("ShoppingCartView")));
+        Button loginButton = new Button("Log In", event -> {
+            getUI().ifPresent(ui -> ui.navigate("LoginView"));
+        });
+        Button signInButton = new Button("Sign In", event -> {
+            getUI().ifPresent(ui -> ui.navigate("SignInView"));
+        });
+        topLayout.add(helloMessage, homeButton, shoppingCartButton, loginButton, signInButton);
+
+        add(topLayout);
     }
 
     public void SignInFailure(String message) {

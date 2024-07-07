@@ -21,9 +21,10 @@ public class PaymentPresenter {
         this.cartDTO = cartDTO;
     }
 
-    public void onSubmitButtonClicked(String creditCard, int cvv, int month, int year, String holderID) {
+    public void onSubmitButtonClicked(String holderID, String holderName, String currency,
+                                      String creditCard, int cvv, int month, int year) {
         UserDTO userDTO = APIcalls.getUser(userID);
-        PaymentDTO paymentDTO = new PaymentDTO(holderID,creditCard,cvv,month,year);
+        PaymentDTO paymentDTO = new PaymentDTO(holderID, holderName, currency, creditCard, cvv, month, year);
         APIcalls.setUserConfirmationPurchase(userID);
         String result = APIcalls.purchase(userDTO,paymentDTO,cartDTO);
         view.paymentResult(result);

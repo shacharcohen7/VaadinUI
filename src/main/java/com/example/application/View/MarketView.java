@@ -193,6 +193,7 @@ public class MarketView extends VerticalLayout {
 
     public void createAdminLayout(){
         VerticalLayout adminLayout = new VerticalLayout();
+        adminLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         adminLayout.add(new H1("Administration:"));
         Button closeStoreButton = new Button("Close Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView"));
