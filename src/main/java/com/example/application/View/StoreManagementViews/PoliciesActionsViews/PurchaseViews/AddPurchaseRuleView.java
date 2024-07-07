@@ -1,6 +1,6 @@
-package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchaseViews;
 
-import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.AddPurchaseRulePresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.PurchasePresenters.AddPurchaseRulePresenter;
 import com.example.application.Util.TestRuleDTO;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
@@ -21,8 +21,6 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 @Route("AddPurchaseRuleView")
@@ -172,9 +170,6 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
             }
             else if(descriptionField.isEmpty()){
                 Notification.show("Please fill description field",3000, Notification.Position.MIDDLE);
-            }
-            else if(containsField.isEmpty()){
-                Notification.show("Please fill contain field",3000, Notification.Position.MIDDLE);
             }
             else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
                 Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);

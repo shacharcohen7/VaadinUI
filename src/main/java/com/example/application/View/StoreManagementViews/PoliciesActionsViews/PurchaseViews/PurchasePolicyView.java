@@ -1,16 +1,14 @@
-package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchaseViews;
 
-import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.RemovePurchaseRulePresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.PurchasePresenters.PurchasePolicyPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
@@ -20,17 +18,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("RemovePurchaseRuleView")
-public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlParameter<String> {
-    private RemovePurchaseRulePresenter presenter;
+@Route("PurchasePolicyView")
+public class PurchasePolicyView extends VerticalLayout implements HasUrlParameter<String> {
+    private PurchasePolicyPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private ComboBox<String> purchaseRuleField;
-    private Button removeButton;
-    private Button cancelButton;
+    private Button BackButton;
+    private Button AddRuleButton;
+    private Button ComposeRulesButton;
+    private Button RemoveRuleButton;
 
-    public RemovePurchaseRuleView(){}
+    public PurchasePolicyView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -39,27 +38,29 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new RemovePurchaseRulePresenter(this, userID, storeID);
+        presenter = new PurchasePolicyPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Remove Purchase Rule");
+        H1 header = new H1("Store Purchase Policy");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        purchaseRuleField = new ComboBox<String>("rule");
-        purchaseRuleField.setItems(presenter.getStoreCurrentPurchaseRules());
-        removeButton = new Button("Remove", event -> {
-            removeConfirm();
+        AddRuleButton = new Button("Add New Rule", event -> {
+            getUI().ifPresent(ui -> ui.navigate("AddPurchaseRuleView", storeQuery));
         });
-        cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
+        ComposeRulesButton = new Button("Compose Rules", event -> {
+            getUI().ifPresent(ui -> ui.navigate("ComposePurchaseRuleView", storeQuery));
         });
-        add(
-                purchaseRuleField,
-                new HorizontalLayout(removeButton, cancelButton)
-        );
+        RemoveRuleButton = new Button("Remove Rule", event -> {
+            getUI().ifPresent(ui -> ui.navigate("RemovePurchaseRuleView", storeQuery));
+        });
+        BackButton = new Button("Back To Store", event -> {
+            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+        });
+        createPurchaseLayout();
+        add(new HorizontalLayout(AddRuleButton, ComposeRulesButton, RemoveRuleButton, BackButton));
     }
 
     public void createTopLayout(){
@@ -91,6 +92,16 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
         add(topLayout);
     }
 
+    public void createPurchaseLayout(){
+        List<String> purchaseRules = presenter.getStoreCurrentPurchaseRules();
+        if(purchaseRules.size() == 0){
+            add(new HorizontalLayout(new Text("No purchase rules")));
+        }
+        for(int i=0 ; i<purchaseRules.size() ; i++){
+            add(new HorizontalLayout(new Text(i + 1 + ". " + purchaseRules.get(i))));
+        }
+    }
+
     public void logoutConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Logout");
@@ -105,26 +116,6 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
     public void logout(){
         this.removeAll();
         buildView();
-    }
-
-    public void removeConfirm(){
-        ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Remove Purchase Rule");
-        dialog.setText("Are you sure you want to remove this purchase rule?");
-        dialog.setCancelable(true);
-        dialog.addCancelListener(event -> dialog.close());
-        dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(purchaseRuleField.getValue()));
-        dialog.open();
-    }
-
-    public void removeSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("PurchasePolicyView", storeQuery));
-    }
-
-    public void removeFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
     }
 
     public void makeStoreQuery(){

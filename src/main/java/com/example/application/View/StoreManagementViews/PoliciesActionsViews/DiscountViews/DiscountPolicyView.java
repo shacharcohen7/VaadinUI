@@ -1,6 +1,6 @@
-package com.example.application.View.StoreManagementViews.PoliciesActionsViews;
+package com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews;
 
-import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.PurchasePolicyPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.DiscountPresenters.DiscountPolicyPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -18,18 +18,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Route("PurchasePolicyView")
-public class PurchasePolicyView extends VerticalLayout implements HasUrlParameter<String> {
-    private PurchasePolicyPresenter presenter;
+@Route("DiscountPolicyView")
+public class DiscountPolicyView extends VerticalLayout implements HasUrlParameter<String> {
+    private DiscountPolicyPresenter presenter;
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
     private Button BackButton;
-    private Button AddRuleButton;
-    private Button ComposeRulesButton;
+    private Button AddSimpleRuleButton;
+    private Button AddCondRuleButton;
+    private Button ComposeSimpleRuleButton;
+    private Button ComposeCondRuleButton;
     private Button RemoveRuleButton;
 
-    public PurchasePolicyView(){}
+    public DiscountPolicyView(){}
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
@@ -38,29 +40,36 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new PurchasePolicyPresenter(this, userID, storeID);
+        presenter = new DiscountPolicyPresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        H1 header = new H1("Store Purchase Policy");
+        H1 header = new H1("Store Discount Policy");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        AddRuleButton = new Button("Add New Rule", event -> {
-            getUI().ifPresent(ui -> ui.navigate("AddPurchaseRuleView", storeQuery));
+        AddSimpleRuleButton = new Button("Add Simple Discount", event -> {
+            getUI().ifPresent(ui -> ui.navigate("AddSimpleDiscountView", storeQuery));
         });
-        ComposeRulesButton = new Button("Compose Rules", event -> {
-            getUI().ifPresent(ui -> ui.navigate("ComposePurchaseRuleView", storeQuery));
+        AddCondRuleButton = new Button("Add Conditional Discount", event -> {
+            getUI().ifPresent(ui -> ui.navigate("AddCondDiscountView", storeQuery));
         });
-        RemoveRuleButton = new Button("Remove Rule", event -> {
-            getUI().ifPresent(ui -> ui.navigate("RemovePurchaseRuleView", storeQuery));
+        ComposeSimpleRuleButton = new Button("Compose Simple Discount", event -> {
+            getUI().ifPresent(ui -> ui.navigate("ComposeSimpleDiscountView", storeQuery));
+        });
+        ComposeCondRuleButton = new Button("Compose Conditional Discount", event -> {
+            getUI().ifPresent(ui -> ui.navigate("ComposeCondDiscountView", storeQuery));
+        });
+        RemoveRuleButton = new Button("Remove Discount", event -> {
+            getUI().ifPresent(ui -> ui.navigate("RemoveDiscountView", storeQuery));
         });
         BackButton = new Button("Back To Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
         });
-        createPurchaseLayout();
-        add(new HorizontalLayout(AddRuleButton, ComposeRulesButton, RemoveRuleButton, BackButton));
+        createDiscountLayout();
+        add(new HorizontalLayout(AddSimpleRuleButton, AddCondRuleButton, ComposeSimpleRuleButton,
+                ComposeCondRuleButton, RemoveRuleButton, BackButton));
     }
 
     public void createTopLayout(){
@@ -92,13 +101,13 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
         add(topLayout);
     }
 
-    public void createPurchaseLayout(){
-        List<String> purchaseRules = presenter.getStoreCurrentPurchaseRules();
-        if(purchaseRules.size() == 0){
-            add(new HorizontalLayout(new Text("No purchase rules")));
+    public void createDiscountLayout(){
+        List<String> discountRules = presenter.getStoreCurrentDiscountRules();
+        if(discountRules.size() == 0){
+            add(new HorizontalLayout(new Text("No discount rules")));
         }
-        for(int i=0 ; i<purchaseRules.size() ; i++){
-            add(new HorizontalLayout(new Text(i + 1 + ". " + purchaseRules.get(i))));
+        for(int i=0 ; i<discountRules.size() ; i++){
+            add(new HorizontalLayout(new Text(i + 1 + ". " + discountRules.get(i))));
         }
     }
 

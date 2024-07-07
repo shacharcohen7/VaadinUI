@@ -1,8 +1,7 @@
-package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.DiscountPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountPolicyView;
-import com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchasePolicyView;
+import com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews.DiscountPolicyView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
@@ -30,7 +29,6 @@ public class DiscountPolicyPresenter {
     }
 
     public List<String> getStoreCurrentDiscountRules(){
-//        return APIcalls.getStoreCurrentDiscountRules(userID, storeID);
-        return new LinkedList<String>();
+        return APIcalls.getStoreCurrentDiscountRules(userID, storeID);
     }
 }

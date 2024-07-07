@@ -57,7 +57,10 @@ public class MarketPresenter {
     }
 
     public boolean isAdmin(){
-        return false;
+        if(!isMember()){
+            return false;
+        }
+        return APIcalls.isAdmin(VaadinSession.getCurrent().getAttribute("memberID").toString());
     }
 
     public void logOut(){

@@ -1,8 +1,7 @@
-package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters;
+package com.example.application.Presenter.StoreManagementPresenters.PoliciesActionsPresenters.PurchasePresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.StoreManagementViews.PoliciesActionsViews.ComposePurchaseRuleView;
-import com.example.application.View.StoreManagementViews.PoliciesActionsViews.RemovePurchaseRuleView;
+import com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchaseViews.ComposePurchaseRuleView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;

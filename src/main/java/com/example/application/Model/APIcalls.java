@@ -59,21 +59,11 @@ public class APIcalls {
         return "notFound";
     }
 
-    public static String init(UserDTO userDTO, String password, PaymentServiceDTO paymentServiceDTO,
-                              String supplyDealerNumberField, String supplyServiceName,
-                              String countriesSet, String citiesSet) {
+    public static String init() {
         try {
             String url = "http://localhost:8080/api/market/initiate";  // Absolute URL
 
-            URI uri = UriComponentsBuilder.fromUriString(url)
-                    .queryParam("userDTO", mapper.writeValueAsString(userDTO))
-                    .queryParam("password", password)
-                    .queryParam("paymentServiceDTO", mapper.writeValueAsString(paymentServiceDTO))
-                    .queryParam("supplyDealerNumberField", supplyDealerNumberField)
-                    .queryParam("supplyServiceName", supplyServiceName)
-                    .queryParam("countriesSet", countriesSet)
-                    .queryParam("citiesSet", citiesSet)
-                    .build().toUri();
+            URI uri = new URI(url);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
@@ -126,6 +116,34 @@ public class APIcalls {
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<Boolean>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<Boolean>>() {
+                    });
+            APIResponse<Boolean> responseBody = response.getBody();
+            Boolean data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean isAdmin(String memberId){
+        try {
+            String url = "http://localhost:8080/api/member/isAdmin/{memberId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(memberId)
                     .toUri();
 
             HttpHeaders headers = new HttpHeaders();
@@ -262,6 +280,87 @@ public class APIcalls {
         }
     }
 
+    public static List<String> getStoreCurrentDiscountRules(String userID, String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/getStoreCurrentDiscountRules/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static List<String> getStoreCurrentSimpleDiscountRules(String userID, String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/getStoreCurrentSimpleDiscountRules/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static List<String> getStoreCurrentCondDiscountRules(String userID, String storeID){
+        try {
+            String url = "http://localhost:8080/api/market/getStoreCurrentCondDiscountRules/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID, storeID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
     public static Map<Integer, String> getAllPurchaseRules(String userID, String storeID){
         try {
             String url = "http://localhost:8080/api/market/getAllPurchaseRules/{userId}/{storeId}";  // Absolute URL
@@ -332,6 +431,101 @@ public class APIcalls {
         }
     }
 
+    public static String addDiscountSimpleRuleToStore(List<DiscountValueDTO> discDetailsList, List<String> numericalOperatorsList, String userID, String storeID){
+        try {
+            ObjectMapper mapper2 = new ObjectMapper();
+            mapper2.registerModule(new JavaTimeModule());
+            mapper2.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            String url = "http://localhost:8080/api/market/addDiscountSimpleRuleToStore";  // Absolute URL
+
+            List<String> stringDisc = new ArrayList<>();
+            for (DiscountValueDTO discountValueDTO : discDetailsList){
+                stringDisc.add(mapper2.writeValueAsString(discountValueDTO));
+            }
+            String jsonDisc = mapper2.writeValueAsString(stringDisc);
+            String numericOp = mapper2.writeValueAsString(numericalOperatorsList);
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("userId", userID);
+            params.add("storeId", storeID);
+            params.add("discs", jsonDisc);
+            params.add("numericalOperators", numericOp);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
+
+            String data = response.getBody();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("addDiscountSimpleRuleToStore error occurred");
+            return null;
+        }
+    }
+
+    public static String addDiscountCondRuleToStore(List<TestRuleDTO> Rules, List<String> logicOperators, List<DiscountValueDTO> discDetailsList, List<String> numericalOperatorsList, String userID, String storeID){
+        try {
+            ObjectMapper mapper2 = new ObjectMapper();
+            mapper2.registerModule(new JavaTimeModule());
+            mapper2.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            String url = "http://localhost:8080/api/market/addDiscountCondRuleToStore";  // Absolute URL
+
+            List<String> stringDisc = new ArrayList<>();
+            for (DiscountValueDTO discountValueDTO : discDetailsList){
+                stringDisc.add(mapper2.writeValueAsString(discountValueDTO));
+            }
+            String jsonDisc = mapper2.writeValueAsString(stringDisc);
+            String numericOp = mapper2.writeValueAsString(numericalOperatorsList);
+
+            List<String> stringRules = new ArrayList<>();
+            for (TestRuleDTO testRuleDTO : Rules){
+                stringRules.add(mapper2.writeValueAsString(testRuleDTO));
+            }
+            String jsonRules = mapper2.writeValueAsString(stringRules);
+            String logicOp = mapper2.writeValueAsString(logicOperators);
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("userId", userID);
+            params.add("storeId", storeID);
+            params.add("discDetails", jsonDisc);
+            params.add("numericalOperators", numericOp);
+            params.add("testRules", jsonRules);
+            params.add("logicOperators", logicOp);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
+
+            String data = response.getBody();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("addDiscountCondRuleToStore error occurred");
+            return null;
+        }
+    }
+
     public static String composeCurrentPurchaseRules(int ruleIndex1, int ruleIndex2, String operator, String userId, String storeId){
         try {
             String url = "http://localhost:8080/api/market/composeCurrentPurchaseRules/{ruleIndex1}/{ruleIndex2}/{operator}/{userId}/{storeId}";  // Absolute URL
@@ -356,7 +550,65 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println("addPurchaseRuleToStore error occurred");
+            System.err.println("composeCurrentPurchaseRules error occurred");
+            return null;
+        }
+    }
+
+    public static String composeCurrentSimpleDiscountRules(int ruleIndex1, int ruleIndex2, String numericalOperator, String userId, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/composeCurrentSimpleDiscountRules/{ruleIndex1}/{ruleIndex2}/{numericalOperator}/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(ruleIndex1, ruleIndex2, numericalOperator, userId, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("composeCurrentSimpleDiscountRules error occurred");
+            return null;
+        }
+    }
+
+    public static String composeCurrentCondDiscountRules(int ruleIndex1, int ruleIndex2, String logicalOperator, String numericalOperator, String userId, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/composeCurrentCondDiscountRules/{ruleIndex1}/{ruleIndex2}/{logicalOperator}/{numericalOperator}/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(ruleIndex1, ruleIndex2, logicalOperator, numericalOperator, userId, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            System.err.println("composeCurrentCondDiscountRules error occurred");
             return null;
         }
     }
@@ -367,6 +619,33 @@ public class APIcalls {
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(ruleNum, userId, storeId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static String removeDiscountRuleFromStore(int ruleIndex, String userId, String storeId){
+        try {
+            String url = "http://localhost:8080/api/market/removeDiscountRuleFromStore/{ruleIndex}/{userId}/{storeId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(ruleIndex, userId, storeId)
                     .toUri();
 
             HttpHeaders headers = new HttpHeaders();
