@@ -190,8 +190,11 @@ public class AddCondDiscountView extends VerticalLayout implements HasUrlParamet
             else if(descriptionField.isEmpty()){
                 Notification.show("Please fill description field",3000, Notification.Position.MIDDLE);
             }
-            else if(containsField.isEmpty()){
-                Notification.show("Please fill contain field",3000, Notification.Position.MIDDLE);
+            else if(categoryField.isEmpty() && productNameField.isEmpty() && !containsField.isEmpty()){
+                Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
+            }
+            else if((!categoryField.isEmpty() || !productNameField.isEmpty()) && containsField.isEmpty()){
+                Notification.show("Please fill contains field",3000, Notification.Position.MIDDLE);
             }
             else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
                 Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);
@@ -213,11 +216,12 @@ public class AddCondDiscountView extends VerticalLayout implements HasUrlParamet
             }
             else {
                 Boolean contain = null;
-                if(containsField.getValue().equals("basket must contain")){
-                    contain = true;
-                }
-                else if(containsField.getValue().equals("basket must not contain")){
-                    contain = false;
+                if(containsField.getValue() != null) {
+                    if (containsField.getValue().equals("basket must contain")) {
+                        contain = true;
+                    } else if (containsField.getValue().equals("basket must not contain")) {
+                        contain = false;
+                    }
                 }
                 TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
                         productNameField.getValue(), descriptionField.getValue(), contain, ageField.getValue(),

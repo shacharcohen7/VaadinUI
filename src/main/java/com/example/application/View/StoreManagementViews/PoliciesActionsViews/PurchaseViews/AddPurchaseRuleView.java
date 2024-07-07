@@ -171,6 +171,12 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
             else if(descriptionField.isEmpty()){
                 Notification.show("Please fill description field",3000, Notification.Position.MIDDLE);
             }
+            else if(categoryField.isEmpty() && productNameField.isEmpty() && !containsField.isEmpty()){
+                Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
+            }
+            else if((!categoryField.isEmpty() || !productNameField.isEmpty()) && containsField.isEmpty()){
+                Notification.show("Please fill contains field",3000, Notification.Position.MIDDLE);
+            }
             else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
                 Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);
             }
@@ -191,11 +197,12 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
             }
             else {
                 Boolean contain = null;
-                if(containsField.getValue().equals("basket must contain")){
-                    contain = true;
-                }
-                else if(containsField.getValue().equals("basket must not contain")){
-                    contain = false;
+                if(containsField.getValue() != null) {
+                    if (containsField.getValue().equals("basket must contain")) {
+                        contain = true;
+                    } else if (containsField.getValue().equals("basket must not contain")) {
+                        contain = false;
+                    }
                 }
                 TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
                         productNameField.getValue(), descriptionField.getValue(), contain, ageField.getValue(),
@@ -220,65 +227,6 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
         });
         buttons.add(applyButton);
         rulesLayout.add(buttons);
-    }
-
-    public void apply(ComboBox<String> ruleTypes, ComboBox<String> rangeField, ComboBox<String> categoryField,
-                      ComboBox<String> productNameField, TextField descriptionField, ComboBox<Boolean> containsField,
-                      IntegerField ageField, IntegerField quantityField, DatePicker dateField, IntegerField priceField,
-                      TimePicker timeField, HorizontalLayout buttons, Button applyButton){
-        if(ruleTypes.isEmpty()){
-            Notification.show("Please fill ruleType field",3000, Notification.Position.MIDDLE);
-        }
-        if(rangeField.isEmpty()){
-            Notification.show("Please fill range field",3000, Notification.Position.MIDDLE);
-        }
-        if(descriptionField.isEmpty()){
-            Notification.show("Please fill description field",3000, Notification.Position.MIDDLE);
-        }
-        if(containsField.isEmpty()){
-            Notification.show("Please fill contain field",3000, Notification.Position.MIDDLE);
-        }
-        else if(ruleTypes.getValue() == "Age" && ageField.isEmpty()){
-            Notification.show("Please fill age field",3000, Notification.Position.MIDDLE);
-        }
-        else if(ruleTypes.getValue() == "Amount"){
-            if(quantityField.isEmpty()){
-                Notification.show("Please fill quantity field",3000, Notification.Position.MIDDLE);
-            }
-            if(categoryField.isEmpty() && productNameField.isEmpty()){
-                Notification.show("Please fill category or productName field",3000, Notification.Position.MIDDLE);
-            }
-        }
-        else if(ruleTypes.getValue() == "Date" && dateField.isEmpty()){
-            Notification.show("Please fill date field",3000, Notification.Position.MIDDLE);
-        }
-        else if(ruleTypes.getValue() == "Price" && priceField.isEmpty()){
-            Notification.show("Please fill price field",3000, Notification.Position.MIDDLE);
-        }
-        else if(ruleTypes.getValue() == "Time" && timeField.isEmpty()){
-            Notification.show("Please fill time field",3000, Notification.Position.MIDDLE);
-        }
-        else {
-            TestRuleDTO newRule = new TestRuleDTO(ruleTypes.getValue(), rangeField.getValue(), categoryField.getValue(),
-                    productNameField.getValue(), descriptionField.getValue(), containsField.getValue(), ageField.getValue(),
-                    quantityField.getValue(), dateField.getValue(), priceField.getValue(), timeField.getValue());
-            Rules.add(newRule);
-            ruleTypes.setEnabled(false);
-            rangeField.setEnabled(false);
-            categoryField.setEnabled(false);
-            productNameField.setEnabled(false);
-            descriptionField.setEnabled(false);
-            containsField.setEnabled(false);
-            ageField.setEnabled(false);
-            quantityField.setEnabled(false);
-            dateField.setEnabled(false);
-            priceField.setEnabled(false);
-            timeField.setEnabled(false);
-            Button extendButton = new Button("extend", buttonClickEvent -> extend());
-            extendButton.setDisableOnClick(true);
-            buttons.add(extendButton);
-            applyButton.setEnabled(false);
-        }
     }
 
     public void extend(){
