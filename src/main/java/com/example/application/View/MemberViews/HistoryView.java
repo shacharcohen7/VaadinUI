@@ -52,13 +52,13 @@ public class HistoryView extends VerticalLayout {
 
         acquisitionGrid = new Grid<>(AcquisitionDTO.class);
         acquisitionGrid.setColumns("date", "acquisitionId", "totalPrice");
-        acquisitionGrid.addComponentColumn(acquisitionDTO -> {
-            Button cancelBtn = new Button("Cancel", VaadinIcon.CLOSE.create());
-            cancelBtn.addClickListener(event -> {
-                Notification.show(presenter.cancelAcquisition(userID, acquisitionDTO.getAcquisitionId()),3000,Notification.Position.MIDDLE);
-            });
-            return cancelBtn;
-        }).setHeader("Cancel").setSortable(false).setAutoWidth(true);
+//        acquisitionGrid.addComponentColumn(acquisitionDTO -> {
+//            Button cancelBtn = new Button("Cancel", VaadinIcon.CLOSE.create());
+//            cancelBtn.addClickListener(event -> {
+//                Notification.show(presenter.cancelAcquisition(userID, acquisitionDTO.getAcquisitionId()),3000,Notification.Position.MIDDLE);
+//            });
+//            return cancelBtn;
+//        }).setHeader("Cancel").setSortable(false).setAutoWidth(true);
         acquisitionGrid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
                 presenter.onAcquisitionSelected(event.getValue().getAcquisitionId());
