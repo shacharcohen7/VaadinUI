@@ -111,8 +111,7 @@ public class ComposeSimpleDiscountView extends VerticalLayout implements HasUrlP
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void composeSuccess(String message) {

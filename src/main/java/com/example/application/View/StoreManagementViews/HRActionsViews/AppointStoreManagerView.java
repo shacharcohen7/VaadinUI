@@ -117,9 +117,9 @@ public class AppointStoreManagerView extends VerticalLayout implements HasUrlPar
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
+
 
     public void appointmentFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);

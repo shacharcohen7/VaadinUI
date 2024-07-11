@@ -136,8 +136,7 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void makeStoreQuery(){

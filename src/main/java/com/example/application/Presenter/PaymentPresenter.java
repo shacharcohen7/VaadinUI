@@ -6,6 +6,7 @@ import com.example.application.Util.PaymentDTO;
 import com.example.application.Util.UserDTO;
 import com.example.application.View.GuestViews.SignInView;
 import com.example.application.View.PaymentView;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +20,29 @@ public class PaymentPresenter {
         this.view = view;
         this.userID = userID;
         this.cartDTO = cartDTO;
+    }
+
+    public String getUserName(){
+        if(isMember()){
+            return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
+        }
+        return "Guest";
+    }
+
+    public UserDTO getUser(){
+        return APIcalls.getUser(userID);
+    }
+
+
+    public boolean isMember(){
+        return APIcalls.isMember(userID);
+    }
+
+    public void logOut(){
+        if(APIcalls.logout(userID).contains("success")){
+
+            view.logout();
+        }
     }
 
     public void onSubmitButtonClicked(String holderID, String holderName, String currency,

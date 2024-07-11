@@ -103,8 +103,7 @@ public class RemoveProductFromStoreView extends VerticalLayout implements HasUrl
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void removeConfirm(){

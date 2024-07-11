@@ -266,8 +266,7 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void addFailure(String message) {

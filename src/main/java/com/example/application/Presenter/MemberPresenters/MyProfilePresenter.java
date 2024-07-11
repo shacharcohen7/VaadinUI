@@ -38,14 +38,14 @@ public class MyProfilePresenter {
         return APIcalls.getUser(userID);
     }
 
-    public void onSaveButtonClicked(LocalDate birthdate, String country, String city,
-                                      String address, String name) {
-        //call updateUser()
-        boolean success = true;
-        if (success){
-            view.updateSuccess("User details were updated successfully");
-        } else {
-            view.updateFailure("Invalid input.");
-        }
-    }
+//    public void onSaveButtonClicked(LocalDate birthdate, String country, String city,
+//                                      String address, String name) {
+//        //call updateUser()
+//        boolean success = true;
+//        if (success){
+//            view.updateSuccess("User details were updated successfully");
+//        } else {
+//            view.updateFailure("Invalid input.");
+//        }
+//    }
 }
