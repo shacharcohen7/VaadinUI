@@ -1,7 +1,10 @@
-package com.example.application.View.StoreManagementViews.HRActionsViews;
+package com.example.application.View.AdminViews;
 
-import com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters.FireStoreManagerPresenter;
+import com.example.application.Presenter.AdminPresenters.AddPaymentPresenter;
+import com.example.application.Presenter.StoreManagementPresenters.InventoryActionPresenters.AddProductToStorePresenter;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -9,50 +12,57 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-@Route("FireStoreManagerView")
-public class FireStoreManagerView  extends VerticalLayout implements HasUrlParameter<String> {
-    private FireStoreManagerPresenter presenter;
-    private QueryParameters storeQuery;
+@Route("AddPaymentView")
+public class AddPaymentView extends VerticalLayout {
+    private AddPaymentPresenter presenter;
     private String userID;
-    private String storeID;
-    private ComboBox<String> storeManagerField;
-    private Button fireButton;
+    private TextField paymentNameField;
+    private TextField licensedDealerNumberField;
+    private TextField urlField;
+    private Button addButton;
     private Button cancelButton;
 
-    public FireStoreManagerView(){}
+    public AddPaymentView(){
+        buildView();
+    }
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
-        presenter = new FireStoreManagerPresenter(this, userID, storeID);
-        makeStoreQuery();
+        Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
+        if (memberIdObj!=null){
+            String memberId = memberIdObj.toString();
+            WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
+        }
+        presenter = new AddPaymentPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Fire Store Manager");
+        H1 header = new H1("Add Payment Service");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
-        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        storeManagerField = new ComboBox<String>("store manager");
-        storeManagerField.setItems(presenter.getStoreManagers());
-        fireButton = new Button("Fire", event -> {
-            fireConfirm();
+        paymentNameField = new TextField("payment name");
+        licensedDealerNumberField = new TextField("license dealer number");
+        urlField = new TextField("url");
+        addButton = new Button("Add", event -> {
+            presenter.onAddButtonClicked(paymentNameField.getValue(),
+                    licensedDealerNumberField.getValue(), urlField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+            getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
         add(
-                storeManagerField,
-                new HorizontalLayout(fireButton, cancelButton)
+                paymentNameField,
+                licensedDealerNumberField,
+                urlField,
+                new HorizontalLayout(addButton, cancelButton)
         );
     }
 
@@ -100,36 +110,12 @@ public class FireStoreManagerView  extends VerticalLayout implements HasUrlParam
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
-    public void fireConfirm(){
-        ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Fire Store Manager");
-        dialog.setText("Are you sure you want to fire this store manager?");
-        dialog.setCancelable(true);
-        dialog.addCancelListener(event -> dialog.close());
-        dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> presenter.onFireButtonClicked(storeManagerField.getValue()));
-        dialog.open();
-    }
-
-    public void fireSuccess(String message) {
+    public void addSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
-    public void fireFailure(String message) {
+    public void addFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-    public void makeStoreQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("storeID", List.of(storeID));
-        storeQuery = new QueryParameters(parameters);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
-        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        buildView();
     }
 }

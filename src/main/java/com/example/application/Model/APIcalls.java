@@ -80,7 +80,7 @@ public class APIcalls {
             String data = responseBody.getData();
             return data;
         } catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -106,7 +106,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -134,7 +134,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -162,7 +162,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -193,10 +193,45 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
+
+
+    public static String cancelAcquisition(String userId , String acquisitionId){
+        try {
+            String url = "http://localhost:8080/api/market/cancelAcquisition/{userId}/{acquisitionId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userId, acquisitionId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
 
     public static List<StoreDTO> getAllStores(){
         try {
@@ -222,7 +257,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -249,7 +284,7 @@ public class APIcalls {
             return mapper.readValue(responseBody.getData(), CartDTO.class);
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -276,7 +311,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -303,7 +338,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -330,7 +365,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -357,7 +392,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -384,7 +419,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -636,7 +671,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -663,7 +698,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -688,7 +723,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -715,7 +750,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -746,7 +781,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -773,7 +808,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -800,7 +835,7 @@ public class APIcalls {
             return responseBody.getData();
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -858,7 +893,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -924,7 +959,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -957,7 +992,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -985,7 +1020,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -1013,7 +1048,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -1041,7 +1076,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -1069,7 +1104,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -1099,7 +1134,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1129,7 +1164,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1159,7 +1194,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1189,7 +1224,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1217,7 +1252,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -1247,7 +1282,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1277,7 +1312,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1309,7 +1344,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1336,7 +1371,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1365,7 +1400,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1392,7 +1427,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1419,7 +1454,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1446,7 +1481,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1473,7 +1508,7 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1500,7 +1535,124 @@ public class APIcalls {
             return data;
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String addExternalPaymentService(String paymentName, String memberId, PaymentServiceDTO paymentServiceDTO){
+        try {
+            String url = "http://localhost:8080/api/market/addExternalPaymentService";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .queryParam("paymentName", paymentName)
+                    .queryParam("memberId",memberId)
+                    .queryParam("paymentServiceDTO",mapper.writeValueAsString(paymentServiceDTO))
+                    .build().toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String addExternalSupplyService(String managerId, SupplyServiceDTO supplyServiceDTO){
+        try {
+            String url = "http://localhost:8080/api/market/addExternalSupplyService";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .queryParam("managerId", managerId)
+                    .queryParam("supplyServiceDTO",mapper.writeValueAsString(supplyServiceDTO))
+                    .build().toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String removeExternalPaymentService(String licenceNum, String managerId){
+        try {
+            String url = "http://localhost:8080/api/market/removeExternalPaymentService/{licenceNum}/{managerId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(licenceNum, managerId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String removeExternalSupplyService(String licenceNum, String managerId){
+        try {
+            String url = "http://localhost:8080/api/market/removeExternalSupplyService/{licenceNum}/{managerId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(licenceNum, managerId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (Exception e){
+            e.printStackTrace();
             return null;
         }
     }
@@ -1530,7 +1682,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1560,7 +1712,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1590,7 +1742,7 @@ public class APIcalls {
             return extractErrorMessageFromJson(e.getResponseBodyAsString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1622,7 +1774,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1687,7 +1839,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1721,7 +1873,7 @@ public class APIcalls {
             throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

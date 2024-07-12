@@ -193,8 +193,7 @@ public class AddSimpleDiscountView extends VerticalLayout implements HasUrlParam
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void addFailure(String message) {

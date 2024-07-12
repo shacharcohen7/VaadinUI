@@ -48,22 +48,16 @@ public class MyProfileView extends VerticalLayout {
             add(layout);
             UserDTO userDto = presenter.getUser();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            DatePicker birthdateField = new DatePicker("birthdate", LocalDate.parse(userDto.getBirthday(), formatter));
-            TextField countryField = new TextField("country", userDto.getCountry());
-            TextField cityField = new TextField("city", userDto.getCity());
-            TextField addressField = new TextField("address", userDto.getAddress());
-            TextField nameField = new TextField("name", userDto.getName());
-            Button updateButton = new Button("Save", event -> {
-                presenter.onSaveButtonClicked(birthdateField.getValue(),
-                        countryField.getValue(), cityField.getValue(),
-                        addressField.getValue(), nameField.getValue());
-            });
-            Button cancelButton = new Button("Cancel", event -> {
+            Button OkButton = new Button("OK", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MarketView"));
             });
             add(
-                    nameField, birthdateField, countryField, cityField, addressField,
-                    new HorizontalLayout(updateButton, cancelButton)
+                    new HorizontalLayout(new Text("Name: " + userDto.getName())),
+                    new HorizontalLayout(new Text("Birth Date: " + LocalDate.parse(userDto.getBirthday(), formatter))),
+                    new HorizontalLayout(new Text("Country: " + userDto.getCountry())),
+                    new HorizontalLayout(new Text("City: " + userDto.getCity())),
+                    new HorizontalLayout(new Text("Address: " + userDto.getAddress())),
+                    new HorizontalLayout(OkButton)
             );
         } catch (Exception e){
             System.out.println(e);

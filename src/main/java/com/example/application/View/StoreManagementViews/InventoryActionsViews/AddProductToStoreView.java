@@ -118,8 +118,7 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
     }
 
     public void logout(){
-        this.removeAll();
-        buildView();
+        getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
     public void addSuccess(String message) {
