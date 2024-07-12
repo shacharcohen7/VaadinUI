@@ -4,6 +4,7 @@ import com.example.application.Util.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.jsoup.Connection;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -804,7 +805,7 @@ public class APIcalls {
         }
     }
 
-    public static StoreDTO getStore(String storeID){
+    public static APIResponse<StoreDTO> getStore(String storeID){
         try {
             String url = "http://localhost:8080/api/store/getStore/{storeId}";  // Absolute URL
 
@@ -824,11 +825,13 @@ public class APIcalls {
                     });
             APIResponse<String> responseBody = response.getBody();
             StoreDTO data = mapper.readValue(responseBody.getData(), StoreDTO.class);
-            return data;
+            APIResponse<StoreDTO> ans = new APIResponse<>(data, responseBody.getErrorMassage());
+            return ans;
         }
         catch (Exception e){
             System.err.println(e.getMessage());
-            return null;
+            APIResponse<StoreDTO> ans = new APIResponse<>(null,e.getMessage());
+            return ans;
         }
     }
 
