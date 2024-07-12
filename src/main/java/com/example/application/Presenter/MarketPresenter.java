@@ -53,11 +53,7 @@ public class MarketPresenter {
     }
 
     public String getStoreName(String storeID){
-        APIResponse<StoreDTO> ans =  APIcalls.getStore(storeID);
-        if (ans.getData() == null){
-            view.storeFailure(ans.getErrorMassage());
-        }
-        return ans.getData().getStoreName();
+        return APIcalls.getStore(storeID).getStoreName();
     }
 
     public boolean isAdmin(){

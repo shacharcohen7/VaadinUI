@@ -304,10 +304,5 @@ public class FinalShoppingCartView extends VerticalLayout{
         buildView();
     }
 
-    public void storeFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-
 
 }

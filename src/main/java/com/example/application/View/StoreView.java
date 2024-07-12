@@ -31,7 +31,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     private QueryParameters storeQuery;
     private String userID;
     private String storeID;
-    private String storeName;
     private VerticalLayout productsFoundLayout;
 
     public StoreView() {
@@ -44,11 +43,10 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
 
     public void buildView(){
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
-        //presenter = new StorePresenter(this, userID, storeID);
-        //presenter.getStoreName();
+        presenter = new StorePresenter(this, userID, storeID);
         makeStoreQuery();
         createTopLayout();
-        String welcomeText = "Welcome to " + storeName;
+        String welcomeText = "Welcome to " + presenter.getStoreName();
         if(!presenter.isStoreOpen()){
             welcomeText += " (Closed)";
         }
@@ -363,21 +361,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        presenter = new StorePresenter(this, userID, storeID);
-        presenter.getStoreName();
         buildView();
     }
-
-    public void storeGetNameFailure(String message) {
-        UI.getCurrent().access(() -> {
-            Notification.show(message);
-        });
-        //getUI().ifPresent(ui -> ui.navigate("MarketView?errorMessage=" + message));
-        //Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-    public void storeGetNameSuccess(String message) {
-        this.storeName = message;
-    }
-
 }
