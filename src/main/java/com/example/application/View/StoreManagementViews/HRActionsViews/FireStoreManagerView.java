@@ -43,7 +43,13 @@ public class FireStoreManagerView  extends VerticalLayout implements HasUrlParam
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(layout);
         storeManagerField = new ComboBox<String>("store manager");
-        storeManagerField.setItems(presenter.getStoreManagers());
+        List<String> storeManagers = presenter.getStoreManagers();
+        if (storeManagers == null) {
+            storeManagersFailedToLoad();
+        }
+        else {
+            storeManagerField.setItems(storeManagers);
+        }
         fireButton = new Button("Fire", event -> {
             fireConfirm();
         });
@@ -108,6 +114,14 @@ public class FireStoreManagerView  extends VerticalLayout implements HasUrlParam
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> presenter.onFireButtonClicked(storeManagerField.getValue()));
+        dialog.open();
+    }
+
+    public void storeManagersFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Store managers failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
     }
 

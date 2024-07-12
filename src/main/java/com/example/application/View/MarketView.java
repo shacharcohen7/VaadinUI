@@ -130,7 +130,13 @@ public class MarketView extends VerticalLayout {
         // Create the search fields
         TextField productNameField = new TextField("Product name");
         ComboBox<String> categoryField = new ComboBox<>("Category");
-        categoryField.setItems(presenter.getCategories());
+        List<String> categories = presenter.getCategories();
+        if (categories == null) {
+            categoriesFailedToLoad();
+        }
+        else{
+            categoryField.setItems(categories);
+        }
         MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<>("Keywords");
         keywordsField.setItems("clothes", "shoes", "food", "optic", "electricity", "toys", "health", "sport",
                 "women", "men", "children", "beauty", "travel", "gifts", "office", "coffee", "home");
@@ -181,14 +187,19 @@ public class MarketView extends VerticalLayout {
         storesLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
         storesLayout.add(new H1("All Stores:"));
         List<StoreDTO> allStoresDtos = presenter.getAllStores();
-        HorizontalLayout storeNamesLayout = new HorizontalLayout();
-        for(int i=0 ; i<allStoresDtos.size(); i++){
-            StoreDTO storeDto = allStoresDtos.get(i);
-            storeNamesLayout.add(new Button(storeDto.getStoreName(), event -> {
-                UI.getCurrent().access(() -> goToStore(storeDto.getStore_ID()));}));
+        if (allStoresDtos == null) {
+            storesFailedToLoad();
         }
-        storesLayout.add(storeNamesLayout);
-        add(storesLayout);
+        else{
+            HorizontalLayout storeNamesLayout = new HorizontalLayout();
+            for(int i=0 ; i<allStoresDtos.size(); i++){
+                StoreDTO storeDto = allStoresDtos.get(i);
+                storeNamesLayout.add(new Button(storeDto.getStoreName(), event -> {
+                    UI.getCurrent().access(() -> goToStore(storeDto.getStore_ID()));}));
+            }
+            storesLayout.add(storeNamesLayout);
+            add(storesLayout);
+        }
     }
 
     public void createAdminLayout(){
@@ -270,6 +281,22 @@ public class MarketView extends VerticalLayout {
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> presenter.logOut());
+        dialog.open();
+    }
+
+    public void categoriesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Categories failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
+    public void storesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Stores failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
     }
 

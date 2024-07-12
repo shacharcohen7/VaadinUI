@@ -2,6 +2,7 @@ package com.example.application.Presenter;
 
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.StoreDTO;
 import com.example.application.View.StoreView;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -56,8 +57,15 @@ public class StorePresenter {
         return APIcalls.isMember(userID);
     }
 
+    public StoreDTO getStore(){
+        return APIcalls.getStore(storeID);
+    }
+
     public String getStoreName(){
-        return APIcalls.getStore(storeID).getStoreName();
+        if(getStore() == null){
+            return null;
+        }
+        return getStore().getStoreName();
     }
 
     public void logOut(){

@@ -85,13 +85,18 @@ public class NotificationsView extends VerticalLayout {
     public void createNotificationsLayout(){
         VerticalLayout notificationsLayout = new VerticalLayout();
         List<String> notifications = presenter.getNotifications();
-        if(notifications.size() == 0){
-            notificationsLayout.add(new HorizontalLayout(new Text("No notifications")));
+        if (notifications == null) {
+            notificationsFailedToLoad();
         }
-        for(int i=0 ; i<notifications.size() ; i++){
-            notificationsLayout.add(new HorizontalLayout(new Text(notifications.get(i))));
+        else {
+            if (notifications.size() == 0) {
+                notificationsLayout.add(new HorizontalLayout(new Text("No notifications")));
+            }
+            for (int i = 0; i < notifications.size(); i++) {
+                notificationsLayout.add(new HorizontalLayout(new Text(notifications.get(i))));
+            }
+            add(notificationsLayout);
         }
-        add(notificationsLayout);
     }
 
     public void logoutConfirm(){
@@ -105,7 +110,13 @@ public class NotificationsView extends VerticalLayout {
         dialog.open();
     }
 
-
+    public void notificationsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Notifications failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
 //    @SubscribeMapping("/topic/notifications")
 //    public void handleNotification(String notificationMessage) {
 //        UI.getCurrent().access(() -> {

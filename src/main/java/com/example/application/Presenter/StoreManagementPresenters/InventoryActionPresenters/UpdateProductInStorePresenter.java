@@ -25,12 +25,16 @@ public class UpdateProductInStorePresenter {
 
     public List<String> getAllProductNames(){
         List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
-        List<String> productNames = new LinkedList<String>();
-        for(int i=0 ;i<products.size() ; i++){
-            productNames.add(products.get(i).getName());
+        if(products != null){
+            List<String> productNames = new LinkedList<String>();
+            for(int i=0 ;i<products.size() ; i++){
+                productNames.add(products.get(i).getName());
+            }
+            return productNames;
         }
-        return productNames;
+        return null;
     }
+
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
             view.logout();
@@ -39,9 +43,11 @@ public class UpdateProductInStorePresenter {
 
     public ProductDTO getProductByName(String productName){
         List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
-        for(int i=0 ;i<products.size() ; i++){
-            if(products.get(i).getName().equals(productName)) {
-                return products.get(i);
+        if (products != null) {
+            for(int i=0 ;i<products.size() ; i++){
+                if(products.get(i).getName().equals(productName)) {
+                    return products.get(i);
+                }
             }
         }
         return null;

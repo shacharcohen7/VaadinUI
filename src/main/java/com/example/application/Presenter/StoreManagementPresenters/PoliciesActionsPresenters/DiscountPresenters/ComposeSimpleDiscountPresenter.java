@@ -24,10 +24,13 @@ public class ComposeSimpleDiscountPresenter {
 
     public List<String> getStoreCurrentSimpleDiscountRules(){
         List<String> simpleDiscountRules = APIcalls.getStoreCurrentSimpleDiscountRules(userID, storeID);
-        for(int i=0 ; i<simpleDiscountRules.size() ; i++){
-            descriptionToNum.put(simpleDiscountRules.get(i), i);
+        if (simpleDiscountRules != null) {
+            for(int i=0 ; i<simpleDiscountRules.size() ; i++){
+                descriptionToNum.put(simpleDiscountRules.get(i), i);
+            }
+            return simpleDiscountRules;
         }
-        return simpleDiscountRules;
+        return null;
     }
 
     public String getUserName(){

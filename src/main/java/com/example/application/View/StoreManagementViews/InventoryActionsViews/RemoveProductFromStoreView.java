@@ -49,7 +49,13 @@ public class RemoveProductFromStoreView extends VerticalLayout implements HasUrl
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         productNameField = new ComboBox<String>("product");
-        productNameField.setItems(presenter.getAllProductNames());
+        List<String> productNames = presenter.getAllProductNames();
+        if (productNames == null) {
+            productsFailedToLoad();
+        }
+        else {
+            productNameField.setItems(productNames);
+        }
         removeButton = new Button("Remove", event -> {
             removeConfirm();
         });
@@ -124,6 +130,14 @@ public class RemoveProductFromStoreView extends VerticalLayout implements HasUrl
 
     public void removeFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void productsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Products failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

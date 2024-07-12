@@ -19,14 +19,8 @@ public class HistoryPresenter {
         this.userID = userID;
     }
 
-    public void loadAcquisitionHistory() {
-        try {
-            List<AcquisitionDTO> acquisitions = APIcalls.getUserAcquisitionsHistory(userID);
-            view.showAcquisitions(acquisitions);
-            //getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView"));
-        } catch (Exception e) {
-            view.showError("Failed to load acquisition history.");
-        }
+    public List<AcquisitionDTO> loadAcquisitionHistory() {
+        return APIcalls.getUserAcquisitionsHistory(userID);
     }
 
     public void logOut(){

@@ -56,7 +56,13 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         productNameField = new ComboBox<String>("product");
-        productNameField.setItems(presenter.getAllProductNames());
+        List<String> productNames = presenter.getAllProductNames();
+        if (productNames == null) {
+            productsFailedToLoad();
+        }
+        else {
+            productNameField.setItems(productNames);
+        }
         priceField = new IntegerField("price");
         quantityField = new IntegerField("quantity");
         categoryField = new ComboBox<String>("category");
@@ -64,10 +70,15 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
         descriptionField = new TextField("description");
         productNameField.addValueChangeListener(event -> {
             ProductDTO product = presenter.getProductByName(event.getValue());
-            priceField.setValue(product.getPrice());
-            quantityField.setValue(product.getQuantity());
-            categoryField.setValue(product.getCategoryStr());
-            descriptionField.setValue(product.getDescription());
+            if (product == null) {
+                productFailedToLoad();
+            }
+            else {
+                priceField.setValue(product.getPrice());
+                quantityField.setValue(product.getQuantity());
+                categoryField.setValue(product.getCategoryStr());
+                descriptionField.setValue(product.getDescription());
+            }
         });
         updateButton = new Button("Update", event -> {
             presenter.onUpdateButtonClicked(productNameField.getValue(), priceField.getValue(),
@@ -137,6 +148,22 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void productsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Products failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
+    public void productFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Product failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

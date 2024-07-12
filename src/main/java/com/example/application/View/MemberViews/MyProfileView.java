@@ -47,18 +47,23 @@ public class MyProfileView extends VerticalLayout {
             layout.setAlignItems(Alignment.CENTER);
             add(layout);
             UserDTO userDto = presenter.getUser();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            Button OkButton = new Button("OK", event -> {
-                getUI().ifPresent(ui -> ui.navigate("MarketView"));
-            });
-            add(
-                    new HorizontalLayout(new Text("Name: " + userDto.getName())),
-                    new HorizontalLayout(new Text("Birth Date: " + LocalDate.parse(userDto.getBirthday(), formatter))),
-                    new HorizontalLayout(new Text("Country: " + userDto.getCountry())),
-                    new HorizontalLayout(new Text("City: " + userDto.getCity())),
-                    new HorizontalLayout(new Text("Address: " + userDto.getAddress())),
-                    new HorizontalLayout(OkButton)
-            );
+            if (userDto == null) {
+                userFailedToLoad();
+            }
+            else {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                Button OkButton = new Button("OK", event -> {
+                    getUI().ifPresent(ui -> ui.navigate("MarketView"));
+                });
+                add(
+                        new HorizontalLayout(new Text("Name: " + userDto.getName())),
+                        new HorizontalLayout(new Text("Birth Date: " + LocalDate.parse(userDto.getBirthday(), formatter))),
+                        new HorizontalLayout(new Text("Country: " + userDto.getCountry())),
+                        new HorizontalLayout(new Text("City: " + userDto.getCity())),
+                        new HorizontalLayout(new Text("Address: " + userDto.getAddress())),
+                        new HorizontalLayout(OkButton)
+                );
+            }
         } catch (Exception e){
             System.out.println(e);
         }
@@ -101,6 +106,14 @@ public class MyProfileView extends VerticalLayout {
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> presenter.logOut());
+        dialog.open();
+    }
+
+    public void userFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("User failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
     }
 

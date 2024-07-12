@@ -43,7 +43,13 @@ public class FireStoreOwnerView extends VerticalLayout implements HasUrlParamete
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(layout);
         storeOwnerField = new ComboBox<String>("store owner");
-        storeOwnerField.setItems(presenter.getStoreOwners());
+        List<String> storeOwners = presenter.getStoreOwners();
+        if (storeOwners == null) {
+            storeOwnersFailedToLoad();
+        }
+        else {
+            storeOwnerField.setItems(storeOwners);
+        }
         fireButton = new Button("Fire", event -> {
             fireConfirm();
         });
@@ -108,6 +114,14 @@ public class FireStoreOwnerView extends VerticalLayout implements HasUrlParamete
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> presenter.onFireButtonClicked(storeOwnerField.getValue()));
+        dialog.open();
+    }
+
+    public void storeOwnersFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Store owners failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
     }
 

@@ -87,7 +87,13 @@ public class HistoryView extends VerticalLayout {
         mainLayout.add(acquisitionGrid, receiptGrid, receiptDetailsLayout, backButton);
 
         add(mainLayout);
-        presenter.loadAcquisitionHistory();
+        List<AcquisitionDTO> acquisitions = presenter.loadAcquisitionHistory();
+        if (acquisitions == null) {
+            acquisitionsFailedToLoad();
+        }
+        else{
+            showAcquisitions(acquisitions);
+        }
     }
 
     public void createTopLayout() {
@@ -184,7 +190,13 @@ public class HistoryView extends VerticalLayout {
         });
     }
 
-
+    public void acquisitionsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Acquisitions failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
 
     public void showError(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);

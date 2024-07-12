@@ -42,9 +42,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     }
 
     public void buildView(){
-        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
-        presenter = new StorePresenter(this, userID, storeID);
-        makeStoreQuery();
         createTopLayout();
         String welcomeText = "Welcome to " + presenter.getStoreName();
         if(!presenter.isStoreOpen()){
@@ -131,7 +128,13 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         // Create the search fields
         TextField productNameField = new TextField("Product name");
         ComboBox<String> categoryField = new ComboBox<>("Category");
-        categoryField.setItems(presenter.getCategories());
+        List<String> categories = presenter.getCategories();
+        if(categories == null){
+            categoriesFailedToLoad();
+        }
+        else{
+            categoryField.setItems(categories);
+        }
         MultiSelectComboBox<String> keywordsField = new MultiSelectComboBox<>("Keywords");
         keywordsField.setItems("clothes", "shoes", "food", "optic", "electricity", "toys", "health", "sport",
                 "women", "men", "children", "beauty", "travel", "gifts", "office", "coffee", "home");
@@ -186,25 +189,30 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         VerticalLayout allProductsLayout = new VerticalLayout();
         allProductsLayout.add(new H1("All store products:"));
         List<ProductDTO> allProducts = presenter.getAllProducts();
-        for (int i=0 ; i<allProducts.size(); i++) {
-            ProductDTO product = allProducts.get(i);
-            IntegerField quantityField = new IntegerField();
-            quantityField.setLabel("quantity");
-            quantityField.setMin(0);
-            quantityField.setMax(Math.min(10,product.getQuantity()));
-            quantityField.setValue(1);
-            quantityField.setStepButtonsVisible(true);
-            allProductsLayout.add(
-                    new HorizontalLayout(new Text("name: " + product.getName())),
-                    new HorizontalLayout(new Text("description: " + product.getDescription())),
-                    new HorizontalLayout(new Text("price: " + product.getPrice())),
-                    quantityField,
-                    new Button("Add to Cart", event -> {
-                        presenter.onAddToCartButtonClicked(product.getName(), quantityField.getValue());
-                    })
-            );
+        if(allProducts == null){
+            productsFailedToLoad();
         }
-        add(allProductsLayout);
+        else{
+            for (int i=0 ; i<allProducts.size(); i++) {
+                ProductDTO product = allProducts.get(i);
+                IntegerField quantityField = new IntegerField();
+                quantityField.setLabel("quantity");
+                quantityField.setMin(0);
+                quantityField.setMax(Math.min(10,product.getQuantity()));
+                quantityField.setValue(1);
+                quantityField.setStepButtonsVisible(true);
+                allProductsLayout.add(
+                        new HorizontalLayout(new Text("name: " + product.getName())),
+                        new HorizontalLayout(new Text("description: " + product.getDescription())),
+                        new HorizontalLayout(new Text("price: " + product.getPrice())),
+                        quantityField,
+                        new Button("Add to Cart", event -> {
+                            presenter.onAddToCartButtonClicked(product.getName(), quantityField.getValue());
+                        })
+                );
+            }
+            add(allProductsLayout);
+        }
     }
 
     public void createInventoryLayout(){
@@ -351,6 +359,30 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
+    public void storeFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Store failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+        dialog.open();
+    }
+
+    public void productsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Products failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
+    public void categoriesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Categories failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
     public void makeStoreQuery(){
         Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("storeID", List.of(storeID));
@@ -361,6 +393,14 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
         Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
         storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        buildView();
+        userID = VaadinSession.getCurrent().getAttribute("userID").toString();
+        presenter = new StorePresenter(this, userID, storeID);
+        makeStoreQuery();
+        if(presenter.getStore() != null){
+            buildView();
+        }
+        else{
+            storeFailedToLoad();
+        }
     }
 }

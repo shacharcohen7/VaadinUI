@@ -49,13 +49,13 @@ public class PaymentView extends VerticalLayout {
     private void buildView() {
         presenter = new PaymentPresenter(this, userID, cartDTO);
 
+        createTopLayout();
         H1 header = new H1("Payment Details");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        createTopLayout();
 
         holderIDField = new TextField("Holder ID");
         holderIDField.setWidth("300px");

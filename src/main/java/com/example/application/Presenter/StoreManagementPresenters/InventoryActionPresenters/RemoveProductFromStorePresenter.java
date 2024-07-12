@@ -31,11 +31,14 @@ public class RemoveProductFromStorePresenter {
 
     public List<String> getAllProductNames(){
         List<ProductDTO> products = APIcalls.getStoreProducts(storeID);
-        List<String> productNames = new LinkedList<String>();
-        for(int i=0 ;i<products.size() ; i++){
-            productNames.add(products.get(i).getName());
+        if (products != null) {
+            List<String> productNames = new LinkedList<String>();
+            for(int i=0 ;i<products.size() ; i++){
+                productNames.add(products.get(i).getName());
+            }
+            return productNames;
         }
-        return productNames;
+        return null;
     }
 
     public void onRemoveButtonClicked(String productName) {

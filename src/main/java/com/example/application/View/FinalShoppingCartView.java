@@ -155,37 +155,42 @@ public class FinalShoppingCartView extends VerticalLayout{
                 }
 
                 ProductDTO product = presenter.getProduct(productName, storeID);
-                VerticalLayout productLayout = new VerticalLayout();
-                productLayout.getStyle()
-                        .set("border", "1px solid #ccc") // Light gray border around each product block
-                        .set("padding", "10px") // Padding inside the product block
-                        .set("border-radius", "10px") // Rounded corners
-                        .set("box-shadow", "1px 1px 6px rgba(0, 0, 0, 0.1)"); // Subtle shadow for depth
+                if (product == null) {
+                    productFailedToLoad();
+                }
+                else {
+                    VerticalLayout productLayout = new VerticalLayout();
+                    productLayout.getStyle()
+                            .set("border", "1px solid #ccc") // Light gray border around each product block
+                            .set("padding", "10px") // Padding inside the product block
+                            .set("border-radius", "10px") // Rounded corners
+                            .set("box-shadow", "1px 1px 6px rgba(0, 0, 0, 0.1)"); // Subtle shadow for depth
 
-                Span productNameSpan = new Span("Name: " + productName);
-                productNameSpan.getStyle()
-                        .set("font-weight", "bold") // Bold font for product name
-                        .set("color", "#333"); // Darker color for readability
+                    Span productNameSpan = new Span("Name: " + productName);
+                    productNameSpan.getStyle()
+                            .set("font-weight", "bold") // Bold font for product name
+                            .set("color", "#333"); // Darker color for readability
 
-                Span productDescriptionSpan = new Span("Description: " + product.getDescription());
-                productDescriptionSpan.getStyle()
-                        .set("color", "#666"); // Medium color for description
+                    Span productDescriptionSpan = new Span("Description: " + product.getDescription());
+                    productDescriptionSpan.getStyle()
+                            .set("color", "#666"); // Medium color for description
 
-                Span productPriceSpan = new Span("Price: " + basket.get(productName).get(1));
-                productPriceSpan.getStyle()
-                        .set("color", "#e91e63") // Pink color for price
-                        .set("font-weight", "bold"); // Bold font for price
+                    Span productPriceSpan = new Span("Price: " + basket.get(productName).get(1));
+                    productPriceSpan.getStyle()
+                            .set("color", "#e91e63") // Pink color for price
+                            .set("font-weight", "bold"); // Bold font for price
 
-                IntegerField quantityField = new IntegerField();
-                quantityField.setLabel("Quantity");
-                quantityField.setMin(0);
-                quantityField.setMax(Math.min(10, product.getQuantity()));
-                quantityField.setValue(basket.get(productName).get(0));
-                quantityField.setStepButtonsVisible(true);
+                    IntegerField quantityField = new IntegerField();
+                    quantityField.setLabel("Quantity");
+                    quantityField.setMin(0);
+                    quantityField.setMax(Math.min(10, product.getQuantity()));
+                    quantityField.setValue(basket.get(productName).get(0));
+                    quantityField.setStepButtonsVisible(true);
 
-                productLayout.add(productNameSpan, productDescriptionSpan, productPriceSpan, quantityField);
-                currentRow.add(productLayout);
-                currentColumn++;
+                    productLayout.add(productNameSpan, productDescriptionSpan, productPriceSpan, quantityField);
+                    currentRow.add(productLayout);
+                    currentColumn++;
+                }
             }
             // Add the last row if it contains any products
             if (currentColumn > 0) {
@@ -282,6 +287,14 @@ public class FinalShoppingCartView extends VerticalLayout{
 //                )
 //        );
 //    }
+
+    public void productFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Product failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
 
     public void logoutConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();

@@ -58,7 +58,13 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
         priceField = new IntegerField("price");
         quantityField = new IntegerField("quantity");
         categoryField = new ComboBox<String>("category");
-        categoryField.setItems(presenter.getCategories());
+        List<String> categories = presenter.getCategories();
+        if (categories == null) {
+            categoriesFailedToLoad();
+        }
+        else {
+            categoryField.setItems(categories);
+        }
         descriptionField = new TextField("description");
         addButton = new Button("Add", event -> {
             presenter.onAddButtonClicked(productNameField.getValue(), priceField.getValue(),
@@ -128,6 +134,14 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
 
     public void addFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void categoriesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Categories failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){
