@@ -297,4 +297,9 @@ public class ShoppingCartView extends VerticalLayout {
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
+
+    public void storeFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
 }

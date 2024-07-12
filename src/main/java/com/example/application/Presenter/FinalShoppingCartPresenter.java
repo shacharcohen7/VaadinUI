@@ -1,10 +1,7 @@
 package com.example.application.Presenter;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Util.CartDTO;
-import com.example.application.Util.PaymentDTO;
-import com.example.application.Util.ProductDTO;
-import com.example.application.Util.UserDTO;
+import com.example.application.Util.*;
 import com.example.application.View.FinalShoppingCartView;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
@@ -53,7 +50,12 @@ public class FinalShoppingCartPresenter {
     }
 
     public String getStoreName(String storeID){
-        return APIcalls.getStore(storeID).getStoreName();
+        APIResponse<StoreDTO> ans =  APIcalls.getStore(storeID);
+        if (ans.getData() == null){
+            view.storeFailure(ans.getErrorMassage());
+        }
+        return ans.getData().getStoreName();
+
     }
 
     public ProductDTO getProduct(String productName, String storeID){

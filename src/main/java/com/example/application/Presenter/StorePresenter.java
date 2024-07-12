@@ -1,9 +1,12 @@
 package com.example.application.Presenter;
 
 import com.example.application.Model.APIcalls;
+import com.example.application.Util.APIResponse;
 import com.example.application.Util.ProductDTO;
+import com.example.application.Util.StoreDTO;
 import com.example.application.View.StoreView;
 import com.vaadin.flow.server.VaadinSession;
+import org.jsoup.Connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,8 +59,14 @@ public class StorePresenter {
         return APIcalls.isMember(userID);
     }
 
-    public String getStoreName(){
-        return APIcalls.getStore(storeID).getStoreName();
+    public void getStoreName(){
+        APIResponse<StoreDTO> ans =  APIcalls.getStore(storeID);
+        if (ans.getData() != null){
+            view.storeGetNameSuccess(ans.getData().getStoreName());
+        }
+        else {
+            view.storeGetNameFailure(ans.getErrorMassage());
+        }
     }
 
     public void logOut(){

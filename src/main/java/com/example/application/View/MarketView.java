@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @Route("MarketView")
-public class MarketView extends VerticalLayout {
+public class MarketView extends VerticalLayout  implements AfterNavigationObserver {
     private MarketPresenter presenter;
     private String userID;
     private VerticalLayout productsFoundLayout;
@@ -43,6 +43,16 @@ public class MarketView extends VerticalLayout {
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
         buildView();
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        // Extract the error message from query parameters and show notification
+        QueryParameters queryParameters = event.getLocation().getQueryParameters();
+        String errorMessage = getErrorMessageFromQuery(queryParameters);
+        if (errorMessage != null) {
+            Notification.show(errorMessage, 3000, Notification.Position.MIDDLE);
+        }
     }
 
     public void buildView(){
@@ -284,4 +294,17 @@ public class MarketView extends VerticalLayout {
         this.removeAll();
         buildView();
     }
+
+    public void storeFailure(String message) {
+        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    private String getErrorMessageFromQuery(QueryParameters queryParameters) {
+        Map<String, List<String>> parameters = queryParameters.getParameters();
+        if (parameters.containsKey("errorMessage")) {
+            return parameters.get("errorMessage").get(0);
+        }
+        return null;
+    }
+
 }
