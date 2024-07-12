@@ -16,11 +16,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.util.List;
+
 @Route("AdminCloseStoreView")
 public class AdminCloseStoreView  extends VerticalLayout {
     private AdminCloseStorePresenter presenter;
     private String userID;
-    private ComboBox<String> storeIDField;
+    private ComboBox<String> storeNameField;
     private Button closeButton;
     private Button cancelButton;
 
@@ -43,8 +45,14 @@ public class AdminCloseStoreView  extends VerticalLayout {
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        storeIDField = new ComboBox<String>("store ID");
-        storeIDField.setItems(presenter.getAllStoreIDs());
+        storeNameField = new ComboBox<String>("store name");
+        List<String> stores = presenter.getAllStoreNames();
+        if (stores == null) {
+            storesFailedToLoad();
+        }
+        else {
+            storeNameField.setItems(stores);
+        }
         closeButton = new Button("Close", event -> {
             closeStoreConfirm();
         });
@@ -52,7 +60,7 @@ public class AdminCloseStoreView  extends VerticalLayout {
             getUI().ifPresent(ui -> ui.navigate("MarketView"));
         });
         add(
-                storeIDField,
+                storeNameField,
                 new HorizontalLayout(closeButton, cancelButton)
         );
     }
@@ -108,8 +116,16 @@ public class AdminCloseStoreView  extends VerticalLayout {
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
         dialog.addConfirmListener(event -> {
-            presenter.onCloseButtonClicked(storeIDField.getValue());
+            presenter.onCloseButtonClicked(storeNameField.getValue());
         });
+        dialog.open();
+    }
+
+    public void storesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Stores failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
     }
 

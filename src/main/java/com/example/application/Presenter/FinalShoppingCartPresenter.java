@@ -53,14 +53,19 @@ public class FinalShoppingCartPresenter {
     }
 
     public String getStoreName(String storeID){
+        if(APIcalls.getStore(storeID).getStoreName() == null){
+            return null;
+        }
         return APIcalls.getStore(storeID).getStoreName();
     }
 
     public ProductDTO getProduct(String productName, String storeID){
         List<ProductDTO> storeProducts = APIcalls.getStoreProducts(storeID);
-        for(int i=0 ; i<storeProducts.size() ; i++){
-            if(storeProducts.get(i).getName().equals(productName)){
-                return storeProducts.get(i);
+        if (storeProducts != null) {
+            for(int i=0 ; i<storeProducts.size() ; i++){
+                if(storeProducts.get(i).getName().equals(productName)){
+                    return storeProducts.get(i);
+                }
             }
         }
         return null;

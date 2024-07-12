@@ -110,9 +110,21 @@ public class AddSimpleDiscountView extends VerticalLayout implements HasUrlParam
         buttons.removeAll();
         IntegerField percentageField = new IntegerField("percentage *");
         ComboBox<String> categoryField = new ComboBox<String>("category *");
-        categoryField.setItems(presenter.getCategories());
+        List<String> categories = presenter.getCategories();
+        if (categories == null) {
+            categoriesFailedToLoad();
+        }
+        else {
+            categoryField.setItems(categories);
+        }
         MultiSelectComboBox<String> productsField = new MultiSelectComboBox<String>("product *");
-        productsField.setItems(presenter.getAllProductNames());
+        List<String> productNames = presenter.getAllProductNames();
+        if (productNames == null) {
+            productsFailedToLoad();
+        }
+        else {
+            productsField.setItems(productNames);
+        }
         relevantFieldsLayout.add(percentageField);
         if(discountTypes.getValue().equals("Products Discount")){
             relevantFieldsLayout.add(productsField);
@@ -198,6 +210,22 @@ public class AddSimpleDiscountView extends VerticalLayout implements HasUrlParam
 
     public void addFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void categoriesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Categories failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
+    public void productsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Products failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

@@ -53,6 +53,9 @@ public class MarketPresenter {
     }
 
     public String getStoreName(String storeID){
+        if(APIcalls.getStore(storeID).getStoreName() == null){
+            return null;
+        }
         return APIcalls.getStore(storeID).getStoreName();
     }
 

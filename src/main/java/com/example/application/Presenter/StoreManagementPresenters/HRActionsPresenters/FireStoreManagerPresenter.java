@@ -30,11 +30,14 @@ public class FireStoreManagerPresenter {
 
     public List<String> getStoreManagers(){
         List<String> memberIDs = APIcalls.getStoreMangers(storeID);
-        List<String> names = new LinkedList<>();
-        for(int i=0 ; i<memberIDs.size() ; i++){
-            names.add(APIcalls.getMemberName(memberIDs.get(i)));
+        if (memberIDs != null) {
+            List<String> names = new LinkedList<>();
+            for(int i=0 ; i<memberIDs.size() ; i++){
+                names.add(APIcalls.getMemberName(memberIDs.get(i)));
+            }
+            return names;
         }
-        return names;
+        return null;
     }
 
     public void onFireButtonClicked(String appointedUsername) {

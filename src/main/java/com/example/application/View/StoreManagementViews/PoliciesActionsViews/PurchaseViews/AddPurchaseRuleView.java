@@ -113,9 +113,21 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
         ComboBox<String> rangeField = new ComboBox<String>("range *");
         rangeField.setItems("Exact", "Below", "Above");
         ComboBox<String> categoryField = new ComboBox<String>("category");
-        categoryField.setItems(presenter.getCategories());
+        List<String> categories = presenter.getCategories();
+        if (categories == null) {
+            categoriesFailedToLoad();
+        }
+        else {
+            categoryField.setItems(categories);
+        }
         ComboBox<String> productNameField = new ComboBox<String>("product name");
-        productNameField.setItems(presenter.getAllProductNames());
+        List<String> productNames = presenter.getAllProductNames();
+        if (productNames == null) {
+            productsFailedToLoad();
+        }
+        else {
+            productNameField.setItems(productNames);
+        }
         categoryField.addValueChangeListener(event -> {
             if(!categoryField.isEmpty() & !productNameField.isEmpty()) {
                 Notification.show("Impossible to fill both category and product name fields",3000, Notification.Position.MIDDLE);
@@ -267,6 +279,22 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void categoriesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Categories failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
+    public void productsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Products failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void addFailure(String message) {

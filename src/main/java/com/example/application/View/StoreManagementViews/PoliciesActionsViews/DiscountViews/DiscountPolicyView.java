@@ -103,11 +103,16 @@ public class DiscountPolicyView extends VerticalLayout implements HasUrlParamete
 
     public void createDiscountLayout(){
         List<String> discountRules = presenter.getStoreCurrentDiscountRules();
-        if(discountRules.size() == 0){
-            add(new HorizontalLayout(new Text("No discount rules")));
+        if (discountRules == null) {
+            rulesFailedToLoad();
         }
-        for(int i=0 ; i<discountRules.size() ; i++){
-            add(new HorizontalLayout(new Text(i + 1 + ". " + discountRules.get(i))));
+        else {
+            if (discountRules.size() == 0) {
+                add(new HorizontalLayout(new Text("No discount rules")));
+            }
+            for (int i = 0; i < discountRules.size(); i++) {
+                add(new HorizontalLayout(new Text(i + 1 + ". " + discountRules.get(i))));
+            }
         }
     }
 
@@ -124,6 +129,14 @@ public class DiscountPolicyView extends VerticalLayout implements HasUrlParamete
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void rulesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Rules failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

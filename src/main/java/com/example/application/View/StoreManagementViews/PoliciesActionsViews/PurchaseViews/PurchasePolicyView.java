@@ -94,12 +94,25 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
 
     public void createPurchaseLayout(){
         List<String> purchaseRules = presenter.getStoreCurrentPurchaseRules();
-        if(purchaseRules.size() == 0){
-            add(new HorizontalLayout(new Text("No purchase rules")));
+        if (purchaseRules == null) {
+            rulesFailedToLoad();
         }
-        for(int i=0 ; i<purchaseRules.size() ; i++){
-            add(new HorizontalLayout(new Text(i + 1 + ". " + purchaseRules.get(i))));
+        else {
+            if (purchaseRules.size() == 0) {
+                add(new HorizontalLayout(new Text("No purchase rules")));
+            }
+            for (int i = 0; i < purchaseRules.size(); i++) {
+                add(new HorizontalLayout(new Text(i + 1 + ". " + purchaseRules.get(i))));
+            }
         }
+    }
+
+    public void rulesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Rules failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void logoutConfirm(){

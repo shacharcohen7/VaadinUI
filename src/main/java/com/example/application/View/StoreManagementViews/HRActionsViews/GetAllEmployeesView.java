@@ -85,28 +85,38 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         VerticalLayout ownersLayout = new VerticalLayout();
         ownersLayout.add(new H1("Store Owners:"));
         List<String> storeOwners = presenter.getStoreOwners();
-        for(int i=0 ; i<storeOwners.size() ; i++){
-            VerticalLayout ownerLayout = new VerticalLayout();
-            ownerLayout.add(new HorizontalLayout(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i)))));
-            ownersLayout.add(ownerLayout);
+        if (storeOwners == null) {
+            storeOwnersFailedToLoad();
         }
-        add(ownersLayout);
+        else{
+            for(int i=0 ; i<storeOwners.size() ; i++){
+                VerticalLayout ownerLayout = new VerticalLayout();
+                ownerLayout.add(new HorizontalLayout(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i)))));
+                ownersLayout.add(ownerLayout);
+            }
+            add(ownersLayout);
+        }
     }
 
     public void createManagersLayout(){
         VerticalLayout managersLayout = new VerticalLayout();
         managersLayout.add(new H1("Store Managers:"));
         List<String> storeManagers = presenter.getStoreManagers();
-        for(int i=0 ; i<storeManagers.size() ; i++){
-            VerticalLayout managerLayout = new VerticalLayout();
-            managerLayout.add(
-                    new HorizontalLayout(new Text("Store Manager - " + presenter.getEmployeeUserName(storeManagers.get(i)))),
-                    new HorizontalLayout(new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i)))),
-                    new HorizontalLayout(new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i))))
-            );
-            managersLayout.add(managerLayout);
+        if (storeManagers == null) {
+            storeManagersFailedToLoad();
         }
-        add(managersLayout);
+        else{
+            for(int i=0 ; i<storeManagers.size() ; i++){
+                VerticalLayout managerLayout = new VerticalLayout();
+                managerLayout.add(
+                        new HorizontalLayout(new Text("Store Manager - " + presenter.getEmployeeUserName(storeManagers.get(i)))),
+                        new HorizontalLayout(new Text("Inventory permissions: " + presenter.hasInventoryPermissions(storeManagers.get(i)))),
+                        new HorizontalLayout(new Text("Purchase permissions: " + presenter.hasPurchasePermissions(storeManagers.get(i))))
+                );
+                managersLayout.add(managerLayout);
+            }
+            add(managersLayout);
+        }
     }
 
     public void logoutConfirm(){
@@ -122,6 +132,22 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void storeOwnersFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Store owners failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
+    }
+
+    public void storeManagersFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Store managers failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

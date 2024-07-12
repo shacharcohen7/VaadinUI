@@ -24,10 +24,6 @@ public class AddSupplyPresenter {
         return APIcalls.getMemberName(VaadinSession.getCurrent().getAttribute("memberID").toString());
     }
 
-    public List<String> getCategories(){
-        return APIcalls.getCategories();
-    }
-
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
             view.logout();

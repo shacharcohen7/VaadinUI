@@ -24,10 +24,13 @@ public class ComposeCondDiscountPresenter {
 
     public List<String> getStoreCurrentCondDiscountRules(){
         List<String> condDiscountRules = APIcalls.getStoreCurrentCondDiscountRules(userID, storeID);
-        for(int i=0 ; i<condDiscountRules.size() ; i++){
-            descriptionToNum.put(condDiscountRules.get(i), i);
+        if (condDiscountRules != null) {
+            for(int i=0 ; i<condDiscountRules.size() ; i++){
+                descriptionToNum.put(condDiscountRules.get(i), i);
+            }
+            return condDiscountRules;
         }
-        return condDiscountRules;
+        return null;
     }
 
     public String getUserName(){

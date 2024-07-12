@@ -23,10 +23,13 @@ public class RemovePurchaseRulePresenter {
 
     public List<String> getStoreCurrentPurchaseRules(){
         List<String> purchasePolicies = APIcalls.getStoreCurrentPurchaseRules(userID, storeID);
-        for(int i=0 ; i<purchasePolicies.size() ; i++){
-            descriptionToNum.put(purchasePolicies.get(i), i);
+        if (purchasePolicies != null) {
+            for(int i=0 ; i<purchasePolicies.size() ; i++){
+                descriptionToNum.put(purchasePolicies.get(i), i);
+            }
+            return purchasePolicies;
         }
-        return purchasePolicies;
+        return null;
     }
 
     public String getUserName(){

@@ -39,11 +39,16 @@ public class ShoppingCartView extends VerticalLayout {
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        buildView();
+        this.presenter = new ShoppingCartPresenter(this, userID);
+        if (presenter.getCart() == null) {
+            cartFailedToLoad();
+        }
+        else{
+            buildView();
+        }
     }
 
     public void buildView(){
-        this.presenter = new ShoppingCartPresenter(this, userID);
         createTopLayout();
         H1 header = new H1("Shopping Cart");
         VerticalLayout layout = new VerticalLayout(header);
@@ -140,43 +145,48 @@ public class ShoppingCartView extends VerticalLayout {
                 }
 
                 ProductDTO product = presenter.getProduct(productName, storeID);
-                VerticalLayout productLayout = new VerticalLayout();
-                productLayout.getStyle()
-                        .set("border", "1px solid #ccc") // Light gray border around each product block
-                        .set("padding", "10px") // Padding inside the product block
-                        .set("border-radius", "10px") // Rounded corners
-                        .set("box-shadow", "1px 1px 6px rgba(0, 0, 0, 0.1)"); // Subtle shadow for depth
+                if(product == null){
+                    productFailedToLoad();
+                }
+                else {
+                    VerticalLayout productLayout = new VerticalLayout();
+                    productLayout.getStyle()
+                            .set("border", "1px solid #ccc") // Light gray border around each product block
+                            .set("padding", "10px") // Padding inside the product block
+                            .set("border-radius", "10px") // Rounded corners
+                            .set("box-shadow", "1px 1px 6px rgba(0, 0, 0, 0.1)"); // Subtle shadow for depth
 
-                Span productNameSpan = new Span("Name: " + productName);
-                productNameSpan.getStyle()
-                        .set("font-weight", "bold") // Bold font for product name
-                        .set("color", "#333"); // Darker color for readability
+                    Span productNameSpan = new Span("Name: " + productName);
+                    productNameSpan.getStyle()
+                            .set("font-weight", "bold") // Bold font for product name
+                            .set("color", "#333"); // Darker color for readability
 
-                Span productDescriptionSpan = new Span("Description: " + product.getDescription());
-                productDescriptionSpan.getStyle()
-                        .set("color", "#666"); // Medium color for description
+                    Span productDescriptionSpan = new Span("Description: " + product.getDescription());
+                    productDescriptionSpan.getStyle()
+                            .set("color", "#666"); // Medium color for description
 
-                Span productPriceSpan = new Span("Price: " + basket.get(productName).get(1));
-                productPriceSpan.getStyle()
-                        .set("color", "#e91e63") // Pink color for price
-                        .set("font-weight", "bold"); // Bold font for price
+                    Span productPriceSpan = new Span("Price: " + basket.get(productName).get(1));
+                    productPriceSpan.getStyle()
+                            .set("color", "#e91e63") // Pink color for price
+                            .set("font-weight", "bold"); // Bold font for price
 
-                IntegerField quantityField = new IntegerField();
-                quantityField.setLabel("Quantity");
-                quantityField.setMin(0);
-                quantityField.setMax(Math.min(10, product.getQuantity()));
-                quantityField.setValue(basket.get(productName).get(0));
-                quantityField.setStepButtonsVisible(true);
+                    IntegerField quantityField = new IntegerField();
+                    quantityField.setLabel("Quantity");
+                    quantityField.setMin(0);
+                    quantityField.setMax(Math.min(10, product.getQuantity()));
+                    quantityField.setValue(basket.get(productName).get(0));
+                    quantityField.setStepButtonsVisible(true);
 
-                Button modifyButton = new Button("Modify Quantity", event -> presenter.modifyProductCart(productName, quantityField.getValue(), storeID, userID));
-                modifyButton.getStyle().set("background-color", "#e91e63").set("color", "white");
+                    Button modifyButton = new Button("Modify Quantity", event -> presenter.modifyProductCart(productName, quantityField.getValue(), storeID, userID));
+                    modifyButton.getStyle().set("background-color", "#e91e63").set("color", "white");
 
-                Button removeButton = new Button("Remove from Cart", event -> presenter.removeProductCart(productName, storeID, userID));
-                removeButton.getStyle().set("background-color", "#e91e63").set("color", "white");
+                    Button removeButton = new Button("Remove from Cart", event -> presenter.removeProductCart(productName, storeID, userID));
+                    removeButton.getStyle().set("background-color", "#e91e63").set("color", "white");
 
-                productLayout.add(productNameSpan, productDescriptionSpan, productPriceSpan, quantityField, modifyButton, removeButton);
-                currentRow.add(productLayout);
-                currentColumn++;
+                    productLayout.add(productNameSpan, productDescriptionSpan, productPriceSpan, quantityField, modifyButton, removeButton);
+                    currentRow.add(productLayout);
+                    currentColumn++;
+                }
             }
             // Add the last row if it contains any products
             if (currentColumn > 0) {
@@ -281,6 +291,22 @@ public class ShoppingCartView extends VerticalLayout {
 
     public void failCartValidation(String message){
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void cartFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Cart failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
+        dialog.open();
+    }
+
+    public void productFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Product failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void logoutConfirm(){

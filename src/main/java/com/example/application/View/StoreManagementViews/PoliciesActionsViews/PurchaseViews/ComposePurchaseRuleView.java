@@ -51,9 +51,15 @@ public class ComposePurchaseRuleView extends VerticalLayout implements HasUrlPar
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         purchaseRuleField1 = new ComboBox<String>("first rule");
-        purchaseRuleField1.setItems(presenter.getStoreCurrentPurchaseRules());
         purchaseRuleField2 = new ComboBox<String>("second rule");
-        purchaseRuleField2.setItems(presenter.getStoreCurrentPurchaseRules());
+        List<String> rules = presenter.getStoreCurrentPurchaseRules();
+        if (rules == null) {
+            rulesFailedToLoad();
+        }
+        else {
+            purchaseRuleField1.setItems(rules);
+            purchaseRuleField2.setItems(rules);
+        }
         operatorField = new ComboBox<String>("operator");
         operatorField.setItems("ONLY IF", "OR", "AND");
         composeButton = new Button("Compose", event -> {
@@ -111,6 +117,14 @@ public class ComposePurchaseRuleView extends VerticalLayout implements HasUrlPar
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void rulesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Rules failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void composeSuccess(String message) {

@@ -52,9 +52,15 @@ public class ComposeSimpleDiscountView extends VerticalLayout implements HasUrlP
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         discountField1 = new ComboBox<String>("first discount");
-        discountField1.setItems(presenter.getStoreCurrentSimpleDiscountRules());
         discountField2 = new ComboBox<String>("second discount");
-        discountField2.setItems(presenter.getStoreCurrentSimpleDiscountRules());
+        List<String> rules = presenter.getStoreCurrentSimpleDiscountRules();
+        if (rules == null) {
+            rulesFailedToLoad();
+        }
+        else{
+            discountField1.setItems(rules);
+            discountField2.setItems(rules);
+        }
         operatorField = new ComboBox<String>("operator");
         operatorField.setItems("MAX", "ADD");
         composeButton = new Button("Compose", event -> {
@@ -121,6 +127,14 @@ public class ComposeSimpleDiscountView extends VerticalLayout implements HasUrlP
 
     public void composeFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void rulesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Rules failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

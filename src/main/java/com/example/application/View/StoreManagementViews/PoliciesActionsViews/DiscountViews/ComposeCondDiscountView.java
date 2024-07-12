@@ -53,9 +53,15 @@ public class ComposeCondDiscountView extends VerticalLayout implements HasUrlPar
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         discountField1 = new ComboBox<String>("first discount");
-        discountField1.setItems(presenter.getStoreCurrentCondDiscountRules());
         discountField2 = new ComboBox<String>("second discount");
-        discountField2.setItems(presenter.getStoreCurrentCondDiscountRules());
+        List<String> rules = presenter.getStoreCurrentCondDiscountRules();
+        if (rules == null) {
+            rulesFailedToLoad();
+        }
+        else{
+            discountField1.setItems(rules);
+            discountField2.setItems(rules);
+        }
         logicalOperatorField = new ComboBox<String>("logical operator");
         logicalOperatorField.setItems("XOR", "OR", "AND");
         numericalOperatorField = new ComboBox<String>("numerical operator");
@@ -124,6 +130,14 @@ public class ComposeCondDiscountView extends VerticalLayout implements HasUrlPar
 
     public void composeFailure(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    public void rulesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Rules failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

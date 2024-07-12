@@ -53,34 +53,39 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
         add(layout);
         storeManagerField = new ComboBox<String>("Store Manager");
         List<String> storeManagersMemberID = presenter.getStoreManagers();
-        List<String> storeManagerNames = new LinkedList<String>();
-        Map<String,String> usernameToMemberID = new HashMap<String,String>();
-        for(int i=0 ; i<storeManagersMemberID.size() ; i++){
-            storeManagerNames.add(presenter.getEmployeeUserName(storeManagersMemberID.get(i)));
-            usernameToMemberID.put(presenter.getEmployeeUserName(storeManagersMemberID.get(i)), storeManagersMemberID.get(i));
+        if (storeManagersMemberID == null) {
+            storeManagersFailedToLoad();
         }
-        storeManagerField.setItems(storeManagerNames);
-        inventoryPermissions = new ComboBox<Boolean>("Inventory Permissions");
-        inventoryPermissions.setItems(true, false);
-        purchasePermissions = new ComboBox<Boolean>("Purchase Permissions");
-        purchasePermissions.setItems(true, false);
-        storeManagerField.addValueChangeListener(event -> {
-            inventoryPermissions.setValue(presenter.hasInventoryPermissions(usernameToMemberID.get(event.getValue())));
-            purchasePermissions.setValue(presenter.hasPurchasePermissions(usernameToMemberID.get(event.getValue())));
-        });
-        updateButton = new Button("Update", event -> {
-            presenter.onUpdateButtonClicked(storeManagerField.getValue(), inventoryPermissions.getValue(),
-                    purchasePermissions.getValue());
-        });
-        cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
-        });
-        add(
-                storeManagerField,
-                inventoryPermissions,
-                purchasePermissions,
-                new HorizontalLayout(updateButton, cancelButton)
-        );
+        else {
+            List<String> storeManagerNames = new LinkedList<String>();
+            Map<String, String> usernameToMemberID = new HashMap<String, String>();
+            for (int i = 0; i < storeManagersMemberID.size(); i++) {
+                storeManagerNames.add(presenter.getEmployeeUserName(storeManagersMemberID.get(i)));
+                usernameToMemberID.put(presenter.getEmployeeUserName(storeManagersMemberID.get(i)), storeManagersMemberID.get(i));
+            }
+            storeManagerField.setItems(storeManagerNames);
+            inventoryPermissions = new ComboBox<Boolean>("Inventory Permissions");
+            inventoryPermissions.setItems(true, false);
+            purchasePermissions = new ComboBox<Boolean>("Purchase Permissions");
+            purchasePermissions.setItems(true, false);
+            storeManagerField.addValueChangeListener(event -> {
+                inventoryPermissions.setValue(presenter.hasInventoryPermissions(usernameToMemberID.get(event.getValue())));
+                purchasePermissions.setValue(presenter.hasPurchasePermissions(usernameToMemberID.get(event.getValue())));
+            });
+            updateButton = new Button("Update", event -> {
+                presenter.onUpdateButtonClicked(storeManagerField.getValue(), inventoryPermissions.getValue(),
+                        purchasePermissions.getValue());
+            });
+            cancelButton = new Button("Cancel", event -> {
+                getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
+            });
+            add(
+                    storeManagerField,
+                    inventoryPermissions,
+                    purchasePermissions,
+                    new HorizontalLayout(updateButton, cancelButton)
+            );
+        }
     }
 
     public void createTopLayout(){
@@ -134,6 +139,14 @@ public class UpdateManagerPermissionsView extends VerticalLayout implements HasU
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void storeManagersFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Store managers failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void makeStoreQuery(){

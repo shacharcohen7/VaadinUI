@@ -24,10 +24,13 @@ public class RemoveDiscountPresenter {
 
     public List<String> getStoreCurrentDiscountRules(){
         List<String> discountPolicies = APIcalls.getStoreCurrentDiscountRules(userID, storeID);
-        for(int i=0 ; i<discountPolicies.size() ; i++){
-            descriptionToNum.put(discountPolicies.get(i), i);
+        if (discountPolicies != null) {
+            for(int i=0 ; i<discountPolicies.size() ; i++){
+                descriptionToNum.put(discountPolicies.get(i), i);
+            }
+            return discountPolicies;
         }
-        return discountPolicies;
+        return null;
     }
 
     public String getUserName(){

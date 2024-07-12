@@ -49,7 +49,13 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         purchaseRuleField = new ComboBox<String>("rule");
-        purchaseRuleField.setItems(presenter.getStoreCurrentPurchaseRules());
+        List<String> rules = presenter.getStoreCurrentPurchaseRules();
+        if (rules == null) {
+            rulesFailedToLoad();
+        }
+        else {
+            purchaseRuleField.setItems(rules);
+        }
         removeButton = new Button("Remove", event -> {
             removeConfirm();
         });
@@ -104,6 +110,14 @@ public class RemovePurchaseRuleView extends VerticalLayout implements HasUrlPara
 
     public void logout(){
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    }
+
+    public void rulesFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Rules failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 
     public void removeConfirm(){
