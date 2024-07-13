@@ -22,8 +22,13 @@ public class InitializePresenter {
             view.startSession();
         }
         else{
-            APIcalls.init();
-            view.startSession();
+            if (APIcalls.init()!= null) {
+                view.startSession();
+            }
+            else {
+                System.out.println("init error system cannot run");
+                view.cannotRun();
+            }
         }
     }
 

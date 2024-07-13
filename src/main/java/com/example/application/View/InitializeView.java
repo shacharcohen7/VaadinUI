@@ -53,6 +53,10 @@ public class InitializeView extends VerticalLayout {
         UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("StartSessionView")));
     }
 
+    public void cannotRun(){
+        Notification.show("initialization error system cannot run", 10000, Notification.Position.MIDDLE);
+    }
+
 //    public void startMarket(){
 //        UI.getCurrent().access(() -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
 //    }
