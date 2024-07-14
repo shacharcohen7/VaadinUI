@@ -56,7 +56,7 @@ public class AddPaymentView extends VerticalLayout {
                     licensedDealerNumberField.getValue(), urlField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView"));
+            getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
         });
         add(
                 paymentNameField,
@@ -84,13 +84,16 @@ public class AddPaymentView extends VerticalLayout {
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
         });
+        Button jobProposalsButton = new Button("Job Proposals", event -> {
+            getUI().ifPresent(ui -> ui.navigate("JobProposalsView"));
+        });
         Button notificationsButton = new Button("Notifications", event -> {
             getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
         });
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }
@@ -112,7 +115,7 @@ public class AddPaymentView extends VerticalLayout {
 
     public void addSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
+        getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
     }
 
     public void addFailure(String message) {

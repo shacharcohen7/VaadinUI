@@ -18,6 +18,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class APIcalls {
@@ -839,6 +841,56 @@ public class APIcalls {
         }
     }
 
+    public static List<String> getExternalSupplyServices(){
+        try {
+            String url = "http://localhost:8080/api/market/getExternalSupplyServices";  // Absolute URL
+
+            URI uri = new URI(url);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<String> getExternalPaymentServices(){
+        try {
+            String url = "http://localhost:8080/api/market/getExternalPaymentServices";  // Absolute URL
+
+            URI uri = new URI(url);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(
+                    uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            return responseBody.getData();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static StoreDTO getStore(String storeID){
         try {
             String url = "http://localhost:8080/api/store/getStore/{storeId}";  // Absolute URL
@@ -1537,13 +1589,12 @@ public class APIcalls {
         }
     }
 
-    public static String addExternalPaymentService(String paymentName, String memberId, PaymentServiceDTO paymentServiceDTO){
+    public static String addExternalPaymentService(String systemMangerUserId, PaymentServiceDTO paymentServiceDTO){
         try {
             String url = "http://localhost:8080/api/market/addExternalPaymentService";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .queryParam("paymentName", paymentName)
-                    .queryParam("memberId",memberId)
+                    .queryParam("systemMangerUserId",systemMangerUserId)
                     .queryParam("paymentServiceDTO",mapper.writeValueAsString(paymentServiceDTO))
                     .build().toUri();
 
@@ -1569,12 +1620,12 @@ public class APIcalls {
         }
     }
 
-    public static String addExternalSupplyService(String managerId, SupplyServiceDTO supplyServiceDTO){
+    public static String addExternalSupplyService(String systemMangerUserId, SupplyServiceDTO supplyServiceDTO){
         try {
             String url = "http://localhost:8080/api/market/addExternalSupplyService";  // Absolute URL
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .queryParam("managerId", managerId)
+                    .queryParam("systemMangerUserId", systemMangerUserId)
                     .queryParam("supplyServiceDTO",mapper.writeValueAsString(supplyServiceDTO))
                     .build().toUri();
 
@@ -1600,13 +1651,16 @@ public class APIcalls {
         }
     }
 
-    public static String removeExternalPaymentService(String licenceNum, String managerId){
+    public static String removeExternalPaymentService(String urlInput, String systemMangerUserId){
         try {
-            String url = "http://localhost:8080/api/market/removeExternalPaymentService/{licenceNum}/{managerId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/removeExternalPaymentService";  // Absolute URL
+
+            String encodedUrl = URLEncoder.encode(urlInput, "UTF-8");
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(licenceNum, managerId)
-                    .toUri();
+                    .queryParam("url", encodedUrl)
+                    .queryParam("systemMangerUserId", systemMangerUserId)
+                    .build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
@@ -1623,17 +1677,20 @@ public class APIcalls {
         }
         catch (Exception e){
             e.printStackTrace();
-            return null;
+            return e.getMessage();
         }
     }
 
-    public static String removeExternalSupplyService(String licenceNum, String managerId){
+    public static String removeExternalSupplyService(String urlInput, String systemMangerUserId){
         try {
-            String url = "http://localhost:8080/api/market/removeExternalSupplyService/{licenceNum}/{managerId}";  // Absolute URL
+            String url = "http://localhost:8080/api/market/removeExternalSupplyService";  // Absolute URL
+
+            String encodedUrl = URLEncoder.encode(urlInput, "UTF-8");
 
             URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(licenceNum, managerId)
-                    .toUri();
+                    .queryParam("url", encodedUrl)
+                    .queryParam("systemMangerUserId", systemMangerUserId)
+                    .build().toUri();
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("accept", "*/*");
@@ -1650,7 +1707,7 @@ public class APIcalls {
         }
         catch (Exception e){
             e.printStackTrace();
-            return null;
+            return e.getMessage();
         }
     }
 
@@ -1720,6 +1777,36 @@ public class APIcalls {
 
             URI uri = UriComponentsBuilder.fromUriString(url)
                     .buildAndExpand(userId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<String>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<String>>() {
+                    });
+            APIResponse<String> responseBody = response.getBody();
+            String data = responseBody.getData();
+            return data;
+        }
+        catch (HttpClientErrorException e){
+            return extractErrorMessageFromJson(e.getResponseBodyAsString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String answerJobProposal(String userId, String storeId, boolean manager_proposal, boolean answer){
+        try {
+            String url = "http://localhost:8080/api/market/answerJobProposal/{userId}/{storeID}/{manager_proposal}/{answer}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userId, storeId, manager_proposal, answer)
                     .toUri();
 
             HttpHeaders headers = new HttpHeaders();
@@ -1829,6 +1916,72 @@ public class APIcalls {
             List<AcquisitionDTO> data = new LinkedList<AcquisitionDTO>();
             for(int i=0 ; i<responseBody.getData().size() ; i++){
                 data.add(mapper.readValue(responseBody.getData().get(i), AcquisitionDTO.class));
+            }
+            return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<StoreOwnerDTO> getOwnerJobProposal(String userID){
+        try {
+            String url = "http://localhost:8080/api/market/getOwnerJobProposal/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<StoreOwnerDTO> data = new LinkedList<StoreOwnerDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), StoreOwnerDTO.class));
+            }
+            return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<StoreManagerDTO> getManagerJobProposal(String userID){
+        try {
+            String url = "http://localhost:8080/api/market/getManagerJobProposal/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<StoreManagerDTO> data = new LinkedList<StoreManagerDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), StoreManagerDTO.class));
             }
             return data;
         }

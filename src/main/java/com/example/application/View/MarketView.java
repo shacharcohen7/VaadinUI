@@ -92,13 +92,17 @@ public class MarketView extends VerticalLayout {
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
+            Button jobProposalsButton = new Button("Job Proposals", event -> {
+                getUI().ifPresent(ui -> ui.navigate("JobProposalsView"));
+            });
             Button notificationsButton = new Button("Notifications", event -> {
                 getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
+            topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+
         }
         add(topLayout);
     }
@@ -209,29 +213,24 @@ public class MarketView extends VerticalLayout {
         Button closeStoreButton = new Button("Close Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("AdminCloseStoreView"));
         });
-        Button addSupplyButton = new Button("Add Supply Service", event -> {
-            getUI().ifPresent(ui -> ui.navigate("AddSupplyView"));
+        Button externalServicesButton = new Button("External Services", event -> {
+            getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
         });
-        Button addPaymentButton = new Button("Add Payment Service", event -> {
-            getUI().ifPresent(ui -> ui.navigate("AddPaymentView"));
-        });
-        Button removeSupplyButton = new Button("Remove Supply Service", event -> {
-            getUI().ifPresent(ui -> ui.navigate("RemoveSupplyView"));
-        });
-        Button removePaymentButton = new Button("Remove Payment Service", event -> {
-            getUI().ifPresent(ui -> ui.navigate("RemovePaymentView"));
-        });
-        adminLayout.add(new HorizontalLayout(closeStoreButton, addSupplyButton, removeSupplyButton,
-                addPaymentButton, removePaymentButton));
+        adminLayout.add(new HorizontalLayout(closeStoreButton, externalServicesButton));
         add(adminLayout);
     }
 
     public void goToStore(String storeID){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("storeID", List.of(storeID));
-        parameters.put("userID", List.of(userID));
-        QueryParameters userStoreQuery = new QueryParameters(parameters);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+        if(!presenter.isStoreOpen(storeID) && !presenter.isAdmin() && !presenter.isStoreOwner(storeID)){
+            Notification.show("Store is closed",3000, Notification.Position.MIDDLE);
+        }
+        else {
+            Map<String, List<String>> parameters = new HashMap<>();
+            parameters.put("storeID", List.of(storeID));
+            parameters.put("userID", List.of(userID));
+            QueryParameters userStoreQuery = new QueryParameters(parameters);
+            getUI().ifPresent(ui -> ui.navigate("StoreView", userStoreQuery));
+        }
     }
 
     public void showGeneralSearchResult(Map<String,List<ProductDTO>> productsFound){

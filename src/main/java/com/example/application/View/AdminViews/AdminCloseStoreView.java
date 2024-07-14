@@ -78,32 +78,25 @@ public class AdminCloseStoreView  extends VerticalLayout {
         });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
 
-        if (!presenter.isMember()) {
-            Button loginButton = new Button("Log In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("LoginView"));
-            });
-            Button signInButton = new Button("Sign In", event -> {
-                getUI().ifPresent(ui -> ui.navigate("SignInView"));
-            });
-            topLayout.add(loginButton, signInButton);
-        } else {
-            Button openStoreButton = new Button("Open new Store", event -> {
-                getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
-            });
-            Button historyButton = new Button("History", event -> {
-                getUI().ifPresent(ui -> ui.navigate("HistoryView"));
-            });
-            Button myProfileButton = new Button("My Profile", event -> {
-                getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
-            });
-            Button notificationsButton = new Button("Notifications", event -> {
-                getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
-            });
-            Button logoutButton = new Button("Log Out", event -> {
-                logoutConfirm();
-            });
-            topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
-        }
+        Button openStoreButton = new Button("Open new Store", event -> {
+            getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
+        });
+        Button historyButton = new Button("History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("HistoryView"));
+        });
+        Button myProfileButton = new Button("My Profile", event -> {
+            getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
+        });
+        Button jobProposalsButton = new Button("Job Proposals", event -> {
+            getUI().ifPresent(ui -> ui.navigate("JobProposalsView"));
+        });
+        Button notificationsButton = new Button("Notifications", event -> {
+            getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
+        });
+        Button logoutButton = new Button("Log Out", event -> {
+            logoutConfirm();
+        });
+        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }

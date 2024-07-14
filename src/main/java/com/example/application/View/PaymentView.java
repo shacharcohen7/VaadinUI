@@ -151,13 +151,17 @@ public class PaymentView extends VerticalLayout {
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
             });
+            Button jobProposalsButton = new Button("Job Proposals", event -> {
+                getUI().ifPresent(ui -> ui.navigate("JobProposalsView"));
+            });
             Button notificationsButton = new Button("Notifications", event -> {
                 getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
             });
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
+            topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+
         }
         add(topLayout);
     }

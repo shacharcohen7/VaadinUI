@@ -36,7 +36,7 @@ public class AddSupplyPresenter {
         countries.add(country);
         HashSet<String> cities = new HashSet<>();
         countries.add(city);
-        String result = APIcalls.addExternalSupplyService(VaadinSession.getCurrent().getAttribute("memberID").toString(),
+        String result = APIcalls.addExternalSupplyService(userID,
                 new SupplyServiceDTO(licensedDealerNumber, supplyServiceName, countries, cities));
         if (result.contains("success")) {
             view.addSuccess("Supply service was added");

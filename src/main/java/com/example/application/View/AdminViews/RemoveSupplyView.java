@@ -1,11 +1,11 @@
 package com.example.application.View.AdminViews;
 
-import com.example.application.Presenter.AdminPresenters.RemovePaymentPresenter;
 import com.example.application.Presenter.AdminPresenters.RemoveSupplyPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
@@ -21,7 +21,7 @@ import com.vaadin.flow.server.VaadinSession;
 public class RemoveSupplyView extends VerticalLayout {
     private RemoveSupplyPresenter presenter;
     private String userID;
-    private TextField licenceNumField;
+    private ComboBox<String> urlField;
     private Button removeButton;
     private Button cancelButton;
 
@@ -44,15 +44,16 @@ public class RemoveSupplyView extends VerticalLayout {
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        licenceNumField = new TextField("license number");
+        urlField = new ComboBox<String>("url");
+        urlField.setItems(presenter.getSupplyServices());
         removeButton = new Button("Remove", event -> {
             removeConfirm();
         });
         cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView"));
+            getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
         });
         add(
-                licenceNumField,
+                urlField,
                 new HorizontalLayout(removeButton, cancelButton)
         );
     }
@@ -75,13 +76,16 @@ public class RemoveSupplyView extends VerticalLayout {
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
         });
+        Button jobProposalsButton = new Button("Job Proposals", event -> {
+            getUI().ifPresent(ui -> ui.navigate("JobProposalsView"));
+        });
         Button notificationsButton = new Button("Notifications", event -> {
             getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
         });
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }
@@ -108,13 +112,13 @@ public class RemoveSupplyView extends VerticalLayout {
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(licenceNumField.getValue()));
+        dialog.addConfirmListener(event -> presenter.onRemoveButtonClicked(urlField.getValue()));
         dialog.open();
     }
 
     public void removeSuccess(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
+        getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
     }
 
     public void removeFailure(String message) {

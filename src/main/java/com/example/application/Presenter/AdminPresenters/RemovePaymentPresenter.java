@@ -30,12 +30,16 @@ public class RemovePaymentPresenter {
         }
     }
 
-    public void onRemoveButtonClicked(String licenceNum) {
-        if (APIcalls.removeExternalPaymentService(licenceNum,
-                VaadinSession.getCurrent().getAttribute("memberID").toString()).contains("success")) {
+    public List<String> getPaymentServices(){
+        return APIcalls.getExternalPaymentServices();
+    }
+
+    public void onRemoveButtonClicked(String url) {
+        String result = APIcalls.removeExternalPaymentService(url, userID);
+        if (result.contains("success")) {
             view.removeSuccess("Payment service was removed");
         } else {
-            view.removeFailure("Invalid input.");
+            view.removeFailure(result);
         }
     }
 }
