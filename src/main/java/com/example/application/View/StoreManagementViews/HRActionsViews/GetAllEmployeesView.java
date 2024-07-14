@@ -70,13 +70,16 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
         });
+        Button jobProposalsButton = new Button("Job Proposals", event -> {
+            getUI().ifPresent(ui -> ui.navigate("JobProposalsView"));
+        });
         Button notificationsButton = new Button("Notifications", event -> {
             getUI().ifPresent(ui -> ui.navigate("NotificationsView"));
         });
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }
@@ -89,6 +92,9 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
             storeOwnersFailedToLoad();
         }
         else{
+            if (storeOwners.size() == 0) {
+                ownersLayout.add(new HorizontalLayout(new Text("No store owners")));
+            }
             for(int i=0 ; i<storeOwners.size() ; i++){
                 VerticalLayout ownerLayout = new VerticalLayout();
                 ownerLayout.add(new HorizontalLayout(new Text("Store Owner - " + presenter.getEmployeeUserName(storeOwners.get(i)))));
@@ -106,6 +112,9 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
             storeManagersFailedToLoad();
         }
         else{
+            if (storeManagers.size() == 0) {
+                managersLayout.add(new HorizontalLayout(new Text("No store owners")));
+            }
             for(int i=0 ; i<storeManagers.size() ; i++){
                 VerticalLayout managerLayout = new VerticalLayout();
                 managerLayout.add(

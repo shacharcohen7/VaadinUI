@@ -30,8 +30,7 @@ public class AddPaymentPresenter {
     }
 
     public void onAddButtonClicked(String paymentName, String licensedDealerNumber,String url) {
-        String result = APIcalls.addExternalPaymentService(paymentName,
-                VaadinSession.getCurrent().getAttribute("memberID").toString(),
+        String result = APIcalls.addExternalPaymentService(userID,
                 new PaymentServiceDTO(licensedDealerNumber, paymentName, url));
         if (result.contains("success")) {
             view.addSuccess("Payment service was added");

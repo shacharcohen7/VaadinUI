@@ -34,6 +34,10 @@ public class MarketPresenter {
         return "Guest";
     }
 
+    public boolean isStoreOpen(String storeID){
+        return APIcalls.isStoreOpen(storeID);
+    }
+
     public boolean isMember(){
         return APIcalls.isMember(userID);
     }
@@ -57,6 +61,13 @@ public class MarketPresenter {
             return null;
         }
         return APIcalls.getStore(storeID).getStoreName();
+    }
+
+    public boolean isStoreOwner(String storeID){
+        if(!isMember()){
+            return false;
+        }
+        return APIcalls.isStoreOwner(VaadinSession.getCurrent().getAttribute("memberID").toString(), storeID);
     }
 
     public boolean isAdmin(){

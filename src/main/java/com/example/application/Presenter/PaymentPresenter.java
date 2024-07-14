@@ -51,7 +51,11 @@ public class PaymentPresenter {
         PaymentDTO paymentDTO = new PaymentDTO(holderID, holderName, currency, creditCard, cvv, month, year);
         APIcalls.setUserConfirmationPurchase(userID);
         String result = APIcalls.purchase(userDTO,paymentDTO,cartDTO);
-        view.paymentResult(result);
+        if (result.contains("success")) {
+            view.paymentResult("Purchase performed successfully");
+        } else {
+            view.paymentResult(result);
+        }
     }
 
 }

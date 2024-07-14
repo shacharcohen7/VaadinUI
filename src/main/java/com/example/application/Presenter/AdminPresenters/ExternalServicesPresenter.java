@@ -1,21 +1,19 @@
 package com.example.application.Presenter.AdminPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.AdminViews.RemovePaymentView;
-import com.example.application.View.AdminViews.RemoveSupplyView;
+import com.example.application.View.AdminViews.ExternalServicesView;
+import com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews.DiscountPolicyView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;
 
-public class RemoveSupplyPresenter {
-    private RemoveSupplyView view;
+public class ExternalServicesPresenter {
+    private ExternalServicesView view;
     private String userID;
-    private String storeID;
 
-    public RemoveSupplyPresenter(RemoveSupplyView view, String userID){
+    public ExternalServicesPresenter(ExternalServicesView view, String userID){
         this.view = view;
         this.userID = userID;
-        this.storeID = storeID;
     }
 
     public String getUserName(){
@@ -32,12 +30,7 @@ public class RemoveSupplyPresenter {
         return APIcalls.getExternalSupplyServices();
     }
 
-    public void onRemoveButtonClicked(String url) {
-        String result = APIcalls.removeExternalSupplyService(url, userID);
-        if (result.contains("success")) {
-            view.removeSuccess("Supply service was removed");
-        } else {
-            view.removeFailure(result);
-        }
+    public List<String> getPaymentServices(){
+        return APIcalls.getExternalPaymentServices();
     }
 }
