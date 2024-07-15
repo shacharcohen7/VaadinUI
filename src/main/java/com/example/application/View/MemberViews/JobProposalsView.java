@@ -136,11 +136,11 @@ public class JobProposalsView extends VerticalLayout {
             for(int i = 0; i< managerProposals.size() ; i++){
                 VerticalLayout managerProposalLayout = new VerticalLayout();
                 StoreManagerDTO managerProposal = managerProposals.get(i);
-                if(presenter.getStore(managerProposal.getStore_ID()) == null){
+                if(presenter.getStore(managerProposal.getStoreId()) == null){
                     storeFailedToLoad();
                 }
                 else {
-                    String storeID = managerProposal.getStore_ID();
+                    String storeID = managerProposal.getStoreId();
                     managerProposalLayout.add(
                             new HorizontalLayout(
                                     new Text("Store ID - " + storeID),
