@@ -142,6 +142,7 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
     public void categoriesFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Categories failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

@@ -287,6 +287,7 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
     public void categoriesFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Categories failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
@@ -295,6 +296,7 @@ public class AddPurchaseRuleView extends VerticalLayout implements HasUrlParamet
     public void productsFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Products failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

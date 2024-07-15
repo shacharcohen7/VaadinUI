@@ -137,6 +137,7 @@ public class DiscountPolicyView extends VerticalLayout implements HasUrlParamete
     public void rulesFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Rules failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

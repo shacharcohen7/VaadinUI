@@ -114,7 +114,8 @@ public class MyProfileView extends VerticalLayout {
 
     public void userFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("User failed to load");
+        dialog.setHeader("User Profile failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

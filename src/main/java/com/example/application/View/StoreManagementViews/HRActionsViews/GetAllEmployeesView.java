@@ -146,6 +146,7 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
     public void storeOwnersFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store owners failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
@@ -154,6 +155,7 @@ public class GetAllEmployeesView extends VerticalLayout implements HasUrlParamet
     public void storeManagersFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store managers failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
