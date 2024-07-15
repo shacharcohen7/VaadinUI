@@ -170,15 +170,15 @@ public class PurchaseHistoryView extends VerticalLayout {
                 ReceiptDTO receipt = event.getValue();
                 receiptDetailsLayout.removeAll();
                 receiptDetailsLayout.add(new H1("Receipt Details"),
-                        new HorizontalLayout(new H1("Receipt ID: " + receipt.getReceiptId())),
-                        new HorizontalLayout(new H1("Store ID: " + receipt.getStoreId())),
-                        new HorizontalLayout(new H1("Member ID: " + receipt.getMemberId())),
+                        new HorizontalLayout(new Text("Receipt ID: " + receipt.getReceiptId())),
+                        new HorizontalLayout(new Text("Store ID: " + receipt.getStoreId())),
+                        new HorizontalLayout(new Text("Member ID: " + receipt.getMemberId())),
                         new H1("Products"));
 
                 receipt.getProductList().forEach((product, details) -> {
-                    receiptDetailsLayout.add(new HorizontalLayout(new H1("Product: " + product),
-                            new H1("Price: " + details.get(1)),
-                            new H1("Quantity: " + details.get(0))));
+                    receiptDetailsLayout.add(new HorizontalLayout(new Text("Product: " + product),
+                            new Text(" Price: " + details.get(0)),
+                            new Text(" Quantity: " + details.get(1))));
                 });
 
                 receiptDetailsLayout.setVisible(true);

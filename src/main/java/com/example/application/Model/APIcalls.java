@@ -1928,6 +1928,105 @@ public class APIcalls {
         }
     }
 
+    public static List<AcquisitionDTO> getAllAcquisitions(String systemManagerUserId){
+        try {
+            String url = "http://localhost:8080/api/market/getAllAcquisitions/{systemManagerUserId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(systemManagerUserId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<AcquisitionDTO> data = new LinkedList<AcquisitionDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), AcquisitionDTO.class));
+            }
+            return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<ShippingDTO> getAllSupplyByUser(String userID){
+        try {
+            String url = "http://localhost:8080/api/market/getAllSupplyByUser/{userId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(userID)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<ShippingDTO> data = new LinkedList<ShippingDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), ShippingDTO.class));
+            }
+            return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<ShippingDTO> getSupplySystemHistory(String systemManagerUserId){
+        try {
+            String url = "http://localhost:8080/api/market/getSupplySystemHistory/{systemManagerUserId}";  // Absolute URL
+
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                    .buildAndExpand(systemManagerUserId)
+                    .toUri();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("accept", "*/*");
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+            ResponseEntity<APIResponse<List<String>>> response = restTemplate.exchange(uri,  // Use the URI object here
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<APIResponse<List<String>>>() {
+                    });
+            APIResponse<List<String>> responseBody = response.getBody();
+            List<ShippingDTO> data = new LinkedList<ShippingDTO>();
+            for(int i=0 ; i<responseBody.getData().size() ; i++){
+                data.add(mapper.readValue(responseBody.getData().get(i), ShippingDTO.class));
+            }
+            return data;
+        }
+        catch (HttpClientErrorException e) {
+            throw new APIException(extractErrorMessageFromJson(e.getResponseBodyAsString()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static List<StoreOwnerDTO> getOwnerJobProposal(String userID){
         try {
             String url = "http://localhost:8080/api/market/getOwnerJobProposal/{userId}";  // Absolute URL
