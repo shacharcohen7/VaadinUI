@@ -1,13 +1,9 @@
-package com.example.application.Presenter.AdminPresenters;
+package com.example.application.Presenter.AdminPresenters.ExternalServicesPresenters;
 
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.PaymentServiceDTO;
-import com.example.application.Util.ProductDTO;
-import com.example.application.View.AdminViews.AddPaymentView;
-import com.example.application.View.StoreManagementViews.InventoryActionsViews.AddProductToStoreView;
+import com.example.application.View.AdminViews.ExternalServicesViews.AddPaymentView;
 import com.vaadin.flow.server.VaadinSession;
-
-import java.util.List;
 
 public class AddPaymentPresenter {
     private AddPaymentView view;

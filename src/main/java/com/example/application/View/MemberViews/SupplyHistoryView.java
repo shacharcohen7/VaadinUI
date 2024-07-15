@@ -1,32 +1,35 @@
-package com.example.application.View.AdminViews;
+package com.example.application.View.MemberViews;
 
-import com.example.application.Presenter.AdminPresenters.AdminCloseStorePresenter;
+import com.example.application.Presenter.MemberPresenters.SupplyHistoryPresenter;
+import com.example.application.Util.ReceiptDTO;
+import com.example.application.Util.ShippingDTO;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;
 
-@Route("AdminCloseStoreView")
-public class AdminCloseStoreView  extends VerticalLayout {
-    private AdminCloseStorePresenter presenter;
+@Route("SupplyHistoryView")
+public class SupplyHistoryView extends VerticalLayout {
+    private SupplyHistoryPresenter presenter;
     private String userID;
-    private ComboBox<String> storeNameField;
-    private Button closeButton;
-    private Button cancelButton;
+    private Grid<ShippingDTO> shippingGrid;
+    private Grid<ReceiptDTO> receiptGrid;
+    private VerticalLayout receiptDetailsLayout;
+    private Button backButton;
 
-    public AdminCloseStoreView(){
+    public SupplyHistoryView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
         if (memberIdObj!=null){
@@ -36,33 +39,34 @@ public class AdminCloseStoreView  extends VerticalLayout {
         buildView();
     }
 
-    public void buildView(){
-        presenter = new AdminCloseStorePresenter(this, userID);
+    public void buildView() {
+        presenter = new SupplyHistoryPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Close Store");
+        H1 header = new H1("Supply History");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        storeNameField = new ComboBox<String>("store name");
-        List<String> stores = presenter.getAllStoreNames();
-        if (stores == null) {
-            storesFailedToLoad();
+
+        shippingGrid = new Grid<>(ShippingDTO.class);
+        shippingGrid.setColumns("shipping_id", "memberId", "country", "city", "address",
+                                                            "zip", "date", "acquisitionId", "transactionId");
+
+        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setSizeFull();
+        mainLayout.setAlignItems(Alignment.CENTER);
+        mainLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        mainLayout.add(shippingGrid);
+
+        add(mainLayout);
+        List<ShippingDTO> shippings = presenter.loadSupplyHistory();
+        if (shippings == null) {
+            shippingsFailedToLoad();
         }
-        else {
-            storeNameField.setItems(stores);
+        else{
+            showShippings(shippings);
         }
-        closeButton = new Button("Close", event -> {
-            closeStoreConfirm();
-        });
-        cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("MarketView"));
-        });
-        add(
-                storeNameField,
-                new HorizontalLayout(closeButton, cancelButton)
-        );
     }
 
     public void createTopLayout() {
@@ -104,27 +108,6 @@ public class AdminCloseStoreView  extends VerticalLayout {
         add(topLayout);
     }
 
-    public void closeStoreConfirm(){
-        ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Close Store");
-        dialog.setText("Are you sure you want to close this store?");
-        dialog.setCancelable(true);
-        dialog.addCancelListener(event -> dialog.close());
-        dialog.setConfirmText("Yes");
-        dialog.addConfirmListener(event -> {
-            presenter.onCloseButtonClicked(storeNameField.getValue());
-        });
-        dialog.open();
-    }
-
-    public void storesFailedToLoad(){
-        ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Stores failed to load");
-        dialog.setConfirmText("OK");
-        dialog.addConfirmListener(event -> dialog.close());
-        dialog.open();
-    }
-
     public void logoutConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Logout");
@@ -140,13 +123,15 @@ public class AdminCloseStoreView  extends VerticalLayout {
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
-    public void closeSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("MarketView"));
+    public void showShippings(List<ShippingDTO> shippings) {
+        shippingGrid.setItems(shippings);
     }
 
-    public void closeFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    public void shippingsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Shippings failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
-
 }
