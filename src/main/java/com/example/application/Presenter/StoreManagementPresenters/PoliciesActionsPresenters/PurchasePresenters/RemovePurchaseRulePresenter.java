@@ -2,6 +2,7 @@ package com.example.application.Presenter.StoreManagementPresenters.PoliciesActi
 
 import com.example.application.Model.APIcalls;
 import com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchaseViews.RemovePurchaseRuleView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
@@ -38,6 +39,10 @@ public class RemovePurchaseRulePresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

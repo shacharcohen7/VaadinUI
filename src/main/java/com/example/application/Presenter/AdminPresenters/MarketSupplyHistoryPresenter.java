@@ -4,6 +4,7 @@ import com.example.application.Model.APIcalls;
 import com.example.application.Util.ShippingDTO;
 import com.example.application.View.AdminViews.MarketPurchaseHistoryView;
 import com.example.application.View.AdminViews.MarketSupplyHistoryView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
@@ -28,6 +29,10 @@ public class MarketSupplyHistoryPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

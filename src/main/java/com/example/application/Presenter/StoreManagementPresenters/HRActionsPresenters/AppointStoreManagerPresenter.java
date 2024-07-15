@@ -2,6 +2,7 @@ package com.example.application.Presenter.StoreManagementPresenters.HRActionsPre
 
 import com.example.application.Model.APIcalls;
 import com.example.application.View.StoreManagementViews.HRActionsViews.AppointStoreManagerView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 public class AppointStoreManagerPresenter {
@@ -21,6 +22,10 @@ public class AppointStoreManagerPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

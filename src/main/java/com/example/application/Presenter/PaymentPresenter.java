@@ -6,6 +6,7 @@ import com.example.application.Util.PaymentDTO;
 import com.example.application.Util.UserDTO;
 import com.example.application.View.GuestViews.SignInView;
 import com.example.application.View.PaymentView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.time.LocalDate;
@@ -40,6 +41,10 @@ public class PaymentPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
 
             view.logout();
         }

@@ -2,6 +2,7 @@ package com.example.application.Presenter.StoreManagementPresenters.PoliciesActi
 
 import com.example.application.Model.APIcalls;
 import com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews.DiscountPolicyView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
@@ -24,6 +25,10 @@ public class DiscountPolicyPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

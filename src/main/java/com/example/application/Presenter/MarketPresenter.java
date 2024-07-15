@@ -5,6 +5,7 @@ import com.example.application.Util.APIResponse;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.StoreDTO;
 import com.example.application.View.MarketView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -79,6 +80,10 @@ public class MarketPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

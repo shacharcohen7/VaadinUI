@@ -2,6 +2,7 @@ package com.example.application.Presenter.AdminPresenters.ExternalServicesPresen
 
 import com.example.application.Model.APIcalls;
 import com.example.application.View.AdminViews.ExternalServicesViews.RemovePaymentView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;
@@ -23,6 +24,10 @@ public class RemovePaymentPresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }

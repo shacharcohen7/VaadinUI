@@ -4,6 +4,7 @@ import com.example.application.Model.APIcalls;
 import com.example.application.Util.ProductDTO;
 import com.example.application.Util.TestRuleDTO;
 import com.example.application.View.StoreManagementViews.PoliciesActionsViews.PurchaseViews.AddPurchaseRuleView;
+import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.LinkedList;
@@ -42,6 +43,10 @@ public class AddPurchaseRulePresenter {
 
     public void logOut(){
         if(APIcalls.logout(userID).contains("success")){
+            Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberID");
+            if (memberIdObj!= null) {
+                WebSocketHandler.getInstance().closeConnection(memberIdObj.toString());
+            }
             view.logout();
         }
     }
