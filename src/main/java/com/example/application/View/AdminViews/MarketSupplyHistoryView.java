@@ -40,7 +40,7 @@ public class MarketSupplyHistoryView extends VerticalLayout {
     public void buildView() {
         presenter = new MarketSupplyHistoryPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Supply History");
+        H1 header = new H1("Market Supply History");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);

@@ -22,11 +22,11 @@ public class SupplyHistoryPresenter {
     }
 
     public List<ShippingDTO> loadSupplyHistory() {
-//        return APIcalls.getUserAcquisitionsHistory(userID);
-        List<ShippingDTO> list = new LinkedList<>();
-        ShippingDTO dto = new ShippingDTO("a", 1, "a", "a", "a", "a", "a");
-        list.add(dto);
-        return list;
+        return APIcalls.getAllSupplyByUser(userID);
+//        List<ShippingDTO> list = new LinkedList<>();
+//        ShippingDTO dto = new ShippingDTO("a", 1, "a", "a", "a", "a", "a");
+//        list.add(dto);
+//        return list;
     }
 
     public void logOut(){

@@ -19,11 +19,11 @@ public class MarketSupplyHistoryPresenter {
     }
 
     public List<ShippingDTO> loadMarketSupplyHistory() {
-//        return APIcalls.getUserAcquisitionsHistory(userID);
-        List<ShippingDTO> list = new LinkedList<>();
-        ShippingDTO dto = new ShippingDTO("a", 1, "a", "a", "a", "a", "a");
-        list.add(dto);
-        return list;
+        return APIcalls.getSupplySystemHistory(userID);
+//        List<ShippingDTO> list = new LinkedList<>();
+//        ShippingDTO dto = new ShippingDTO("a", 1, "a", "a", "a", "a", "a");
+//        list.add(dto);
+//        return list;
     }
 
     public void logOut(){
