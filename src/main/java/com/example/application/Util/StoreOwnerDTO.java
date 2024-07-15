@@ -17,25 +17,37 @@ public class StoreOwnerDTO {
 
     }
 
-    public String getNominatorId() {
-        return nominatorId;
-    }
-
-    public boolean getFounder() {
-        return founder;
-    }
-
-
-    public boolean verifyStoreOwnerIsFounder()
-    {
-        return founder;
-    }
 
     public String getStoreId() {
         return storeId;
     }
 
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
     public String getMemberId() {
         return memberId;
     }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
+
+    public boolean isFounder() {
+        return founder;
+    }
+
+    public void setFounder(boolean founder) {
+        this.founder = founder;
+    }
+
+    public String getNominatorId() {
+        return nominatorId;
+    }
+
+    public void setNominatorId(String nominatorId) {
+        this.nominatorId = nominatorId;
+    }
+
 }
