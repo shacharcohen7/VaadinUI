@@ -66,7 +66,7 @@ public class PurchaseHistoryView extends VerticalLayout {
         });
 
         receiptGrid = new Grid<>(ReceiptDTO.class);
-        receiptGrid.setColumns("receiptId", "storeId", "userId");
+        receiptGrid.setColumns("receiptId", "storeId", "memberId");
         receiptGrid.setVisible(false);
 
         receiptDetailsLayout = new VerticalLayout();
