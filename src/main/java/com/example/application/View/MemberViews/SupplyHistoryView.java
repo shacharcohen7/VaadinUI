@@ -1,75 +1,87 @@
-package com.example.application.View.StoreManagementViews.HRActionsViews;
+package com.example.application.View.MemberViews;
 
-import com.example.application.Presenter.StoreManagementPresenters.HRActionsPresenters.AppointStoreOwnerPresenter;
+import com.example.application.Presenter.MemberPresenters.SupplyHistoryPresenter;
+import com.example.application.Util.ReceiptDTO;
+import com.example.application.Util.ShippingDTO;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Route("AppointStoreOwnerView")
-public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParameter<String> {
-    private AppointStoreOwnerPresenter presenter;
-    private QueryParameters storeQuery;
+@Route("SupplyHistoryView")
+public class SupplyHistoryView extends VerticalLayout {
+    private SupplyHistoryPresenter presenter;
     private String userID;
-    private String storeID;
-    private TextField usernameField;
-    private Button appointButton;
-    private Button cancelButton;
+    private Grid<ShippingDTO> shippingGrid;
+    private Grid<ReceiptDTO> receiptGrid;
+    private VerticalLayout receiptDetailsLayout;
+    private Button backButton;
 
-    public AppointStoreOwnerView(){}
-
-    public void buildView(){
+    public SupplyHistoryView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
         if (memberIdObj!=null){
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new AppointStoreOwnerPresenter(this, userID, storeID);
-        makeStoreQuery();
+        buildView();
+    }
+
+    public void buildView() {
+        presenter = new SupplyHistoryPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Appoint Store Owner");
+        H1 header = new H1("Supply History");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        usernameField = new TextField("","user name");
-        appointButton = new Button("Appoint", event -> {
-            presenter.onAppointButtonClicked(usernameField.getValue());
-        });
-        cancelButton = new Button("Cancel", event -> {
-            getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
-        });
-        add(
-                usernameField,
-                new HorizontalLayout(appointButton, cancelButton)
-        );
+
+        shippingGrid = new Grid<>(ShippingDTO.class);
+        shippingGrid.setColumns("shipping_id", "memberId", "country", "city", "address",
+                                                            "zip", "date", "acquisitionId", "transactionId");
+
+        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setSizeFull();
+        mainLayout.setAlignItems(Alignment.CENTER);
+        mainLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        mainLayout.add(shippingGrid);
+
+        add(mainLayout);
+        List<ShippingDTO> shippings = presenter.loadSupplyHistory();
+        if (shippings == null) {
+            shippingsFailedToLoad();
+        }
+        else{
+            showShippings(shippings);
+        }
     }
 
-    public void createTopLayout(){
+    public void createTopLayout() {
         HorizontalLayout topLayout = new HorizontalLayout();
         topLayout.getStyle().set("background-color", "#fff0f0"); // Set background color
-        Text helloMessage = new Text("Hello, " + presenter.getUserName());
-        Button homeButton = new Button("Home", new Icon(VaadinIcon.HOME), event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
-        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART),
-                event -> getUI().ifPresent(ui -> ui.navigate("ShoppingCartView")));
 
+        Text helloMessage = new Text("Hello, " + presenter.getUserName());
+        Button homeButton = new Button("Home", new Icon(VaadinIcon.HOME), event -> {
+            getUI().ifPresent(ui -> ui.navigate("MarketView"));
+        });
+        Button shoppingCartButton = new Button("Shopping Cart", new Icon(VaadinIcon.CART), event -> {
+            getUI().ifPresent(ui -> ui.navigate("ShoppingCartView"));
+        });
         topLayout.add(helloMessage, homeButton, shoppingCartButton);
+
         Button openStoreButton = new Button("Open new Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
         });
@@ -96,11 +108,6 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
         add(topLayout);
     }
 
-    public void appointmentSuccess(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-        getUI().ifPresent(ui -> ui.navigate("StoreView", storeQuery));
-    }
-
     public void logoutConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Logout");
@@ -116,20 +123,15 @@ public class AppointStoreOwnerView extends VerticalLayout implements HasUrlParam
         getUI().ifPresent(ui -> ui.navigate("MarketView"));
     }
 
-    public void appointmentFailure(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
+    public void showShippings(List<ShippingDTO> shippings) {
+        shippingGrid.setItems(shippings);
     }
 
-    public void makeStoreQuery(){
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("storeID", List.of(storeID));
-        storeQuery = new QueryParameters(parameters);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter String parameter) {
-        Map<String, List<String>> parameters = beforeEvent.getLocation().getQueryParameters().getParameters();
-        storeID = parameters.getOrDefault("storeID", List.of("Unknown")).get(0);
-        buildView();
+    public void shippingsFailedToLoad(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Shippings failed to load");
+        dialog.setConfirmText("OK");
+        dialog.addConfirmListener(event -> dialog.close());
+        dialog.open();
     }
 }

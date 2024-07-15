@@ -1,6 +1,6 @@
-package com.example.application.View.AdminViews;
+package com.example.application.View.AdminViews.ExternalServicesViews;
 
-import com.example.application.Presenter.AdminPresenters.RemovePaymentPresenter;
+import com.example.application.Presenter.AdminPresenters.ExternalServicesPresenters.RemoveSupplyPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -13,19 +13,18 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-@Route("RemovePaymentView")
-public class RemovePaymentView extends VerticalLayout {
-    private RemovePaymentPresenter presenter;
+@Route("RemoveSupplyView")
+public class RemoveSupplyView extends VerticalLayout {
+    private RemoveSupplyPresenter presenter;
     private String userID;
     private ComboBox<String> urlField;
     private Button removeButton;
     private Button cancelButton;
 
-    public RemovePaymentView(){
+    public RemoveSupplyView(){
         buildView();
     }
 
@@ -36,16 +35,16 @@ public class RemovePaymentView extends VerticalLayout {
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new RemovePaymentPresenter(this, userID);
+        presenter = new RemoveSupplyPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Remove Payment Service");
+        H1 header = new H1("Remove Supply Service");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
         urlField = new ComboBox<String>("url");
-        urlField.setItems(presenter.getPaymentServices());
+        urlField.setItems(presenter.getSupplyServices());
         removeButton = new Button("Remove", event -> {
             removeConfirm();
         });
@@ -70,8 +69,11 @@ public class RemovePaymentView extends VerticalLayout {
         Button openStoreButton = new Button("Open new Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
         });
-        Button historyButton = new Button("History", event -> {
-            getUI().ifPresent(ui -> ui.navigate("HistoryView"));
+        Button purchaseHistoryButton = new Button("Purchase History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("PurchaseHistoryView"));
+        });
+        Button supplyHistoryButton = new Button("Supply History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("SupplyHistoryView"));
         });
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
@@ -85,7 +87,7 @@ public class RemovePaymentView extends VerticalLayout {
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, purchaseHistoryButton, supplyHistoryButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }
@@ -107,8 +109,8 @@ public class RemovePaymentView extends VerticalLayout {
 
     public void removeConfirm(){
         ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Remove Payment Service");
-        dialog.setText("Are you sure you want to remove this payment service?");
+        dialog.setHeader("Remove Supply Service");
+        dialog.setText("Are you sure you want to remove this Supply service?");
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> dialog.close());
         dialog.setConfirmText("Yes");

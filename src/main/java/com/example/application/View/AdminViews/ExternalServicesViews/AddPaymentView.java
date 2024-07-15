@@ -1,12 +1,10 @@
-package com.example.application.View.AdminViews;
+package com.example.application.View.AdminViews.ExternalServicesViews;
 
-import com.example.application.Presenter.AdminPresenters.AddPaymentPresenter;
-import com.example.application.Presenter.AdminPresenters.AddSupplyPresenter;
+import com.example.application.Presenter.AdminPresenters.ExternalServicesPresenters.AddPaymentPresenter;
 import com.example.application.WebSocketUtil.WebSocketHandler;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
@@ -15,21 +13,20 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-@Route("AddSupplyView")
-public class AddSupplyView extends VerticalLayout {
-    private AddSupplyPresenter presenter;
+@Route("AddPaymentView")
+public class AddPaymentView extends VerticalLayout {
+    private AddPaymentPresenter presenter;
     private String userID;
+    private TextField paymentNameField;
     private TextField licensedDealerNumberField;
-    private TextField supplyServiceNameField;
-    private TextField countryField;
-    private TextField cityField;
+    private TextField urlField;
     private Button addButton;
     private Button cancelButton;
 
-    public AddSupplyView(){
+    public AddPaymentView(){
         buildView();
     }
 
@@ -40,30 +37,28 @@ public class AddSupplyView extends VerticalLayout {
             String memberId = memberIdObj.toString();
             WebSocketHandler.getInstance().addUI(memberId, UI.getCurrent());
         }
-        presenter = new AddSupplyPresenter(this, userID);
+        presenter = new AddPaymentPresenter(this, userID);
         createTopLayout();
-        H1 header = new H1("Add Supply Service");
+        H1 header = new H1("Add Payment Service");
         VerticalLayout layout = new VerticalLayout(header);
         layout.getStyle().set("background-color", "#ffc0cb"); // Set background color to dark pink
         layout.setSpacing(false);
         layout.setAlignItems(Alignment.CENTER);
         add(layout);
-        licensedDealerNumberField = new TextField("licensed dealer number");
-        supplyServiceNameField = new TextField("supply service name");
-        countryField = new TextField("country");
-        cityField = new TextField("city");
+        paymentNameField = new TextField("payment name");
+        licensedDealerNumberField = new TextField("license dealer number");
+        urlField = new TextField("url");
         addButton = new Button("Add", event -> {
-            presenter.onAddButtonClicked(licensedDealerNumberField.getValue(),
-                    supplyServiceNameField.getValue(), countryField.getValue(), cityField.getValue());
+            presenter.onAddButtonClicked(paymentNameField.getValue(),
+                    licensedDealerNumberField.getValue(), urlField.getValue());
         });
         cancelButton = new Button("Cancel", event -> {
             getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
         });
         add(
+                paymentNameField,
                 licensedDealerNumberField,
-                supplyServiceNameField,
-                countryField,
-                cityField,
+                urlField,
                 new HorizontalLayout(addButton, cancelButton)
         );
     }
@@ -80,8 +75,11 @@ public class AddSupplyView extends VerticalLayout {
         Button openStoreButton = new Button("Open new Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
         });
-        Button historyButton = new Button("History", event -> {
-            getUI().ifPresent(ui -> ui.navigate("HistoryView"));
+        Button purchaseHistoryButton = new Button("Purchase History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("PurchaseHistoryView"));
+        });
+        Button supplyHistoryButton = new Button("Supply History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("SupplyHistoryView"));
         });
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
@@ -95,7 +93,7 @@ public class AddSupplyView extends VerticalLayout {
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, purchaseHistoryButton, supplyHistoryButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }

@@ -95,8 +95,11 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
         Button openStoreButton = new Button("Open new Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
         });
-        Button historyButton = new Button("History", event -> {
-            getUI().ifPresent(ui -> ui.navigate("HistoryView"));
+        Button purchaseHistoryButton = new Button("Purchase History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("PurchaseHistoryView"));
+        });
+        Button supplyHistoryButton = new Button("Supply History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("SupplyHistoryView"));
         });
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
@@ -110,7 +113,7 @@ public class AddProductToStoreView extends VerticalLayout implements HasUrlParam
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, purchaseHistoryButton, supplyHistoryButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }

@@ -1,7 +1,6 @@
 package com.example.application.Presenter.MemberPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.MemberViews.HistoryView;
 import com.example.application.View.MemberViews.NotificationsView;
 import com.vaadin.flow.server.VaadinSession;
 

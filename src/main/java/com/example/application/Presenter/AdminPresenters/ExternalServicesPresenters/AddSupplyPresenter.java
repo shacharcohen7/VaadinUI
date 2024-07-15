@@ -1,14 +1,11 @@
-package com.example.application.Presenter.AdminPresenters;
+package com.example.application.Presenter.AdminPresenters.ExternalServicesPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Util.PaymentServiceDTO;
 import com.example.application.Util.SupplyServiceDTO;
-import com.example.application.View.AdminViews.AddPaymentView;
-import com.example.application.View.AdminViews.AddSupplyView;
+import com.example.application.View.AdminViews.ExternalServicesViews.AddSupplyView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashSet;
-import java.util.List;
 
 public class AddSupplyPresenter {
     private AddSupplyView view;

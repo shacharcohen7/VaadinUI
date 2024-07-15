@@ -1,6 +1,6 @@
 package com.example.application.View.MemberViews;
 
-import com.example.application.Presenter.MemberPresenters.HistoryPresenter;
+import com.example.application.Presenter.MemberPresenters.PurchaseHistoryPresenter;
 import com.example.application.Util.AcquisitionDTO;
 import com.example.application.Util.ReceiptDTO;
 import com.example.application.WebSocketUtil.WebSocketHandler;
@@ -21,16 +21,16 @@ import com.vaadin.flow.server.VaadinSession;
 import java.util.List;
 import java.util.Map;
 
-@Route("HistoryView")
-public class HistoryView extends VerticalLayout {
-    private HistoryPresenter presenter;
+@Route("PurchaseHistoryView")
+public class PurchaseHistoryView extends VerticalLayout {
+    private PurchaseHistoryPresenter presenter;
     private String userID;
     private Grid<AcquisitionDTO> acquisitionGrid;
     private Grid<ReceiptDTO> receiptGrid;
     private VerticalLayout receiptDetailsLayout;
     private Button backButton;
 
-    public HistoryView() {
+    public PurchaseHistoryView() {
         userID = VaadinSession.getCurrent().getAttribute("userID").toString();
         Object memberIdObj = VaadinSession.getCurrent().getAttribute("memberId");
         if (memberIdObj!=null){
@@ -41,7 +41,7 @@ public class HistoryView extends VerticalLayout {
     }
 
     public void buildView() {
-        presenter = new HistoryPresenter(this, userID);
+        presenter = new PurchaseHistoryPresenter(this, userID);
         createTopLayout();
         H1 header = new H1("Acquisition History");
         VerticalLayout layout = new VerticalLayout(header);
@@ -112,8 +112,11 @@ public class HistoryView extends VerticalLayout {
         Button openStoreButton = new Button("Open new Store", event -> {
             getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
         });
-        Button historyButton = new Button("History", event -> {
-            getUI().ifPresent(ui -> ui.navigate("HistoryView"));
+        Button purchaseHistoryButton = new Button("Purchase History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("PurchaseHistoryView"));
+        });
+        Button supplyHistoryButton = new Button("Supply History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("SupplyHistoryView"));
         });
         Button myProfileButton = new Button("My Profile", event -> {
             getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
@@ -127,7 +130,7 @@ public class HistoryView extends VerticalLayout {
         Button logoutButton = new Button("Log Out", event -> {
             logoutConfirm();
         });
-        topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+        topLayout.add(openStoreButton, purchaseHistoryButton, supplyHistoryButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         add(topLayout);
     }
