@@ -1,8 +1,7 @@
-package com.example.application.Presenter.AdminPresenters;
+package com.example.application.Presenter.AdminPresenters.ExternalServicesPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.View.AdminViews.ExternalServicesView;
-import com.example.application.View.StoreManagementViews.PoliciesActionsViews.DiscountViews.DiscountPolicyView;
+import com.example.application.View.AdminViews.ExternalServicesViews.ExternalServicesView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;

@@ -86,8 +86,11 @@ public class MarketView extends VerticalLayout {
             Button openStoreButton = new Button("Open new Store", event -> {
                 getUI().ifPresent(ui -> ui.navigate("OpenStoreView"));
             });
-            Button historyButton = new Button("History", event -> {
-                getUI().ifPresent(ui -> ui.navigate("HistoryView"));
+            Button purchaseHistoryButton = new Button("Purchase History", event -> {
+                getUI().ifPresent(ui -> ui.navigate("PurchaseHistoryView"));
+            });
+            Button supplyHistoryButton = new Button("Supply History", event -> {
+                getUI().ifPresent(ui -> ui.navigate("SupplyHistoryView"));
             });
             Button myProfileButton = new Button("My Profile", event -> {
                 getUI().ifPresent(ui -> ui.navigate("MyProfileView"));
@@ -101,7 +104,7 @@ public class MarketView extends VerticalLayout {
             Button logoutButton = new Button("Log Out", event -> {
                 logoutConfirm();
             });
-            topLayout.add(openStoreButton, historyButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
+            topLayout.add(openStoreButton, purchaseHistoryButton, supplyHistoryButton, myProfileButton, jobProposalsButton, notificationsButton, logoutButton);
 
         }
         add(topLayout);
@@ -216,7 +219,14 @@ public class MarketView extends VerticalLayout {
         Button externalServicesButton = new Button("External Services", event -> {
             getUI().ifPresent(ui -> ui.navigate("ExternalServicesView"));
         });
-        adminLayout.add(new HorizontalLayout(closeStoreButton, externalServicesButton));
+        Button marketPurchaseHistoryButton = new Button("Market Purchase History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("MarketPurchaseHistoryView"));
+        });
+        Button marketSupplyHistoryButton = new Button("Market Supply History", event -> {
+            getUI().ifPresent(ui -> ui.navigate("MarketSupplyHistoryView"));
+        });
+        adminLayout.add(new HorizontalLayout(closeStoreButton, externalServicesButton,
+                                                        marketPurchaseHistoryButton, marketSupplyHistoryButton));
         add(adminLayout);
     }
 

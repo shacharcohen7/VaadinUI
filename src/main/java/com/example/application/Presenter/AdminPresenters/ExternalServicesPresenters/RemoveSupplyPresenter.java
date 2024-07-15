@@ -1,20 +1,17 @@
-package com.example.application.Presenter.AdminPresenters;
+package com.example.application.Presenter.AdminPresenters.ExternalServicesPresenters;
 
 import com.example.application.Model.APIcalls;
-import com.example.application.Util.ProductDTO;
-import com.example.application.View.AdminViews.RemovePaymentView;
-import com.example.application.View.StoreManagementViews.InventoryActionsViews.RemoveProductFromStoreView;
+import com.example.application.View.AdminViews.ExternalServicesViews.RemoveSupplyView;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.LinkedList;
 import java.util.List;
 
-public class RemovePaymentPresenter {
-    private RemovePaymentView view;
+public class RemoveSupplyPresenter {
+    private RemoveSupplyView view;
     private String userID;
     private String storeID;
 
-    public RemovePaymentPresenter(RemovePaymentView view, String userID){
+    public RemoveSupplyPresenter(RemoveSupplyView view, String userID){
         this.view = view;
         this.userID = userID;
         this.storeID = storeID;
@@ -30,14 +27,14 @@ public class RemovePaymentPresenter {
         }
     }
 
-    public List<String> getPaymentServices(){
-        return APIcalls.getExternalPaymentServices();
+    public List<String> getSupplyServices(){
+        return APIcalls.getExternalSupplyServices();
     }
 
     public void onRemoveButtonClicked(String url) {
-        String result = APIcalls.removeExternalPaymentService(url, userID);
+        String result = APIcalls.removeExternalSupplyService(url, userID);
         if (result.contains("success")) {
-            view.removeSuccess("Payment service was removed");
+            view.removeSuccess("Supply service was removed");
         } else {
             view.removeFailure(result);
         }

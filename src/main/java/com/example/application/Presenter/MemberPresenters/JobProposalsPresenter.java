@@ -2,12 +2,10 @@ package com.example.application.Presenter.MemberPresenters;
 
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.*;
-import com.example.application.View.MemberViews.HistoryView;
 import com.example.application.View.MemberViews.JobProposalsView;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.List;
-import java.util.Map;
 
 public class JobProposalsPresenter {
     private JobProposalsView view;

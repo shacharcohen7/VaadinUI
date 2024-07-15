@@ -3,18 +3,17 @@ package com.example.application.Presenter.MemberPresenters;
 import com.example.application.Model.APIcalls;
 import com.example.application.Util.AcquisitionDTO;
 import com.example.application.Util.ReceiptDTO;
-import com.example.application.View.MemberViews.HistoryView;
+import com.example.application.View.MemberViews.PurchaseHistoryView;
 import com.vaadin.flow.server.VaadinSession;
-import org.eclipse.jetty.util.Scanner;
 
 import java.util.List;
 import java.util.Map;
 
-public class HistoryPresenter {
-    private HistoryView view;
+public class PurchaseHistoryPresenter {
+    private PurchaseHistoryView view;
     private String userID;
 
-    public HistoryPresenter(HistoryView view, String userID) {
+    public PurchaseHistoryPresenter(PurchaseHistoryView view, String userID) {
         this.view = view;
         this.userID = userID;
     }
