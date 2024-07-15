@@ -172,7 +172,7 @@ public class PurchaseHistoryView extends VerticalLayout {
                 receiptDetailsLayout.add(new H1("Receipt Details"),
                         new HorizontalLayout(new H1("Receipt ID: " + receipt.getReceiptId())),
                         new HorizontalLayout(new H1("Store ID: " + receipt.getStoreId())),
-                        new HorizontalLayout(new H1("User ID: " + receipt.getUserId())),
+                        new HorizontalLayout(new H1("Member ID: " + receipt.getMemberId())),
                         new H1("Products"));
 
                 receipt.getProductList().forEach((product, details) -> {
