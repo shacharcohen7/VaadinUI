@@ -177,6 +177,7 @@ public class JobProposalsView extends VerticalLayout {
     public void storeFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
@@ -185,6 +186,7 @@ public class JobProposalsView extends VerticalLayout {
     public void ownerProposalsFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store owner proposals failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
@@ -193,6 +195,7 @@ public class JobProposalsView extends VerticalLayout {
     public void managerProposalsFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store manager proposals failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

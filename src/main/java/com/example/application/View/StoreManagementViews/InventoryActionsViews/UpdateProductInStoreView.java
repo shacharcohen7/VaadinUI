@@ -159,6 +159,7 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
     public void productsFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Products failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
@@ -167,6 +168,7 @@ public class UpdateProductInStoreView extends VerticalLayout implements HasUrlPa
     public void productFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Product failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

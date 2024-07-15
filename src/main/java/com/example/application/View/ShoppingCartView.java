@@ -303,6 +303,7 @@ public class ShoppingCartView extends VerticalLayout {
     public void cartFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Cart failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
         dialog.open();
@@ -311,6 +312,7 @@ public class ShoppingCartView extends VerticalLayout {
     public void productFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Product failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

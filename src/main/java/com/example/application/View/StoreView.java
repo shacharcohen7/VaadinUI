@@ -369,6 +369,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void storeFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> getUI().ifPresent(ui -> ui.navigate("MarketView")));
         dialog.open();
@@ -377,6 +378,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void productsFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Products failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
@@ -385,6 +387,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<String>
     public void categoriesFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Categories failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

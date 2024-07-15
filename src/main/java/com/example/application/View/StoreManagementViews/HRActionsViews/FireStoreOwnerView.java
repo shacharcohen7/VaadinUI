@@ -126,6 +126,7 @@ public class FireStoreOwnerView extends VerticalLayout implements HasUrlParamete
     public void storeOwnersFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store owners failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

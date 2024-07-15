@@ -141,6 +141,7 @@ public class RemoveProductFromStoreView extends VerticalLayout implements HasUrl
     public void productsFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Products failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();

@@ -126,6 +126,7 @@ public class FireStoreManagerView  extends VerticalLayout implements HasUrlParam
     public void storeManagersFailedToLoad(){
         ConfirmDialog dialog = new ConfirmDialog();
         dialog.setHeader("Store managers failed to load");
+        dialog.setText("Database is not connected");
         dialog.setConfirmText("OK");
         dialog.addConfirmListener(event -> dialog.close());
         dialog.open();
