@@ -15,3 +15,7 @@ The Market is a multi-store e-commerce platform for buying, selling, and managin
 ### Frontend:
 - **Language:** Java
 - **Framework:** Vaadin
+
+
+## system UI
+![image](https://github.com/user-attachments/assets/5c4fed13-e7e1-4826-ade7-fb473776d320)
