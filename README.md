@@ -17,4 +17,4 @@ Frontend: Vaadin
 ![image](https://github.com/user-attachments/assets/784dd6ea-824e-4498-8dc7-cf98707f82bb)
 
 #### Shopping Cart Page
-![image](https://github.com/user-attachments/assets/d4b42ed3-ef91-45c6-8457-9430c6302c43)
+![image](https://github.com/user-attachments/assets/89b078d3-2ca6-479f-887c-6e8bb5a0402a)
