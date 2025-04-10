@@ -18,4 +18,11 @@ The Market is a multi-store e-commerce platform for buying, selling, and managin
 
 
 ## system UI
-![image](https://github.com/user-attachments/assets/5c4fed13-e7e1-4826-ade7-fb473776d320)
+# Home Page
+![image](https://github.com/user-attachments/assets/784dd6ea-824e-4498-8dc7-cf98707f82bb)
+
+# Store Page
+![image](https://github.com/user-attachments/assets/651971a1-17cc-4dc1-a547-196627312948)
+
+# Shopping Cart Page
+![image](https://github.com/user-attachments/assets/e0499e76-945e-426f-8b00-cd8ac0b25b10)
