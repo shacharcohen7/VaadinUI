@@ -2,8 +2,6 @@
 
 The Market is a multi-store e-commerce platform for buying, selling, and managing products. 
 
-Runs locally on http://localhost:8081
-
 ### backend repository - [https://github.com/NadavKtalav11/The-Market](https://github.com/NadavKtalav11/The-Market)
 ### frontend Repository - [https://github.com/shacharcohen7/VaadinUI](https://github.com/shacharcohen7/VaadinUI)
 
